@@ -22,72 +22,20 @@ public class Database
 	//Global database connection state
 	private static Connection dbConnection = null;
 	
-	//Defining accessor methods
-	public String getJDBCDriver()
-	{
-		return this.jdbcDriver;
-	}
-	
-	public String getDBName()
-	{
-		return this.dbName;
-	}
-	
-	public String getDBUrl()
-	{
-		return this.dbUrl;
-	}
-	
-	public String getDBUsername()
-	{
-		return this.dbUsername;
-	}
-	
-	public String getDBPassword()
-	{
-		return this.dbPassword;
-	}
-	
-	//Defining mutator methods
-	public void setJDBCDriver(String jdbcDriver)
-	{
-		this.jdbcDriver = jdbcDriver;
-	}
-	
-	public void setDBName(String dbName)
-	{
-		this.dbName = dbName;
-	}
-	
-	public void setDBUrl(String dbUrl)
-	{
-		this.dbUrl = dbUrl;
-	}
-	
-	public void setDBUsername(String dbUsername)
-	{
-		this.dbUsername = dbUsername;
-	}
-	
-	public void setDBPassword(String dbPassword)
-	{
-		this.dbPassword = dbPassword;
-	}
-	
 	//Method for connecting to DB
 	public boolean connectToDB()
 	{
 		//Setting database connection variables
-		setJDBCDriver("com.mysql.jdbc.Driver");
-		setDBName("testdb");
-		setDBUrl("jdbc:mysql://localhost:3306/" + getDBName());
-		setDBUsername("root");
-		setDBPassword("root");
+		jdbcDriver = "com.mysql.jdbc.Driver";
+		dbName = "testdb";
+		dbUrl = "jdbc:mysql://localhost:3306/" + dbName;
+		dbUsername = "root";
+		dbPassword = "root";
 		
 		try
 		{
 			//Loading JDBC Driver class at run-time
-			Class.forName(getJDBCDriver());
+			Class.forName(jdbcDriver);
 		}
 		catch (Exception genericException)
 		{
@@ -96,11 +44,11 @@ public class Database
 			genericException.printStackTrace();
 		}
 		
-		System.out.println("Initiating connection to database " + getDBName() + "...");
+		System.out.println("Initiating connection to database " + dbName + "...");
 		
 		try
 		{
-			dbConnection = DriverManager.getConnection(getDBUrl(), getDBUsername(), getDBPassword());
+			dbConnection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 		}
 		catch (SQLException dbConnSQLExp)
 		{
