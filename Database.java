@@ -20,17 +20,17 @@ public class Database
 	private String dbPassword = new String();
 	
 	//Global database connection state
-	private static Connection dbConnection = null;
+	private Connection dbConnection = null;
 	
 	//Method for connecting to DB
-	public boolean connectToDB()
+	public boolean connectToDB(String username, String password)
 	{
 		//Setting database connection variables
 		jdbcDriver = "com.mysql.jdbc.Driver";
 		dbName = "testdb";
 		dbUrl = "jdbc:mysql://localhost:3306/" + dbName;
-		dbUsername = "root";
-		dbPassword = "root";
+		dbUsername = username;
+		dbPassword = password;
 		
 		try
 		{
