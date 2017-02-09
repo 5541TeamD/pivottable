@@ -1,0 +1,31 @@
+group 'ca.concordia'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile "com.sparkjava:spark-core:2.5.4"
+    compile 'com.google.code.gson:gson:2.8.0'
+    runtime 'mysql:mysql-connector-java:5.1.16'
+}
+
+sourceSets {
+    main {
+        resources {
+            exclude '/ui/src'
+            exclude '/ui/node_modules'
+        }
+    }
+}
+
+task launchServer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'ca.concordia.pivottable.Main'
+}
