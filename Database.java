@@ -1,4 +1,4 @@
-package teamd.model;
+package com.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -105,10 +105,10 @@ public class Database
 		return false;
 	}
 	
-	//Method for fetching table data
+	//Method for fetching complete data of a table
 	public List<List<Object>> getTableData (String tableName)
 	{
-		Statement stmt = null;
+		Statement stmtAllTableData = null;
 		ResultSet rsAllTableData = null;
 		ResultSetMetaData rsmdAllTableData = null;
 		int columnCount = 0;
@@ -118,8 +118,8 @@ public class Database
 		String allTableDataQuery = "SELECT * FROM " + tableName + ";";
 		try
 		{
-			stmt = dbConnection.createStatement();
-			rsAllTableData = stmt.executeQuery(allTableDataQuery);
+			stmtAllTableData = dbConnection.createStatement();
+			rsAllTableData = stmtAllTableData.executeQuery(allTableDataQuery);
 			
 			//Fetching column count returned by the SQL query executed
 			rsmdAllTableData = rsAllTableData.getMetaData();
@@ -139,7 +139,7 @@ public class Database
 		}
 		catch (SQLException getAllDataSQLExp)
 		{
-			stmt = null;
+			stmtAllTableData = null;
 			rsAllTableData = null;
 			System.out.println();
 			System.out.println("SQLException occurred while fetching complete data of table " + tableName + "...");
@@ -147,5 +147,55 @@ public class Database
 		}
 		
 		return allTableData;
+	}
+	
+	//Method for fetching pivot table data
+	public List<List<Object>> getPivotTableData (String rawTableName, String rowLabel, String colLabel, String valueField, String function)
+	{
+		Statement stmtPivotTableData = null;
+		ResultSet rsPivotTableData = null;
+		ResultSetMetaData rsmdPivotTableData = null;
+		int columnCount = 0;
+		List<List<Object>> pivotTableData = new ArrayList<List<Object>>();
+		
+		//Executing SQL query to get pivot table data
+		String pivotTableDataQuery = "SELECT " + rowLabel + ", " 
+											   + colLabel + ", "
+											   + function + " ("
+											   + valueField + ")"
+									 + " FROM " + rawTableName
+									 + " GROUP BY " + rowLabel + ", "
+									 				+ colLabel + ";";
+		try
+		{
+			stmtPivotTableData = dbConnection.createStatement();
+			rsPivotTableData = stmtPivotTableData.executeQuery(pivotTableDataQuery);
+			
+			//Fetching column count returned by the SQL query executed
+			rsmdPivotTableData = rsPivotTableData.getMetaData();
+			columnCount = rsmdPivotTableData.getColumnCount();
+			
+			while (rsPivotTableData.next())
+			{
+				List<Object> tableRecord = new ArrayList<Object>();
+				
+				for (int i=1; i<=columnCount; i++)
+				{
+					tableRecord.add(rsPivotTableData.getObject(i));
+				}
+				
+				pivotTableData.add(tableRecord);
+			}
+		}
+		catch (SQLException getAllDataSQLExp)
+		{
+			stmtPivotTableData = null;
+			rsPivotTableData = null;
+			System.out.println();
+			System.out.println("SQLException occurred while fetching pivot table data from " + rawTableName + "...");
+			getAllDataSQLExp.printStackTrace();
+		}
+		
+		return pivotTableData;
 	}
 }
