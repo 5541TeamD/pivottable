@@ -1,7 +1,9 @@
 package ca.concordia.pivottable.entities;
 
+import com.google.gson.Gson;
+
 /**
- * TODO: Remove this. This is from the prototype
+ * DataField class. It represents a column in a table.
  */
 public class DataField {
     private final String name;
@@ -15,7 +17,8 @@ public class DataField {
     }
 
     public DataField(String name, DataType type) {
-        this(name, type, "");
+        // make alias the same as name
+        this(name, type, name);
     }
 
     @Override
@@ -23,7 +26,7 @@ public class DataField {
         if (other == null) {
             return false;
         } else if (other.getClass() != this.getClass()) {
-           return false;
+            return false;
         } else {
             DataField o = (DataField)other;
             return this.name.equals(o.name);
@@ -45,5 +48,10 @@ public class DataField {
 
     String getAlias() {
         return alias;
+    }
+
+    String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }
