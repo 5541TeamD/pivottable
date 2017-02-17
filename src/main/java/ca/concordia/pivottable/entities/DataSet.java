@@ -8,8 +8,8 @@ import java.util.*;
  * TODO: Remove this. This is from the prototype
  */
 public class DataSet {
-    List<DataField> columns;
-    List<List<Object>> rows;
+    private List<DataField> columns;
+    private List<List<Object>> rows;
 
     public DataSet() {
         columns = new ArrayList<>();
