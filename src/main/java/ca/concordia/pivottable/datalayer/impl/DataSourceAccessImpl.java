@@ -16,19 +16,11 @@ import java.util.List;
 public class DataSourceAccessImpl implements DataSourceAccess 
 {
 	/**
-	 * Class constructor.
-	 */
-	public DataSourceAccessImpl()
-	{
-		//TODO Add initialization statements if required; else, remove.
-    }
-
-	/**
 	 * Initiates a connection with the data source.
 	 * @return	An object of type Connection (holding connection details), if connection is successful
 	 * <br>		null, if connection fails
 	 */
-	public Connection connect()
+	private Connection connect()
 	{
 		//Database attributes required for connection
 		String jdbcDriver = "com.mysql.jdbc.Driver";
@@ -73,7 +65,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	 * @return	true, if connection is closed successfully, or if the connection was already closed
 	 * <br>		false, if the attempt to disconnect fails
 	 */
-    public boolean disconnect(Connection dbConnection)
+    private boolean disconnect(Connection dbConnection)
     {
     	if (dbConnection != null)
     	{
