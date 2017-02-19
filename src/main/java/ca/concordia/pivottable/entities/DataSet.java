@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.util.*;
 
 /**
- * TODO: Remove this. This is from the prototype
+ * A DataSet entity object
  */
 public class DataSet {
     private List<DataField> columns;

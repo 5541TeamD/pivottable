@@ -22,7 +22,7 @@ public class Application {
     {
         GET = new HashMap<>();
         // "/api" GET endpoints
-        GET.put("/tables", DBConnectionCheckController.class);
+        GET.put("/checkaccess", DBConnectionCheckController.class);
     }
 
     private static final Map<String, Class> POST;

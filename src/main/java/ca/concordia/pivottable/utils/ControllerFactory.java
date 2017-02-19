@@ -12,15 +12,19 @@ public class ControllerFactory {
 
     private DependenciesContainer container;
 
+    /**
+     * Constructor to match the parent one. It takes a DependenciesContainer instance
+     * @param container
+     */
     public ControllerFactory(DependenciesContainer container) {
        this.container = container;
     }
 
     /**
-     *
-     * @param clazz The class of the controller to instanciate.
-     * @param <T>
-     * @return
+     * Main method of the controller factory.
+     * @param clazz The class of the controller to instantiate.
+     * @param <T> The controller class
+     * @return An instance of the controller
      */
     public <T extends Controller> T getController(Class<T> clazz) {
         Logger log = (Logger)container.get("logger");

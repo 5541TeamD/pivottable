@@ -7,8 +7,15 @@ import spark.Response;
 
 public class DBConnectionCheckController extends Controller {
 
+    /**
+     * Services needed
+     */
     private DataRetrievalService dataRetrievalService;
 
+    /**
+     * Controller to match parent
+     * @param container
+     */
     public DBConnectionCheckController(DependenciesContainer container) {
         super(container);
         // TODO this is going to be null

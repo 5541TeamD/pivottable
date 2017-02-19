@@ -2,10 +2,13 @@ package ca.concordia.pivottable.servicelayer;
 
 import ca.concordia.pivottable.entities.DataSet;
 
+/**
+ * TODO
+ */
 public interface DataRetrievalService {
 
-    public boolean checkDataSourceConnection(String dataSourceName, String username, String password);
+    boolean checkDataSourceConnection(String dataSourceName, String username, String password);
 
-    public DataSet getRawReport(String tableName);
+    DataSet getRawReport(String tableName);
 
 }
