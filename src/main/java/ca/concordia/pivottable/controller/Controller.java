@@ -19,7 +19,7 @@ public abstract class Controller implements Route {
      * All controllers need a constructor that needs the container as argument.
      * @param container The DI container
      */
-    Controller(DependenciesContainer container) {
+    public Controller(DependenciesContainer container) {
         this.container = container;
     }
 

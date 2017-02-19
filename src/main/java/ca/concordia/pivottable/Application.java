@@ -2,11 +2,9 @@ package ca.concordia.pivottable;
 
 import ca.concordia.pivottable.controller.Controller;
 import ca.concordia.pivottable.controller.DBConnectionCheckController;
-import ca.concordia.pivottable.entities.DataSet;
+import ca.concordia.pivottable.controller.TableListController;
 import ca.concordia.pivottable.utils.ControllerFactory;
 import ca.concordia.pivottable.utils.DependenciesContainer;
-import org.slf4j.Logger;
-import spark.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +20,8 @@ public class Application {
     {
         GET = new HashMap<>();
         // "/api" GET endpoints
-        GET.put("/checkaccess", DBConnectionCheckController.class);
+        GET.put("/api/checkaccess", DBConnectionCheckController.class);
+        GET.put("/api/tables", TableListController.class);
     }
 
     private static final Map<String, Class> POST;
@@ -64,15 +63,13 @@ public class Application {
             return "";
         });
 
-        path("/api", () -> {
-            for (Map.Entry entry : GET.entrySet()) {
-                get((String)entry.getKey(), ((request, response) -> {
-                    DependenciesContainer container = request.attribute("container");
-                    ControllerFactory factory = container.get("ControllerFactory");
-                    Controller ctrl = factory.getController((Class)entry.getValue());
-                    return ctrl.handle(request, response);
-                }));
-            }
-        });
+       for (Map.Entry entry : GET.entrySet()) {
+           get((String)entry.getKey(), ((request, response) -> {
+               DependenciesContainer container = request.attribute("container");
+               ControllerFactory factory = container.get("ControllerFactory");
+               Controller ctrl = factory.getController((Class)entry.getValue());
+               return ctrl.handle(request, response);
+           }));
+       }
     }
 }
