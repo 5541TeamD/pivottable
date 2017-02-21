@@ -24,6 +24,6 @@ public enum DataType {
     		if (dataType.val == val)
     			return dataType;
     	
-    	return null;
+    	return TYPE_STRING;
     }
 }
