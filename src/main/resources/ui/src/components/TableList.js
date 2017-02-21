@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 import {Segment, Button, Label, Grid, Table } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.css'
 
 export default class TableList extends Component {
 
