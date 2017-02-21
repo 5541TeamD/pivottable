@@ -1,6 +1,10 @@
-package src.main.java.ca.concordia.pivottable.controller;
+package ca.concordia.pivottable.controller;
 
-public class PivotTableController extends Controller{
+import ca.concordia.pivottable.utils.DependenciesContainer;
+import spark.Request;
+import spark.Response;
+
+public class PivotTableController extends Controller {
 
 
     /**

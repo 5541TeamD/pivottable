@@ -19,7 +19,7 @@ public class Application {
     static
     {
         GET = new HashMap<>();
-        // "/api" GET endpoints
+        // GET endpoints
         GET.put("/api/checkaccess", DBConnectionCheckController.class);
         GET.put("/api/tables", TableListController.class);
     }
@@ -63,11 +63,11 @@ public class Application {
             return "";
         });
 
-       for (Map.Entry entry : GET.entrySet()) {
-           get((String)entry.getKey(), ((request, response) -> {
+       for (Map.Entry<String, Class> entry : GET.entrySet()) {
+           get(entry.getKey(), ((request, response) -> {
                DependenciesContainer container = request.attribute("container");
                ControllerFactory factory = container.get("ControllerFactory");
-               Controller ctrl = factory.getController((Class)entry.getValue());
+               Controller ctrl = factory.getController(entry.getValue());
                return ctrl.handle(request, response);
            }));
        }
