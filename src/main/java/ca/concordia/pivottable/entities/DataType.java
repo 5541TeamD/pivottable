@@ -18,4 +18,12 @@ public enum DataType {
     public String toString() {
        return this.val;
     }
+    
+    public static DataType getDataType(String val) {
+    	for (DataType dataType : DataType.values())
+    		if (dataType.val == val)
+    			return dataType;
+    	
+    	return TYPE_STRING;
+    }
 }
