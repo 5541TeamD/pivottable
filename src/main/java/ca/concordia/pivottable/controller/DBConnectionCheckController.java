@@ -26,11 +26,7 @@ public class DBConnectionCheckController extends Controller {
     @Override
     public Object handle(Request request, Response response) {
         log.info("Called the DB Connection check controller");
-        // TODO
-        String dataSourceName = request.params("dataSourceName");
-        String username = request.params("username");
-        String password = request.params("password");
-        boolean isConnectionGood = dataRetrievalService.checkDataSourceConnection(dataSourceName, username, password);
+        boolean isConnectionGood = dataRetrievalService.checkDataSourceConnection();
         if (isConnectionGood) {
             String result = "Connection is good";
             response.status(200);
