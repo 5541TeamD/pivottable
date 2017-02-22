@@ -36,7 +36,6 @@ public class Application {
     public static void main(String[] args) {
 
         System.out.println("Application running at http://localhost:4567.");
-
         staticFiles.location("/ui/build");
 
         before((request, response) -> {

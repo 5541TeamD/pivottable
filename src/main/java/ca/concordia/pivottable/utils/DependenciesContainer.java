@@ -1,6 +1,7 @@
 package ca.concordia.pivottable.utils;
 
 import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
+import ca.concordia.pivottable.servicelayer.impl.DataRetrievalServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +36,10 @@ public class DependenciesContainer {
                 return this.log;
             case "controllerfactory":
                 return new ControllerFactory(this);
-            // TODO maybe use factory method pattern if many classes have the same dependency.
             case "datasourceaccess":
-                return new DataSourceAccessImpl(/*get("dependency1")*/);
+                return new DataSourceAccessImpl();
+            case "dataretrievalservice":
+                return new DataRetrievalServiceImpl(get("dataSourceAccess"));
             default:
                 throw new InstantiationException("No dependency wired " + name + ". Developer needs to specify this.");
         }
