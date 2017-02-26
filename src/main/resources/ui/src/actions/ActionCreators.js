@@ -15,6 +15,7 @@ export const connectToDataSource = (sourceName, username, password) => async (di
   dispatch({type: C.CONNECT_DATA_SOURCE})
   try {
     const resp = await checkAccess(sourceName, username, password)
+    console.log('checkAccess response status', resp.status)
     dispatch({type: C.CONNECT_DATA_SOURCE_SUCCESS})
     dispatch(fetchTableList())
   } catch (e) {
