@@ -1,20 +1,24 @@
 import React, {PropTypes} from 'react'
 import {Dropdown, Segment, Label} from 'semantic-ui-react'
 import {connect} from 'react-redux'
-import {tableSelected} from '../actions/ActionCreators'
+import {fetchRawReport} from '../actions/ActionCreators'
 
 export const TableDropDown = (props) => {
   if (!props.isConnected) {
-    return null;
+    return <div></div>;
   }
-  const tableOptions = props.tables.map( (name) => {
-    return {
-      text: name,
-      value: name
-    }
-  })
+  const tableOptions = [{
+    text: '',
+    value: ''
+  }].concat(props.tables.map( (name) => {
+      return {
+        text: name,
+        value: name
+      }
+    })
+  )
   return (
-    <Segment>
+    <Segment loading={props.loading}>
       <Label as="div" attached="top">Select a data set</Label>
       <Dropdown placeholder='Select Data Set'
                 fluid
@@ -28,6 +32,7 @@ export const TableDropDown = (props) => {
 }
 
 TableDropDown.propTypes = {
+  loading: PropTypes.bool.isRequired,
   tableSelected : PropTypes.func.isRequired,
   tables : PropTypes.arrayOf(PropTypes.string).isRequired,
   currentTable: PropTypes.string.isRequired,
@@ -35,6 +40,7 @@ TableDropDown.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
+  loading: state.fetchTableListLoading,
   tables: state.tableList,
   currentTable: state.selectedTable,
   isConnected: state.connectedSuccessfully
@@ -43,7 +49,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   tableSelected:  (event, obj) => {
     const {value} = obj
-    dispatch(tableSelected(value))
+    dispatch(fetchRawReport(value))
   }
 })
 

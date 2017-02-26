@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './App.css';
 import PivotTableApp from './components/PivotTableApp'
 import 'semantic-ui-css/semantic.css'
 

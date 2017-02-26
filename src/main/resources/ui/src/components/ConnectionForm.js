@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Segment, Input, Button, Label} from 'semantic-ui-react'
+import {Segment, Input, Button, Label, Form, Grid} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 
 import {dataSourceNameChanged, userNameChanged,
@@ -12,23 +12,43 @@ const ConnectionForm = (props) => {
   return (
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Data Source Connection</Label>
+      <Form as="div">
       {!isConnected ?
         <div>
-          <Input type="text" label="Data Source" value={dataSource} onChange={onDataSourceChanged} placeholder="Enter data source"/>
-          <Input type="text" label="Username" value={userName} onChange={onUserNameChanged} placeholder="Enter username"/>
-          <Input type="password" label="Password" value={password} onChange={onPasswordChanged} placeholder="Enter password"/>
+          <Form.Field>
+            <label>Data Source</label>
+            <Input type="text" value={dataSource} onChange={onDataSourceChanged} placeholder="Enter data source"/>
+          </Form.Field>
+          <Form.Field>
+            <label>Username</label>
+            <Input type="text" value={userName} onChange={onUserNameChanged} placeholder="Enter username"/>
+          </Form.Field>
+          <Form.Field>
+            <label>Password</label>
+            <Input type="password" value={password} onChange={onPasswordChanged} placeholder="Enter password"/>
+          </Form.Field>
+          <Form.Field>
           <Button primary={true} onClick={onCheckConnection(dataSource, userName, password)} disabled={!dataSource || !userName || !password}>
             Check Connection
           </Button>
+          </Form.Field>
         </div>
         :
         <div>
-          <Label>Connected as {userName}</Label>
-          <Button color="red" onClick={onDisconnect} >
-            Disconnect
-          </Button>
+          <Form.Field>
+            <Label>{userName}</Label>
+          </Form.Field>
+          <Form.Field>
+            <Label basic>Connected to {dataSource}</Label>
+          </Form.Field>
+          <Form.Field>
+            <Button color="red" onClick={onDisconnect} >
+              Disconnect
+            </Button>
+          </Form.Field>
         </div>
       }
+      </Form>
     </Segment>
   )
 }
@@ -47,7 +67,6 @@ ConnectionForm.propTypes = {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
     loading: state.connectionLoading,
     dataSource: state.sourceName,

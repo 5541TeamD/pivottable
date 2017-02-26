@@ -1,5 +1,5 @@
-import {getTableList, checkAccess} from '../api/mock'
-import {constants as C} from '../reducers/RootReducer'
+import {getTableList, checkAccess, getRawReport} from '../api/mock'
+import {C} from '../reducers/RootReducer'
 
 export const fetchTableList = () => async (dispatch) => {
   dispatch({type: C.FETCH_TABLE_LIST})
@@ -23,12 +23,25 @@ export const connectToDataSource = (sourceName, username, password) => async (di
   }
 }
 
-
-// Sync actions
-export const tableSelected = (value) => ({
+const tableSelected = (value) => ({
   type: C.TABLE_SELECTED,
   value
 })
+
+export const fetchRawReport = (tableName) => async (dispatch) => {
+  dispatch(tableSelected(tableName))
+  if (!tableName)
+    return
+  dispatch({type:C.FETCH_RAW_REPORT})
+  try {
+    const resp = await getRawReport(tableName)
+    dispatch({type: C.FETCH_RAW_REPORT_SUCCESS, data: resp.data})
+  } catch (e) {
+    dispatch({type: C.FETCH_RAW_REPORT_ERROR})
+  }
+}
+
+// Sync actions
 
 export const userNameChanged = (value) => ({
   type: C.USERNAME_CHANGED,
