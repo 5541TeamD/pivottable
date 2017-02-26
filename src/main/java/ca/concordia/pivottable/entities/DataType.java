@@ -20,10 +20,11 @@ public enum DataType {
     }
     
     public static DataType getDataType(String val) {
-    	for (DataType dataType : DataType.values())
-    		if (dataType.val == val)
-    			return dataType;
-    	
-    	return TYPE_STRING;
+        for (DataType dataType : DataType.values()) {
+            if (dataType.val.equals(val)) {
+                return dataType;
+            }
+        }
+        return TYPE_STRING;
     }
 }
