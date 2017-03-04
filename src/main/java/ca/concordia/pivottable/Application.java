@@ -2,6 +2,7 @@ package ca.concordia.pivottable;
 
 import ca.concordia.pivottable.controller.Controller;
 import ca.concordia.pivottable.controller.DBConnectionCheckController;
+import ca.concordia.pivottable.controller.RawReportController;
 import ca.concordia.pivottable.controller.TableListController;
 import ca.concordia.pivottable.utils.ControllerFactory;
 import ca.concordia.pivottable.utils.DependenciesContainer;
@@ -22,6 +23,7 @@ public class Application {
         // GET endpoints
         GET.put("/api/checkaccess", DBConnectionCheckController.class);
         GET.put("/api/tables", TableListController.class);
+        GET.put("/api/rawreport", RawReportController.class);
     }
 
     private static final Map<String, Class> POST;

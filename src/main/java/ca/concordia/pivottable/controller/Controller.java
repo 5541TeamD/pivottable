@@ -7,7 +7,7 @@ import spark.Route;
 
 
 /**
- * All controlers will have the DI container injected to them.
+ * All controllers will have the DI container injected to them.
  */
 public abstract class Controller implements Route {
 

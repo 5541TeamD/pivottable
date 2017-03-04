@@ -28,13 +28,18 @@ public class RawReportController extends Controller{
     @Override
     public Object handle(Request request, Response response) throws Exception {
         //return new Object();
-        log.info("Hello!");
-        String name;
-        boolean rawreportexists = DataRetrievalService.rawReportExists(name);
+        log.info("RawReportController was called");
+        String name = request.params("tablename");
+        if (name == null) {
+            response.status(400);
+            return null;
+        }
+        boolean rawreportexists = dataRetrievalService.rawReportExists(name);
         if (rawreportexists) {
-            DataSet rawReport = DataRetrievalService.getRawReport(request);
+            DataSet rawReport = dataRetrievalService.getRawReport(name);
             response.status(200);
-            return rawReport;
+            response.header("Content-Type", "application/json");
+            return rawReport.toJSON();
         }else{
             log.info("Raw report does not exist.");
             response.status(404);
