@@ -19,7 +19,6 @@ public class DBConnectionCheckController extends Controller {
      */
     public DBConnectionCheckController(DependenciesContainer container) {
         super(container);
-        // TODO this is going to be null
         dataRetrievalService = container.get("dataRetrievalService");
     }
 
@@ -28,7 +27,8 @@ public class DBConnectionCheckController extends Controller {
         log.info("Called the DB Connection check controller");
         boolean isConnectionGood = dataRetrievalService.checkDataSourceConnection();
         if (isConnectionGood) {
-            String result = "Connection is good";
+            String result = "{\"status\": \"Connection is good\"}";
+            response.header("Content-Type", "application/json");
             response.status(200);
             return result;
         } else {

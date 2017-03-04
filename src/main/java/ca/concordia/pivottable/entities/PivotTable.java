@@ -31,7 +31,11 @@ public class PivotTable {
         this.data = data;
     }
 
-    public String toJson() {
+    /**
+     * TODO test this
+     * @return json representing this entity
+     */
+    public String toJSON() {
         Gson gson = new Gson();
         return gson.toJson(this);
     }
