@@ -25,7 +25,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		//Database attributes required for connection
 		String jdbcDriver = "com.mysql.jdbc.Driver";
 		String dbName = "testdb";
-		String dbUrl = "jdbc:mysql://localhost:3306/" + dbName;
+		String dbUrl = "jdbc:mysql://localhost:3306/" + dbName + "?useSSL=false";
 		String dbUsername = "root";
 		String dbPassword = "root";
 		
@@ -333,7 +333,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		//Executing SQL query to get pivot table data
   		String pvtTblDataQuery = "SELECT " + rowLabel + ", " 
   										   + colLabel + ", "
-  										   + function + " ("
+  										   + function + "("
   										   + valField + ")"
   									 + " FROM " + tableName
   									 + " GROUP BY " + rowLabel + ", "
