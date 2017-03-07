@@ -2,10 +2,11 @@ package ca.concordia.pivottable.datalayer.impl;
 
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
 import ca.concordia.pivottable.entities.PivotTableSchema;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles all the operations to be performed on the data source.
@@ -15,6 +16,11 @@ import java.util.List;
  */
 public class DataSourceAccessImpl implements DataSourceAccess 
 {
+	/**
+	 * Used for logging information, warning and error messages during application run.
+	 */
+	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
+	
 	/**
 	 * Initiates a connection with the data source.
 	 * @return	An object of type Connection (holding connection details), if connection is successful
@@ -39,11 +45,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		}
 		catch (Exception dbConnGenExcpn)
 		{
-			System.out.println("\nUnexpected exception occurred while attempting DB connection...");
-			dbConnGenExcpn.printStackTrace();
+			log.error("\nUnexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
+			
 		}		
-				
-		System.out.println("\nInitiating connection to database " + dbName + "...");
+		
+		log.info("\nInitiating connection to database " + dbName + "...");
 		
 		try
 		{
@@ -52,8 +58,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		catch (SQLException dbConnSQLExcpn)
 		{
 			dbConnection = null;
-			System.out.println("\nSQLException occurred while connecting to database...");
-			dbConnSQLExcpn.printStackTrace();
+			log.error("\nSQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
 		}
 		
 		return dbConnection;
@@ -75,8 +80,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
     		}
     		catch (SQLException dbDisconnSQLExcpn)
     		{
-    			System.out.println("\nSQLException occurred while disconnecting from database...");
-    			dbDisconnSQLExcpn.printStackTrace();
+    			log.error("\nSQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
     			return false;
     		}
     	}
@@ -137,8 +141,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		{
   			dbmd = null;
   			rsAllRawTblNames = null;
-  			System.out.println("\nSQLException occurred while fetching all raw table names from database...");
-  			allRawTblSQLExcpn.printStackTrace();
+  			log.error("\nSQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -219,8 +222,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblData = null;
   			rsmdTblData = null;
   			tblData = null;
-  			System.out.println("\nSQLException occurred while fetching all the data of table " + tableName + "...");
-  			allTblDataSQLExcpn.printStackTrace();
+  			log.error("\nSQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -291,8 +293,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblFields = null;
   			rsmdTblFields = null;
   			tblFields = null;
-  			System.out.println("\nSQLException occurred while fetching field details of table  " + tableName + "...");
-  			tblFieldsSQLExcpn.printStackTrace();
+  			log.error("\nSQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -365,8 +366,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPvtTblData = null;
   			rsmdPvtTblData = null;
   			pvtTblData = null;
-  			System.out.println("\nSQLException occurred while fetching pivot table data...");
-  			pvtTblDataSQLExcpn.printStackTrace();
+  			log.error("\nSQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);

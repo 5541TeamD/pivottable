@@ -1,0 +1,352 @@
+--Table Creation Scripts
+CREATE TABLE actor_film_store
+(actor_id			INTEGER
+,actor_first_name	VARCHAR (50)
+,actor_last_name	VARCHAR (50)
+,film_id			INTEGER
+,film_title			VARCHAR (50)
+,film_release_year	INTEGER
+,film_language		VARCHAR (50)
+,store_id			INTEGER
+,inventory_id		INTEGER
+,store_location		VARCHAR (50)
+);
+
+--Data Insertion Scripts
+INSERT INTO actor_film_store
+VALUES (111009
+	,'Joe'
+	,'Swank'
+	,666030
+	,'Anything Savannah'
+	,2006
+	,'English'
+	,191901
+	,144
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111009
+	,'Joe'
+	,'Swank'
+	,666030
+	,'Anything Savannah'
+	,2006
+	,'English'
+	,191901
+	,145
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111163
+	,'Christopher'
+	,'West'
+	,666030
+	,'Anything Savannah'
+	,2006
+	,'English'
+	,191901
+	,144
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111163
+	,'Christopher'
+	,'West'
+	,666030
+	,'Anything Savannah'
+	,2006
+	,'English'
+	,191901
+	,145
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111178
+	,'Lisa'
+	,'Monroe'
+	,666030
+	,'Anything Savannah'
+	,2006
+	,'English'
+	,191901
+	,144
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111178
+	,'Lisa'
+	,'Monroe'
+	,666030
+	,'Anything Savannah'
+	,2006
+	,'English'
+	,191901
+	,145
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111059
+	,'Dustin'
+	,'Tautou'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,207
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111059
+	,'Dustin'
+	,'Tautou'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,208
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111059
+	,'Dustin'
+	,'Tautou'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,209
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111065
+	,'Angela'
+	,'Hudson'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,207
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111065
+	,'Angela'
+	,'Hudson'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,208
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111065
+	,'Angela'
+	,'Hudson'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,209
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111084
+	,'James'
+	,'Pitt'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,207
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111084
+	,'James'
+	,'Pitt'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,208
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111084
+	,'James'
+	,'Pitt'
+	,666046
+	,'Autumn Crow'
+	,2006
+	,'English'
+	,191902
+	,209
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111070
+	,'Michelle'
+	,'McConaughey'
+	,666050
+	,'Baked Cleopatra'
+	,2010
+	,'English'
+	,191901
+	,222
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111070
+	,'Michelle'
+	,'McConaughey'
+	,666050
+	,'Baked Cleopatra'
+	,2010
+	,'English'
+	,191901
+	,223
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111070
+	,'Michelle'
+	,'McConaughey'
+	,666050
+	,'Baked Cleopatra'
+	,2010
+	,'English'
+	,191901
+	,224
+	,'Montreal'
+);
+
+INSERT INTO actor_film_store
+VALUES (111070
+	,'Michelle'
+	,'McConaughey'
+	,666050
+	,'Baked Cleopatra'
+	,2010
+	,'English'
+	,191902
+	,225
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111070
+	,'Michelle'
+	,'McConaughey'
+	,666050
+	,'Baked Cleopatra'
+	,2010
+	,'English'
+	,191902
+	,226
+	,'Toronto'
+);
+
+INSERT INTO actor_film_store
+VALUES (111055
+	,'Fay'
+	,'Kilmer'
+	,666075
+	,'Bird Independence'
+	,2009
+	,'English'
+	,191903
+	,339
+	,'Ottawa'
+);
+
+INSERT INTO actor_film_store
+VALUES (111055
+	,'Fay'
+	,'Kilmer'
+	,666075
+	,'Bird Independence'
+	,2009
+	,'English'
+	,191903
+	,340
+	,'Ottawa'
+);
+
+INSERT INTO actor_film_store
+VALUES (111055
+	,'Fay'
+	,'Kilmer'
+	,666075
+	,'Bird Independence'
+	,2009
+	,'English'
+	,191903
+	,341
+	,'Ottawa'
+);
+
+INSERT INTO actor_film_store
+VALUES (111150
+	,'Jayne'
+	,'Nolte'
+	,666075
+	,'Bird Independence'
+	,2009
+	,'English'
+	,191903
+	,339
+	,'Ottawa'
+);
+
+INSERT INTO actor_film_store
+VALUES (111150
+	,'Jayne'
+	,'Nolte'
+	,666075
+	,'Bird Independence'
+	,2009
+	,'English'
+	,191903
+	,340
+	,'Ottawa'
+);
+
+INSERT INTO actor_film_store
+VALUES (111150
+	,'Jayne'
+	,'Nolte'
+	,666075
+	,'Bird Independence'
+	,2009
+	,'English'
+	,191903
+	,341
+	,'Ottawa'
+);
