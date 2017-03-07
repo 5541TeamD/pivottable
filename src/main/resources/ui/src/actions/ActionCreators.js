@@ -1,4 +1,4 @@
-import {getTableList, checkAccess, getRawReport} from '../api/mock'
+import {getTableList, checkAccess, getRawReport} from '../api/endpoints'
 import {C} from '../reducers/RootReducer'
 
 export const fetchTableList = () => async (dispatch) => {
@@ -62,4 +62,37 @@ export const dataSourceNameChanged = (value) => ({
 // disconnect is sync since all state is stored in UI
 export const disconnect = () => ({
   type: C.DISCONNECT
+})
+
+export const rowLabelsChanged = (value) => ({
+  type: C.SCHEMA_ROW_LABELS_SELECTED,
+  value
+})
+
+export const columnLabelsChanged = (value) => ({
+  type: C.SCHEMA_COLUMN_LABELS_SELECTED,
+  value
+})
+
+export const pageLabelChanged = (value) => ({
+  type: C.SCHEMA_PAGE_LABEL_SELECTED,
+  value
+})
+
+export const resetSchema = () => ({
+  type: C.SCHEMA_RESET
+})
+
+export const functionChanged = (value) => ({
+  type: C.SCHEMA_FUNCTION_SELECTED,
+  value
+})
+
+export const valueChanged = (value) => ({
+  type: C.SCHEMA_VALUE_SELECTED,
+  value
+})
+
+export const generatePivotTable = () => ({
+  type: C.GENERATE_PIVOT_TABLE
 })
