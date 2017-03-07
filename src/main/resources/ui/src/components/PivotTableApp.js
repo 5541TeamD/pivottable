@@ -4,6 +4,7 @@ import {Segment} from 'semantic-ui-react'
 import ConnectionForm from './ConnectionForm'
 import TableDropDown from './TableDropDown'
 import RawDataReport from './RawDataReport'
+import PivotTableSchema from './PivotTableSchema'
 
 const PivotTableApp = () => {
   return (
@@ -11,6 +12,7 @@ const PivotTableApp = () => {
       <ConnectionForm/>
       <TableDropDown/>
       <RawDataReport/>
+      <PivotTableSchema/>
     </Segment>
   )
 }

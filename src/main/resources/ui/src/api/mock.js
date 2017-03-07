@@ -36,15 +36,16 @@ export const getRawReport = (tableName) => {
     status: 200,
     data: {
       columns: [
-        {name: 'age', type: 'numeric', alias: 'Age'},
-        {name: 'name', type: 'string', alias: 'Name'},
-        {name: 'id', type: 'string', alias: 'Student ID'}
+        {name: 'age', type: 'TYPE_NUMERIC', alias: 'Age'},
+        {name: 'name', type: 'TYPE_STRING', alias: 'Name'},
+        {name: 'id', type: 'TYPE_STRING', alias: 'Student ID'},
+        {name: 'team', type: 'TYPE_STRING', alias: 'Team'}
       ],
       rows: [
-        [18, 'John Titor', '42632051'],
-        [24, 'Ben Bishop', '40000000'],
-        [22, 'PK Subban', '40000010'],
-        [23, 'Alex Gally', '40010010']
+        [18, 'John Titor', '42632051', 'Edmonton Oilers'],
+        [24, 'Ben Bishop', '40000000', 'Los Angeles Kings'],
+        [22, 'PK Subban', '40000010', 'Montreal Canadiens'],
+        [23, 'Alex Gally', '40010010', 'Montreal Canadiens']
       ]
     }
   })

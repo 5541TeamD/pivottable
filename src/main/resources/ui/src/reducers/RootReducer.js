@@ -15,6 +15,13 @@ const C = {
   FETCH_RAW_REPORT: 'FETCH_RAW_REPORT',
   FETCH_RAW_REPORT_SUCCESS: 'FETCH_RAW_REPORT_SUCCESS',
   FETCH_RAW_REPORT_ERROR: 'FETCH_RAW_REPORT_ERROR',
+  SCHEMA_ROW_LABELS_SELECTED: 'SCHEMA_ROW_LABELS_SELECTED',
+  SCHEMA_COLUMN_LABELS_SELECTED: 'SCHEMA_COLUMN_LABELS_SELECTED',
+  SCHEMA_PAGE_LABEL_SELECTED: 'SCHEMA_PAGE_LABEL_SELECTED',
+  SCHEMA_FUNCTION_SELECTED: 'SCHEMA_FUNCTION_SELECTED',
+  SCHEMA_VALUE_SELECTED: 'SCHEMA_VALUE_SELECTED',
+  SCHEMA_RESET: 'SCHEMA_RESET',
+  GENERATE_PIVOT_TABLE: 'GENERATE_PIVOT_TABLE'
 }
 
 export {C}
@@ -34,7 +41,18 @@ const initialState = {
     columns: [],
     rows: []
   }, // data set
-  tableSchema: {}, // TODO
+  tableSchema: {
+    rowLabels: [],
+    selectedRowLabels: [],
+    columnLabels: [],
+    selectedColumnLabels: [],
+    pageLabels: [],
+    selectedPageLabel: '', //name of the field
+    functionList: ['count', 'sum'],
+    selectedFunction: '', //name of the function
+    possibleValues: [],
+    selectedValue: '' //name of the value
+  }, // TODO
   pivotTableLoading: false,
   pivotTable: {}, // TODO
   infoMessage: '',
@@ -46,7 +64,7 @@ const initialState = {
 // {...state, infoMessage: 'Success"} will create a shallow copy of the state object with infoMessage set to 'Success'
 // for more info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator
 const rootReducer = (state = initialState, action) => {
-  // console.log(action)
+   console.log(action)
   const {type} = action
   switch (type) {
     case C.FETCH_TABLE_LIST:
@@ -73,12 +91,114 @@ const rootReducer = (state = initialState, action) => {
     case C.FETCH_RAW_REPORT:
       return {...state, rawReportLoading: true}
     case C.FETCH_RAW_REPORT_SUCCESS:
-      return {...state, rawReport: action.data, rawReportLoading: false}
+      return {...state,
+        rawReport: action.data,
+        rawReportLoading: false,
+        tableSchema: {
+          rowLabels: action.data.columns,
+          selectedRowLabels: [],
+          columnLabels: [],
+          selectedColumnLabels: [],
+          pageLabels: [],
+          selectedPageLabel: '',
+          functionList: initialState.tableSchema.functionList,
+          selectedFunction: '',
+          possibleValues: [],
+          selectedValue: ''
+        }
+      }
     case C.FETCH_RAW_REPORT_ERROR:
       // TODO
       return {...state, rawReportLoading: false, rawReport: initialState.rawReport}
     case C.DISCONNECT:
       return initialState
+    case C.SCHEMA_ROW_LABELS_SELECTED:
+      //console.log('Called the reducer for SCHEMA_ROW_LABELS_SELECTED')
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedRowLabels: state.tableSchema.rowLabels.filter(val => {
+            return action.value.indexOf(val.name) !== -1
+          }),
+          columnLabels: state.tableSchema.rowLabels.filter(val => {
+            return action.value.indexOf(val.name) === -1
+          }),
+          selectedColumnLabels: [],
+          selectedPageLabel: '',
+          selectedFunction: '',
+          selectedValue: '',
+        }
+      }
+    case C.SCHEMA_COLUMN_LABELS_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedColumnLabels: state.tableSchema.columnLabels.filter (val => {
+            return action.value.indexOf(val.name) !== -1
+          }),
+          pageLabels: state.tableSchema.columnLabels.filter(val => {
+            return action.value.indexOf(val.name) === -1
+          }),
+          selectedPageLabel: '',
+          selectedFunction: '',
+          selectedValue: '',
+        }
+      }
+    case C.SCHEMA_PAGE_LABEL_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedPageLabel: action.value,
+          functionList: state.rawReport.columns.find( val => {
+            return val.name === action.value
+          }).type === 'TYPE_NUMERIC' ? ['sum', 'count'] : ['count'],
+          selectedFunction: '',
+          selectedValue: '',
+        }
+      }
+    case C.SCHEMA_FUNCTION_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedFunction: action.value,
+          possibleValues: state.tableSchema.pageLabels.filter(val => {
+            if ((action.value) === 'sum') {
+              return val.type === 'TYPE_NUMERIC'
+            }
+            // else (count) -> all fields are good (need to filter out selected page!)
+            return true
+          }),
+          selectedValue: ''
+        }
+      }
+    case C.SCHEMA_VALUE_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedValue: action.value
+        }
+      }
+    case C.SCHEMA_RESET:
+      return {
+        ...state,
+        tableSchema: {
+          rowLabels: state.rawReport.columns,
+          selectedRowLabels: [],
+          columnLabels: [],
+          selectedColumnLabels: [],
+          pageLabels: [],
+          selectedPageLabel: '',
+          functionList: initialState.tableSchema.functionList,
+          selectedFunction: '',
+          possibleValues: [],
+          selectedValue: ''
+        }
+      }
     default:
       return state
   }
