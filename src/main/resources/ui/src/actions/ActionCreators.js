@@ -1,4 +1,4 @@
-import {getTableList, checkAccess, getRawReport} from '../api/mock'
+import {getTableList, checkAccess, getRawReport} from '../api/endpoints'
 import {C} from '../reducers/RootReducer'
 
 export const fetchTableList = () => async (dispatch) => {
