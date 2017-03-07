@@ -29,7 +29,8 @@ public class RawReportController extends Controller{
     public Object handle(Request request, Response response) throws Exception {
         //return new Object();
         log.info("RawReportController was called");
-        String name = request.params("tablename");
+        String name = request.queryParams("tablename");
+		log.info("Tablename is " + name);
         if (name == null) {
             response.status(400);
             return null;
