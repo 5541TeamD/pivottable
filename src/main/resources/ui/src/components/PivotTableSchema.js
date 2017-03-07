@@ -1,16 +1,26 @@
 import React from 'react'
 
-import {Segment, Form} from 'semantic-ui-react'
+import {Segment, Form, Button, Label} from 'semantic-ui-react'
+import {connect} from 'react-redux'
+
+import {rowLabelsChanged,
+  columnLabelsChanged,
+  pageLabelChanged,
+  resetSchema,
+  functionChanged,
+  valueChanged,
+  generatePivotTable
+} from '../actions/ActionCreators'
 
 const PivotTableSchema = (props) => {
-  const {isConnected, rowLabels, selectedRowLabels, columnLables,
+  const {isConnected, loading, rowLabels, selectedRowLabels, columnLabels,
     selectedColumnLabels, pageLabels, selectedPageLabel,
     functionList, selectedFunction, possibleValues, selectedValue,
     onRowLabelsChanged, onColumnLabelsChanged, onPageLabelChanged, onReset,
     onFunctionChanged, onValueChanged, onGeneratePivotTable
   } = props
 
-  return !isConnected ? (
+  return isConnected ? (
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Pivot Table Schema</Label>
       <Form as="div">
@@ -25,7 +35,7 @@ const PivotTableSchema = (props) => {
           <Form.Field>
             <label>Column Labels</label>
             <Form.Dropdown multiple
-                           options={columnLables}
+                           options={columnLabels}
                            disabled={selectedRowLabels.length === 0}
                            value={selectedColumnLabels}
                            onChange={onColumnLabelsChanged}
@@ -47,7 +57,7 @@ const PivotTableSchema = (props) => {
           </Form.Field>
           <Form.Field>
             <label>Function</label>
-            <Form.Dropdown disabled={!selectedPageLabel}
+            <Form.Dropdown disabled={selectedColumnLabels.length === 0}
                            onChange={onFunctionChanged}
                            options={functionList}
                            value={selectedFunction}
@@ -80,3 +90,66 @@ const PivotTableSchema = (props) => {
     )
 
 }
+
+const mapStateToProps = (state) => ({
+  loading: state.rawReportLoading,
+  isConnected: state.connectedSuccessfully,
+  rowLabels: state.tableSchema.rowLabels.map ( val => ({
+    text: val.alias,
+    value: val.name,
+    key: val.name
+  })),
+  selectedRowLabels: state.tableSchema.selectedRowLabels.map( val => val.name),
+  columnLabels: state.tableSchema.columnLabels.map (val => ({
+    text: val.alias,
+    value: val.name,
+    key: val.name
+  })),
+  selectedColumnLabels: state.tableSchema.selectedColumnLabels.map (val => val.name),
+  pageLabels: state.tableSchema.pageLabels.map( val => ({
+    text: val.alias,
+    value: val.name,
+    key: val.name
+  })),
+  selectedPageLabel: state.tableSchema.selectedPageLabel,
+  functionList: state.tableSchema.functionList.map( val => ({
+    text: val,
+    value: val,
+    key: val
+  })),
+  selectedFunction: state.tableSchema.selectedFunction,
+  possibleValues: state.tableSchema.possibleValues.map( val => ({
+    text: val.alias,
+    key: val.name,
+    value: val.name
+  })),
+  selectedValue: state.tableSchema.selectedValue
+})
+
+
+const mapDispatchToProps = (dispatch) => ({
+  onRowLabelsChanged: (e, {value}) => {
+    dispatch(rowLabelsChanged(value))
+  },
+  onColumnLabelsChanged: (e, {value}) => {
+    dispatch(columnLabelsChanged(value))
+  },
+  onPageLabelChanged: (e, {value}) => {
+    pageLabelChanged(value)
+  },
+  onReset: () => {
+    dispatch(resetSchema())
+  },
+  onFunctionChanged: (e, {value}) => {
+    dispatch(functionChanged(value))
+  },
+  onValueChanged: (e, {value}) => {
+    dispatch(valueChanged(value))
+  },
+  onGeneratePivotTable: () => {
+    dispatch(generatePivotTable())
+  }
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps) (PivotTableSchema)
