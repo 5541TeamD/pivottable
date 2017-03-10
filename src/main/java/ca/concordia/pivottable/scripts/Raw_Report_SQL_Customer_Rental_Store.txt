@@ -1,19 +1,19 @@
 --Table Creation Scripts
 CREATE TABLE customer_rental_store
-(customer_id			INTEGER
+(customer_id			VARCHAR (50)
 ,customer_first_name	VARCHAR (50)
 ,customer_last_name		VARCHAR (50)
 ,customer_email			VARCHAR (50)
 ,customer_status		VARCHAR (50)
-,store_id				INTEGER
+,store_id				VARCHAR (50)
 ,store_location			VARCHAR (50)
-,staff_id				INTEGER
+,staff_id				VARCHAR (50)
 ,staff_first_name		VARCHAR (50)
 ,staff_last_name		VARCHAR (50)
-,inventory_id			INTEGER
-,film_tile				VARCHAR (50)
-,payment_id				INTEGER
-,rental_id				INTEGER
+,inventory_id			VARCHAR (50)
+,film_title				VARCHAR (50)
+,payment_id				VARCHAR (50)
+,rental_id				VARCHAR (50)
 ,amount					INTEGER
 ,payment_date			VARCHAR (50)
 ,return_date			VARCHAR (50)
@@ -21,200 +21,200 @@ CREATE TABLE customer_rental_store
 
 --Data Insertion Scripts
 INSERT INTO customer_rental_store
-VALUES (333318
+VALUES ('333318'
 	,'Brian'
 	,'Wyman'
 	,'BRIAN.WYMAN@dcustomer.org'
 	,'active'
-	,191901
+	,'191901'
 	,'Montreal'
-	,202001
+	,'202001'
 	,'Mike'
 	,'Hillyer'
-	,106
+	,'106'
 	,'American Circus'
-	,8616
-	,3732
+	,'8616'
+	,'3732'
 	,5
 	,'2005-07-06 11:33:37'
 	,'2005-07-08 08:31:37'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333318
+VALUES ('333318'
 	,'Brian'
 	,'Wyman'
 	,'BRIAN.WYMAN@dcustomer.org'
 	,'active'
-	,191902
+	,'191902'
 	,'Toronto'
-	,202002
+	,'202002'
 	,'Jon'
 	,'Stephens'
-	,384
+	,'384'
 	,'Bonnie Holocaust'
-	,8621
-	,10023
+	,'8621'
+	,'10023'
 	,6
 	,'2005-07-31 18:25:51'
 	,'2005-08-09 18:00:51'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333318
+VALUES ('333318'
 	,'Brian'
 	,'Wyman'
 	,'BRIAN.WYMAN@dcustomer.org'
 	,'active'
-	,191902
+	,'191902'
 	,'Toronto'
-	,202002
+	,'202002'
 	,'Jon'
 	,'Stephens'
-	,1176
+	,'1176'
 	,'Duffel Apocalypse'
-	,8614
-	,3337
+	,'8614'
+	,'3337'
 	,1
 	,'2005-06-21 10:24:35'
 	,'2005-06-22 13:51:35'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333318
+VALUES ('333318'
 	,'Brian'
 	,'Wyman'
 	,'BRIAN.WYMAN@dcustomer.org'
 	,'active'
-	,191901
+	,'191901'
 	,'Montreal'
-	,202001
+	,'202001'
 	,'Mike'
 	,'Hillyer'
-	,1907
+	,'1907'
 	,'High Encino'
-	,8618
-	,4356
+	,'8618'
+	,'4356'
 	,9
 	,'2005-07-07 19:21:22'
 	,'2005-07-16 15:57:22'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333318
+VALUES ('333318'
 	,'Brian'
 	,'Wyman'
 	,'BRIAN.WYMAN@dcustomer.org'
 	,'active'
-	,191901
+	,'191901'
 	,'Montreal'
-	,202001
+	,'202001'
 	,'Mike'
 	,'Hillyer'
-	,1928
+	,'1928'
 	,'Hobbit Alien'
-	,8613
-	,2643
+	,'8613'
+	,'2643'
 	,3
 	,'2005-06-19 09:39:27'
 	,'2005-06-26 10:27:27'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333061
+VALUES ('333061'
 	,'Katherine'
 	,'Rivera'
 	,'KATHERINE.RIVERA@dcustomer.org'
 	,'active'
-	,191901
+	,'191901'
 	,'Montreal'
-	,202001
+	,'202001'
 	,'Mike'
 	,'Hillyer'
-	,135
+	,'135'
 	,'Anonymous Human'
-	,1682
-	,13450
+	,'1682'
+	,'13450'
 	,1
 	,'2005-08-20 00:18:15'
 	,'2005-08-24 19:36:15'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333061
+VALUES ('333061'
 	,'Katherine'
 	,'Rivera'
 	,'KATHERINE.RIVERA@dcustomer.org'
 	,'active'
-	,191902
+	,'191902'
 	,'Toronto'
-	,202002
+	,'202002'
 	,'Jon'
 	,'Stephens'
-	,251
+	,'251'
 	,'Barefoot Manchurian'
-	,1680
-	,11379
+	,'1680'
+	,'11379'
 	,3
 	,'2005-08-02 18:16:55'
 	,'2005-08-07 18:12:55'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333281
+VALUES ('333281'
 	,'Leona'
 	,'Obrien'
 	,'LEONA.OBRIEN@dcustomer.org'
 	,'active'
-	,191902
+	,'191902'
 	,'Toronto'
-	,202002
+	,'202002'
 	,'Jon'
 	,'Stephens'
-	,194
+	,'194'
 	,'Atlantis Cause'
-	,7613
-	,1485
+	,'7613'
+	,'1485'
 	,6
 	,'2005-06-15 21:24:10'
 	,'2005-06-24 23:03:10'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333281
+VALUES ('333281'
 	,'Leona'
 	,'Obrien'
 	,'LEONA.OBRIEN@dcustomer.org'
 	,'active'
-	,191902
+	,'191902'
 	,'Toronto'
-	,202002
+	,'202002'
 	,'Jon'
 	,'Stephens'
-	,251
+	,'251'
 	,'Barefoot Manchurian'
-	,7612
-	,754
+	,'7612'
+	,'754'
 	,3
 	,'2005-05-29 10:18:59'
 	,'2005-06-04 05:03:59'
 );
 
 INSERT INTO customer_rental_store
-VALUES (333281
+VALUES ('333281'
 	,'Leona'
 	,'Obrien'
 	,'LEONA.OBRIEN@dcustomer.org'
 	,'active'
-	,191901
+	,'191901'
 	,'Montreal'
-	,202001
+	,'202001'
 	,'Mike'
 	,'Hillyer'
-	,106
+	,'106'
 	,'American Circus'
-	,7619
-	,7034
+	,'7619'
+	,'7034'
 	,3
 	,'2005-07-27 03:03:37'
 	,'2005-07-28 23:18:37'

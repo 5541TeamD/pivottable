@@ -2,11 +2,8 @@ package ca.concordia.pivottable.servicelayer.impl;
 
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
 import ca.concordia.pivottable.servicelayer.DataRetrievalService;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
 import ca.concordia.pivottable.entities.DataSet;
 import ca.concordia.pivottable.entities.DataType;
 import ca.concordia.pivottable.entities.DataField;
