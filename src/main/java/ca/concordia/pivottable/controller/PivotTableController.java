@@ -29,7 +29,7 @@ public class PivotTableController extends Controller {
         log.info("PivotTableController was called");
         String name = request.params("pvtTblSchema");
         PivotTableSchema schema = PivotTableSchema.fromJSON(request.body());
-        if (name == null){
+        if (schema == null){
             response.status(400);
             return null;
         }

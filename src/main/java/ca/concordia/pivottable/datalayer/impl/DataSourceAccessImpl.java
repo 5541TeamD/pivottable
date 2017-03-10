@@ -198,6 +198,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
+  			log.info("Running query " + tblDataQuery);
   			rsTblData = stmtTblData.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -260,6 +261,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
+  			log.info("Running query " + tblDataQuery);
   			rsTblFields = stmtTblFields.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -342,6 +344,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPvtTblData = dbConnection.createStatement();
+  			log.info("Running query " + pvtTblDataQuery);
   			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed

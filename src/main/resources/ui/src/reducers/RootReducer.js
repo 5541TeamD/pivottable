@@ -21,7 +21,9 @@ const C = {
   SCHEMA_FUNCTION_SELECTED: 'SCHEMA_FUNCTION_SELECTED',
   SCHEMA_VALUE_SELECTED: 'SCHEMA_VALUE_SELECTED',
   SCHEMA_RESET: 'SCHEMA_RESET',
-  GENERATE_PIVOT_TABLE: 'GENERATE_PIVOT_TABLE'
+  GENERATE_PIVOT_TABLE: 'GENERATE_PIVOT_TABLE',
+  GENERATE_PIVOT_TABLE_SUCCESS: 'GENERATE_PIVOT_TABLE_SUCCESS',
+  GENERATE_PIVOT_TABLE_ERROR: 'GENERATE_PIVOT_TABLE_ERROR'
 }
 
 export {C}
@@ -64,7 +66,7 @@ const initialState = {
 // {...state, infoMessage: 'Success"} will create a shallow copy of the state object with infoMessage set to 'Success'
 // for more info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator
 const rootReducer = (state = initialState, action) => {
-   console.log(action)
+  // console.log(action)
   const {type} = action
   switch (type) {
     case C.FETCH_TABLE_LIST:
@@ -197,8 +199,15 @@ const rootReducer = (state = initialState, action) => {
           selectedFunction: '',
           possibleValues: [],
           selectedValue: ''
-        }
+        },
+        pivotTable: {}
       }
+    case C.GENERATE_PIVOT_TABLE:
+      return {...state, pivotTableLoading: true}
+    case C.GENERATE_PIVOT_TABLE_SUCCESS:
+      return {...state, pivotTableLoading: false, pivotTable: action.data}
+    case C.GENERATE_PIVOT_TABLE_ERROR:
+      return {...state, pivotTableLoading: false, pivotTable: initialState.pivotTable}
     default:
       return state
   }

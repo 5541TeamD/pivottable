@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Segment, Input, Button, Label, Form, Grid} from 'semantic-ui-react'
+import {Segment, Input, Button, Label, Form} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 
 import {dataSourceNameChanged, userNameChanged,
