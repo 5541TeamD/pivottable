@@ -28,4 +28,9 @@ export const getRawReport = (tableName) => {
   })
 }
 
-// TODO /api/pivottable
+
+export const getPivotTable = (schema) => {
+  return instance.post('/api/pivottable', {
+    data: schema
+  })
+}

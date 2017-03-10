@@ -1,4 +1,4 @@
-import {getTableList, checkAccess, getRawReport} from '../api/endpoints'
+import {getTableList, checkAccess, getRawReport, getPivotTable} from '../api/endpoints'
 import {C} from '../reducers/RootReducer'
 
 export const fetchTableList = () => async (dispatch) => {
@@ -93,6 +93,22 @@ export const valueChanged = (value) => ({
   value
 })
 
-export const generatePivotTable = () => ({
-  type: C.GENERATE_PIVOT_TABLE
+const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
+  tableName: selectedTable,
+  columnLabels: tableSchema.selectedColumnLabels.map ( it => it.name),
+  rowLabels: tableSchema.selectedRowLabels.map (it => it.name),
+  pageLabel: tableSchema.selectedPageLabel,
+  functionName: tableSchema.selectedFunction,
+  valueField: tableSchema.selectedValue
 })
+
+export const generatePivotTable = () => async(dispatch, getState) => {
+  dispatch({type: C.GENERATE_PIVOT_TABLE})
+  try {
+    const resp = await getPivotTable(buildSchemaToSend(getState()))
+    dispatch({type: C.GENERATE_PIVOT_TABLE_SUCCESS, data: resp.data})
+  } catch (e) {
+    console.log(e)
+    dispatch({type: C.GENERATE_PIVOT_TABLE_ERROR})
+  }
+}

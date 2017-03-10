@@ -2,6 +2,7 @@ package ca.concordia.pivottable.entities;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -37,12 +38,13 @@ public class PivotTableSchema {
 
     /**
      * Creates an instance of PivotTableSchema from a json string.
-     * @param json The string containing the json
+     * @param json The string containing the json: note, the server returns it in a data object
      * @return a PivotTableSchema object
      */
     public static PivotTableSchema fromJSON(String json) {
         Gson gson = new Gson();
-        return gson.fromJson(json, PivotTableSchema.class);
+        JsonObject obj = gson.fromJson(json, JsonObject.class);
+        return gson.fromJson(obj.get("data"), PivotTableSchema.class);
     }
 
     // Getters and setters
