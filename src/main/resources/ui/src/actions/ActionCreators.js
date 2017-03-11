@@ -3,8 +3,9 @@ import {C} from '../reducers/RootReducer'
 
 export const fetchTableList = () => async (dispatch, getState) => {
   dispatch({type: C.FETCH_TABLE_LIST})
+  const {username, password, sourceName} = getState()
   try {
-    const resp = await getTableList()
+    const resp = await getTableList(sourceName, username, password)
     dispatch({type: C.FETCH_TABLE_LIST_SUCCESS, data: resp.data})
   } catch (e) {
     dispatch({type: C.FETCH_TABLE_LIST_ERROR})
@@ -28,13 +29,14 @@ const tableSelected = (value) => ({
   value
 })
 
-export const fetchRawReport = (tableName) => async (dispatch) => {
+export const fetchRawReport = (tableName) => async (dispatch, getState) => {
   dispatch(tableSelected(tableName))
   if (!tableName)
     return
   dispatch({type:C.FETCH_RAW_REPORT})
+  const {username, password, sourceName} = getState()
   try {
-    const resp = await getRawReport(tableName)
+    const resp = await getRawReport(tableName, sourceName, username, password)
     dispatch({type: C.FETCH_RAW_REPORT_SUCCESS, data: resp.data})
   } catch (e) {
     dispatch({type: C.FETCH_RAW_REPORT_ERROR})
@@ -104,7 +106,11 @@ const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
 export const generatePivotTable = () => async(dispatch, getState) => {
   dispatch({type: C.GENERATE_PIVOT_TABLE})
   try {
-    const resp = await getPivotTable(buildSchemaToSend(getState()))
+    const currentState = getState()
+    const {username, password, sourceName} = currentState
+    const resp = await getPivotTable(buildSchemaToSend(currentState),
+      sourceName, username, password
+    )
     dispatch({type: C.GENERATE_PIVOT_TABLE_SUCCESS, data: resp.data})
   } catch (e) {
     console.log(e)

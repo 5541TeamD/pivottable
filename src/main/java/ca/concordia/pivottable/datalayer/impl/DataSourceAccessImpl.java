@@ -73,7 +73,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 			
 		}		
 		
-		log.info("Initiating connection to database " + dbName + "...");
+		log.info("Initiating connection to database " + dbUrl + "...");
 		
 		try
 		{

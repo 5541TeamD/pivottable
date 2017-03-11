@@ -1,28 +1,31 @@
 import axios from 'axios'
 
-const headerNames = {
-  jdbcUrl: 'jdbcUrl',
-  username: 'username',
-  password: 'password'
-}
+const buildCustomHeader = (sourceUrl, username, password) => ({
+  jdbcUrl: sourceUrl,
+  username,
+  password
+})
 
 
 const instance = axios.create({
   headers: {'X-Requested-With': 'XMLHttpRequest'},
-  timeout: 5000 // 5 seconds
+  timeout: 60000 // 60 seconds
 })
 
 export const getTableList = (dataSource, username, password) => {
-  return instance.get('/api/tables')
+  return instance.get('/api/tables', {
+    headers: buildCustomHeader(dataSource, username, password)
+  })
 }
 
 export const checkAccess = (sourceName, username, password) => {
   return instance.get('/api/checkaccess', {
-    params: {
+    /*params: {
       sourceName,
       username: username,
       password: password
-    }
+    },*/
+    headers: buildCustomHeader(sourceName, username, password)
   })
 }
 
@@ -31,13 +34,14 @@ export const getRawReport = (tableName, dataSource, username, password) => {
   return instance.get('/api/rawreport', {
     params: {
       tablename: tableName
-    }
+    },
+    headers: buildCustomHeader(dataSource, username, password)
   })
 }
 
 
 export const getPivotTable = (schema, dataSource, username, password) => {
-  return instance.post('/api/pivottable', {
-    data: schema
+  return instance.post('/api/pivottable', {data: schema}, {
+    headers: buildCustomHeader(dataSource, username, password),
   })
 }

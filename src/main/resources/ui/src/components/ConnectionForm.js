@@ -28,7 +28,7 @@ const ConnectionForm = (props) => {
             <Input type="password" value={password} onChange={onPasswordChanged} placeholder="Enter password"/>
           </Form.Field>
           <Form.Field>
-          <Button primary={true} onClick={onCheckConnection(dataSource, userName, password)} disabled={!dataSource || !userName || !password}>
+          <Button primary={true} onClick={onCheckConnection(dataSource, userName, password)} disabled={!dataSource || !userName }>
             Check Connection
           </Button>
           </Form.Field>
