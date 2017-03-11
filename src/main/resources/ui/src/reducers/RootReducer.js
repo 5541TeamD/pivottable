@@ -56,9 +56,76 @@ const initialState = {
     selectedValue: '' //name of the value
   }, // TODO
   pivotTableLoading: false,
-  pivotTable: {}, // TODO
+  pivotTable: {
+    schema: {},
+    rowLabels: [],
+    columnLabels: [],
+    data: []
+  },
   infoMessage: '',
   errorMessage: ''
+}
+
+/**
+ * row label index: 0
+ * column label index: 1
+ * data index: dataIndex (usually, 2)
+ */
+const insertIn2D = (rowArray, columnArray, row, dataIndex, data) => {
+  // not very efficient - TODO use a map<string, int> instead of indexOf
+  //console.log('row from api is: ', row)
+  const x = rowArray.indexOf(row[0])
+  const y = columnArray.indexOf(row[1])
+  //console.log('x, y, row[dataIndex]', x, y, row[dataIndex])
+  data[x][y] = row[dataIndex]
+}
+
+// TODO make it generic for multiple rows
+// This code is imperative -> takes data from API and
+// returns an object with rowLabels, columnLabels, data and schema
+const mapPivotTableDataToRender = (apiData, schema) => {
+  //console.log(schema)
+  let rowSet = new Set()
+  let columnSet = new Set()
+  apiData.forEach (row => {
+    row.forEach ((element, idx) => {
+      if (idx === 0) { // idx < schema.rowLabels.length
+        rowSet.add(element)
+      } else if (idx === 1) {// idx < (schema.rowLabels.length + schema.columnLabels.length)
+        columnSet.add(element)
+      }
+      // could optimize if break here
+    })
+  })
+
+  // TODO use Map instead of array?
+  const rows = Array.from(rowSet)
+  const columns = Array.from(columnSet)
+
+  // create an array of arrays filled with zeros.
+  // number of rows is the same as rowLabels and
+  // columns is the same as column labels
+  let data = rows.map (val => {
+    let p = new Array(columns.length)
+    p.fill(0)
+    return p
+  })
+
+  // insert data
+  apiData.forEach ( (row, idx) => {
+    const rowIndex = (schema.rowLabels.length + schema.rowLabels.length)
+    // single label on row and column for now
+    insertIn2D(rows, columns, row, rowIndex, data)
+  })
+
+  const pivotTableData = {
+    schema,
+    rowLabels: rows,
+    columnLabels: columns,
+    data
+  }
+  //console.log(pivotTableData)
+  return pivotTableData
 }
 
 // note: The Spread Operator in {...state} creates a shallow copy of the state object.
@@ -107,11 +174,16 @@ const rootReducer = (state = initialState, action) => {
           selectedFunction: '',
           possibleValues: [],
           selectedValue: ''
-        }
+        },
+        pivotTable: initialState.pivotTable
       }
     case C.FETCH_RAW_REPORT_ERROR:
       // TODO
-      return {...state, rawReportLoading: false, rawReport: initialState.rawReport}
+      return {...state,
+        rawReportLoading: false,
+        rawReport: initialState.rawReport,
+        pivotTable: initialState.pivotTable
+      }
     case C.DISCONNECT:
       return initialState
     case C.SCHEMA_ROW_LABELS_SELECTED:
@@ -130,7 +202,8 @@ const rootReducer = (state = initialState, action) => {
           selectedPageLabel: '',
           selectedFunction: '',
           selectedValue: '',
-        }
+        },
+        pivotTable: initialState.pivotTable
       }
     case C.SCHEMA_COLUMN_LABELS_SELECTED:
       return {
@@ -146,7 +219,8 @@ const rootReducer = (state = initialState, action) => {
           selectedPageLabel: '',
           selectedFunction: '',
           selectedValue: '',
-        }
+        },
+        pivotTable: initialState.pivotTable
       }
     case C.SCHEMA_PAGE_LABEL_SELECTED:
       return {
@@ -159,7 +233,8 @@ const rootReducer = (state = initialState, action) => {
           }).type === 'TYPE_NUMERIC' ? ['sum', 'count'] : ['count'],
           selectedFunction: '',
           selectedValue: '',
-        }
+        },
+        pivotTable: initialState.pivotTable
       }
     case C.SCHEMA_FUNCTION_SELECTED:
       return {
@@ -175,7 +250,8 @@ const rootReducer = (state = initialState, action) => {
             return true
           }),
           selectedValue: ''
-        }
+        },
+        pivotTable: initialState.pivotTable
       }
     case C.SCHEMA_VALUE_SELECTED:
       return {
@@ -183,7 +259,8 @@ const rootReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           selectedValue: action.value
-        }
+        },
+        pivotTable: initialState.pivotTable
       }
     case C.SCHEMA_RESET:
       return {
@@ -200,12 +277,18 @@ const rootReducer = (state = initialState, action) => {
           possibleValues: [],
           selectedValue: ''
         },
-        pivotTable: {}
+        pivotTable: initialState.pivotTable
       }
     case C.GENERATE_PIVOT_TABLE:
       return {...state, pivotTableLoading: true}
     case C.GENERATE_PIVOT_TABLE_SUCCESS:
-      return {...state, pivotTableLoading: false, pivotTable: action.data}
+      return {...state,
+        pivotTableLoading: false,
+        pivotTable: mapPivotTableDataToRender(
+          action.data.data,
+          action.data.schema
+        )
+      }
     case C.GENERATE_PIVOT_TABLE_ERROR:
       return {...state, pivotTableLoading: false, pivotTable: initialState.pivotTable}
     default:
