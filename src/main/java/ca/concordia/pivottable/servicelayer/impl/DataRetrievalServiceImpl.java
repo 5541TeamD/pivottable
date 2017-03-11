@@ -23,6 +23,9 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	private DataSourceAccess dataSource;
 
+	/**
+	 * Credentials service object used for setting the data source connection credentials received from the view.
+	 */
 	private CredentialsService credentials;
 
 	/**
@@ -30,8 +33,9 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	public DataRetrievalServiceImpl(DataSourceAccess dataSource, CredentialsService credentialsService)
 	{
-		this.dataSource = dataSource;
 		this.credentials = credentialsService;
+		this.dataSource = dataSource;
+		dataSource.setCredentials(credentials.getDataSource(), credentials.getUsername(), credentials.getPassword());		
 	}
 
 	/**

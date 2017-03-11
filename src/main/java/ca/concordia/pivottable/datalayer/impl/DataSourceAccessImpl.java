@@ -14,8 +14,36 @@ import org.slf4j.LoggerFactory;
  * @author Jyotsana Gupta
  * @version 1.0
  */
-public class DataSourceAccessImpl implements DataSourceAccess 
+public class DataSourceAccessImpl implements DataSourceAccess
 {
+	/**
+	 * URL of the database to be connected to.
+	 */
+	private String dbUrl;
+	
+	/**
+	 * Username to log in to the database.
+	 */
+	private String dbUsername;
+	
+	/**
+	 * Password to log in to the database.
+	 */
+	private String dbPassword;
+	
+	/**
+	 * Sets the credentials required for connecting to a database.
+	 * @param	dbUrl		URL of the database
+	 * @param	dbUsername	Username for login
+	 * @param	dbPassword	Password for login
+	 */
+	public void setCredentials(String dbUrl, String dbUsername, String dbPassword) 
+	{
+        this.dbUrl = dbUrl;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+    }
+	
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
@@ -28,12 +56,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	 */
 	private Connection connect()
 	{
-		//Database attributes required for connection
+		//Database driver required for connection
 		String jdbcDriver = "com.mysql.jdbc.Driver";
-		String dbName = "testdb";
-		String dbUrl = "jdbc:mysql://localhost:3306/" + dbName + "?useSSL=false";
-		String dbUsername = "root";
-		String dbPassword = "root";
 		
 		//Database connection state
 		Connection dbConnection = null;

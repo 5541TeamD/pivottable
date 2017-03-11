@@ -11,6 +11,14 @@ import ca.concordia.pivottable.entities.PivotTableSchema;
 public interface DataSourceAccess 
 {
 	/**
+	 * Sets the credentials required for connecting to a database.
+	 * @param	dbUrl		URL of the database
+	 * @param	dbUsername	Username for login
+	 * @param	dbPassword	Password for login
+	 */
+	void setCredentials(String dbUrl, String dbUsername, String dbPassword);
+	
+	/**
      * Tests the connection to the data source by first connecting and then disconnecting.
      * @return	true, if connection test is successful
      * 			false, if connection test fails
