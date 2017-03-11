@@ -1,7 +1,7 @@
 import {getTableList, checkAccess, getRawReport, getPivotTable} from '../api/endpoints'
 import {C} from '../reducers/RootReducer'
 
-export const fetchTableList = () => async (dispatch) => {
+export const fetchTableList = () => async (dispatch, getState) => {
   dispatch({type: C.FETCH_TABLE_LIST})
   try {
     const resp = await getTableList()

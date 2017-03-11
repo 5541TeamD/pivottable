@@ -1,6 +1,7 @@
 package ca.concordia.pivottable.servicelayer.impl;
 
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
+import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.servicelayer.DataRetrievalService;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +23,15 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	private DataSourceAccess dataSource;
 
+	private CredentialsService credentials;
+
 	/**
 	 * Class constructor.
 	 */
-	public DataRetrievalServiceImpl(DataSourceAccess dataSource)
+	public DataRetrievalServiceImpl(DataSourceAccess dataSource, CredentialsService credentialsService)
 	{
 		this.dataSource = dataSource;
+		this.credentials = credentialsService;
 	}
 
 	/**

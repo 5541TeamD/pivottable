@@ -1,6 +1,7 @@
 package ca.concordia.pivottable;
 
 import ca.concordia.pivottable.controller.*;
+import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.utils.ControllerFactory;
 import ca.concordia.pivottable.utils.DependenciesContainer;
 import spark.Request;
@@ -58,6 +59,11 @@ public class Application {
         before((request, response) -> {
             DependenciesContainer container = new DependenciesContainer();
             request.attribute("container", container);
+            CredentialsService credentials = container.get("CredentialsService");
+            String userName = request.headers("username");
+            String password = request.headers("password");
+            String dataSource = request.headers("jdbcUrl");
+            credentials.setInformation(dataSource, userName, password);
         });
 
         defineRoutes();
