@@ -2,6 +2,9 @@ package ca.concordia.pivottable.servicelayer.impl;
 
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 
+/**
+ * Default and simple implementation to store credentials.
+ */
 public class CredentialsServiceDefault implements CredentialsService {
 
     private String username;
