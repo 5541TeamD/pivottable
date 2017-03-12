@@ -16,6 +16,12 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSourceAccessImpl implements DataSourceAccess
 {
+
+	/**
+	 * This implementation limits the number of results to a 1000
+	 */
+	private static final int ROW_LIMIT = 1000;
+
 	/**
 	 * URL of the database to be connected to.
 	 */
@@ -218,7 +224,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		List<List<Object>> tblData = new ArrayList<List<Object>>();
   		
   		//Executing SQL query to get all the data of the table
-  		String tblDataQuery = "SELECT * FROM " + tableName + ";";
+  		String tblDataQuery = "SELECT * FROM " + tableName + " LIMIT " + String.valueOf(ROW_LIMIT) + ";";
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
@@ -280,8 +286,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		int fieldCount = 0;
   		List<String[]> tblFields = new ArrayList<String[]>();
   		
-  		//Executing SQL query to get all the data of the table
-  		String tblDataQuery = "SELECT * FROM " + tableName + ";";
+  		//Executing SQL query to get 1 row of the table
+  		String tblDataQuery = "SELECT * FROM " + tableName + " LIMIT 1;";
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
@@ -362,7 +368,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   										   + colLabel + ", "
   										   + function + "("
   										   + valField + ")"
-  									 + " FROM " + tableName
+  									 + " FROM ( SELECT * FROM " + tableName
+									 + " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
   									 + " GROUP BY " + rowLabel + ", "
   									 				+ colLabel + ";";
   		try
