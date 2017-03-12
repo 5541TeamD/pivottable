@@ -14,8 +14,42 @@ import org.slf4j.LoggerFactory;
  * @author Jyotsana Gupta
  * @version 1.0
  */
-public class DataSourceAccessImpl implements DataSourceAccess 
+public class DataSourceAccessImpl implements DataSourceAccess
 {
+
+	/**
+	 * This implementation limits the number of results to a 1000
+	 */
+	private static final int ROW_LIMIT = 1000;
+
+	/**
+	 * URL of the database to be connected to.
+	 */
+	private String dbUrl;
+	
+	/**
+	 * Username to log in to the database.
+	 */
+	private String dbUsername;
+	
+	/**
+	 * Password to log in to the database.
+	 */
+	private String dbPassword;
+	
+	/**
+	 * Sets the credentials required for connecting to a database.
+	 * @param	dbUrl		URL of the database
+	 * @param	dbUsername	Username for login
+	 * @param	dbPassword	Password for login
+	 */
+	public void setCredentials(String dbUrl, String dbUsername, String dbPassword) 
+	{
+        this.dbUrl = dbUrl;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+    }
+	
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
@@ -28,12 +62,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	 */
 	private Connection connect()
 	{
-		//Database attributes required for connection
+		//Database driver required for connection
 		String jdbcDriver = "com.mysql.jdbc.Driver";
-		String dbName = "testdb";
-		String dbUrl = "jdbc:mysql://localhost:3306/" + dbName + "?useSSL=false";
-		String dbUsername = "root";
-		String dbPassword = "root";
 		
 		//Database connection state
 		Connection dbConnection = null;
@@ -49,7 +79,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 			
 		}		
 		
-		log.info("Initiating connection to database " + dbName + "...");
+		log.info("Initiating connection to database " + dbUrl + "...");
 		
 		try
 		{
@@ -194,7 +224,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		List<List<Object>> tblData = new ArrayList<List<Object>>();
   		
   		//Executing SQL query to get all the data of the table
-  		String tblDataQuery = "SELECT * FROM " + tableName + ";";
+  		String tblDataQuery = "SELECT * FROM " + tableName + " LIMIT " + String.valueOf(ROW_LIMIT) + ";";
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
@@ -256,8 +286,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		int fieldCount = 0;
   		List<String[]> tblFields = new ArrayList<String[]>();
   		
-  		//Executing SQL query to get all the data of the table
-  		String tblDataQuery = "SELECT * FROM " + tableName + ";";
+  		//Executing SQL query to get 1 row of the table
+  		String tblDataQuery = "SELECT * FROM " + tableName + " LIMIT 1;";
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
@@ -338,7 +368,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   										   + colLabel + ", "
   										   + function + "("
   										   + valField + ")"
-  									 + " FROM " + tableName
+  									 + " FROM ( SELECT * FROM " + tableName
+									 + " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
   									 + " GROUP BY " + rowLabel + ", "
   									 				+ colLabel + ";";
   		try
