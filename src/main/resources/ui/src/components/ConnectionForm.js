@@ -36,7 +36,7 @@ const ConnectionForm = (props) => {
           </Form.Field>
           <Form.Field>
           <Button primary={true} onClick={onCheckConnection(dataSource, userName, password)} disabled={!dataSource || !userName }>
-            Check Connection
+            Connect
           </Button>
           </Form.Field>
         </div>
