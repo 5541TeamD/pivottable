@@ -139,7 +139,7 @@ const rootReducer = (state = initialState, action) => {
     case C.FETCH_TABLE_LIST:
       return {...state, fetchTableListloading: true}
     case C.FETCH_TABLE_LIST_SUCCESS:
-      return {...state, fetchTableListloading: false, tableList: action.data}
+      return {...state, fetchTableListloading: false, tableList: action.data, errorMessage: ''}
     case C.FETCH_TABLE_LIST_ERROR:
       return {...state, fetchTableListloading: false, errorMessage: 'Error getting list of tables'}
     case C.TABLE_SELECTED:
@@ -147,10 +147,17 @@ const rootReducer = (state = initialState, action) => {
     case C.CONNECT_DATA_SOURCE:
       return {...state, connectionLoading: true}
     case C.CONNECT_DATA_SOURCE_SUCCESS:
-      return {...state, connectionLoading: false, connectedSuccessfully: true}
+      return {...state,
+        connectionLoading: false,
+        connectedSuccessfully: true,
+        errorMsg: '',
+      }
     case C.CONNECT_DATA_SOURCE_ERROR:
-      // TODO error message?
-      return {...state, connectionLoading: false, connectedSuccessfully: false}
+      return {...state,
+        connectionLoading: false,
+        connectedSuccessfully: false,
+        errorMessage: 'There was an error connecting.'
+      }
     case C.USERNAME_CHANGED:
       return {...state, username: action.value}
     case C.PASSWORD_CHANGED:
@@ -175,17 +182,21 @@ const rootReducer = (state = initialState, action) => {
           possibleValues: [],
           selectedValue: ''
         },
-        pivotTable: initialState.pivotTable
+        pivotTable: initialState.pivotTable,
+        errorMessage: ''
       }
     case C.FETCH_RAW_REPORT_ERROR:
-      // TODO
       return {...state,
         rawReportLoading: false,
         rawReport: initialState.rawReport,
-        pivotTable: initialState.pivotTable
+        pivotTable: initialState.pivotTable,
+        errorMessage: 'There was a problem fetching the raw report'
       }
     case C.DISCONNECT:
-      return initialState
+      return {...initialState,
+        username: state.username,
+        sourceName: state.sourceName
+      }
     case C.SCHEMA_ROW_LABELS_SELECTED:
       //console.log('Called the reducer for SCHEMA_ROW_LABELS_SELECTED')
       return {
@@ -287,10 +298,11 @@ const rootReducer = (state = initialState, action) => {
         pivotTable: mapPivotTableDataToRender(
           action.data.data,
           action.data.schema
-        )
+        ),
+        errorMessage: ''
       }
     case C.GENERATE_PIVOT_TABLE_ERROR:
-      return {...state, pivotTableLoading: false, pivotTable: initialState.pivotTable}
+      return {...state, pivotTableLoading: false, pivotTable: initialState.pivotTable, errorMessage: 'Error generating pivot table'}
     default:
       return state
   }

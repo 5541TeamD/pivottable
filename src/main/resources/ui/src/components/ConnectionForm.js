@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Segment, Input, Button, Label, Form} from 'semantic-ui-react'
+import {Segment, Input, Button, Label, Form, Message} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 
 import {dataSourceNameChanged, userNameChanged,
@@ -8,10 +8,17 @@ import {dataSourceNameChanged, userNameChanged,
 const ConnectionForm = (props) => {
   const {loading, dataSource, userName, password,
   onDataSourceChanged, onUserNameChanged, onPasswordChanged,
-  onCheckConnection, isConnected, onDisconnect} = props
+  onCheckConnection, isConnected, onDisconnect, errorMessage} = props
+
+  const errorBox = errorMessage.length > 0 ?
+    (<Message negative>
+      <Message.Header>{errorMessage}</Message.Header>
+    </Message>) : null
+
   return (
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Data Source Connection</Label>
+      {errorBox}
       <Form as="div">
       {!isConnected ?
         <div>
@@ -64,6 +71,7 @@ ConnectionForm.propTypes = {
   onPasswordChanged: PropTypes.func.isRequired,
   onCheckConnection: PropTypes.func.isRequired,
   onDisconnect: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string.isRequired
 }
 
 const mapStateToProps = (state) => {
@@ -72,7 +80,8 @@ const mapStateToProps = (state) => {
     dataSource: state.sourceName,
     userName: state.username,
     password: state.password,
-    isConnected: state.connectedSuccessfully
+    isConnected: state.connectedSuccessfully,
+    errorMessage: state.errorMessage
   }
 }
 
