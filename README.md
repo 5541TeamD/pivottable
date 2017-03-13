@@ -20,7 +20,7 @@ Install UI dependencies:
 ```
 npm install
 ```
-After is has finished installing the dependencies, you can proceed to build the UI
+After it has finished installing the dependencies, you can proceed to build the UI
 ```
 npm run build
 ```
@@ -38,3 +38,9 @@ In windows, omitting the `./` might be required (or using .\\ instead in
 in the case of powershell).  
 This will build the java project and run the `Application.main` function.
 You can ctrl-c to stop the process.
+
+####Database Connection
+
+An online or offline database is required for using the application.
+For logging into the database, its URL, username and password (optional for some databases) must be provided.
+Once connected, all the tables stored in the database will be listed and can be used to generate pivot tables.
