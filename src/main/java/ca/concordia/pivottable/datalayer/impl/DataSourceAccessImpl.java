@@ -4,9 +4,8 @@ import ca.concordia.pivottable.datalayer.DataSourceAccess;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-//TODO uncomment
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles all the operations to be performed on the data source.
@@ -53,8 +52,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO uncomment
-	//private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
+	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
 	
 	/**
 	 * Initiates a connection with the data source.
@@ -76,13 +74,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		}
 		catch (Exception dbConnGenExcpn)
 		{
-			//TODO uncomment
-			//log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
+			log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
 			
 		}		
 		
-		//TODO uncomment
-		//log.info("Initiating connection to database " + dbUrl + "...");
+		log.info("Initiating connection to database " + dbUrl + "...");
 		
 		try
 		{
@@ -91,8 +87,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		catch (SQLException dbConnSQLExcpn)
 		{
 			dbConnection = null;
-			//TODO uncomment
-			//log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
+			log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
 		}
 		
 		return dbConnection;
@@ -114,8 +109,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
     		}
     		catch (SQLException dbDisconnSQLExcpn)
     		{
-    			//TODO uncomment
-    			//log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
+    			log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
     			return false;
     		}
     	}
@@ -178,8 +172,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		{
   			dbmd = null;
   			rsAllRawTblNames = null;
-  			//TODO uncomment
-  			//log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
+  			log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -236,8 +229,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
-  			//TODO uncomment
-  			//log.info("Running query " + tblDataQuery);
+  			log.info("Running query " + tblDataQuery);
   			rsTblData = stmtTblData.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -265,8 +257,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblData = null;
   			rsmdTblData = null;
   			tblData = null;
-  			//TODO uncomment
-  			//log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
+  			log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -304,8 +295,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
-  			//TODO uncomment
-  			//log.info("Running query " + tblDataQuery);
+  			log.info("Running query " + tblDataQuery);
   			rsTblFields = stmtTblFields.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -342,8 +332,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblFields = null;
   			rsmdTblFields = null;
   			tblFields = null;
-  			//TODO uncomment
-  			//log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
+  			log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -393,8 +382,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPvtTblData = dbConnection.createStatement();
-  			//TODO uncomment
-  			//log.info("Running query " + pvtTblDataQuery);
+  			log.info("Running query " + pvtTblDataQuery);
   			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -426,8 +414,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPvtTblData = null;
   			rsmdPvtTblData = null;
   			pvtTblData = null;
-  			//TODO uncomment
-  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -487,8 +474,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  		try
 	  	  		{
 	  	  			stmtPvtTblData = dbConnection.createStatement();
-	  	  			//TODO uncomment
-	  	  			//log.info("Running query " + pvtTblDataQuery);
+	  	  			log.info("Running query " + pvtTblDataQuery);
 	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
 	  	  			
 	  	  			//Fetching field count for the results returned by the SQL query executed
@@ -521,8 +507,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			rsPvtTblData = null;
 	  	  			rsmdPvtTblData = null;
 	  	  			pvtTblData = null;
-	  	  			//TODO uncomment
-	  	  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
 	  	  		}
 	  		}
   		}
@@ -562,8 +547,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPageLabels = dbConnection.createStatement();
-  			//TODO uncomment
-  			//log.info("Running query " + pageLabelQuery);
+  			log.info("Running query " + pageLabelQuery);
   			rsPageLabels = stmtPageLabels.executeQuery(pageLabelQuery);
   			
   			while (rsPageLabels.next())
@@ -577,8 +561,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			stmtPageLabels = null;
   			rsPageLabels = null;
   			pageLabelValues = null;
-  			//TODO uncomment
-  			//log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
+  			log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
