@@ -1,7 +1,6 @@
 package ca.concordia.pivottable.datalayer;
 
 import java.util.List;
-import ca.concordia.pivottable.entities.PivotTableSchema;
 
 /**
  * Defines the interface for data source access operations.
@@ -59,10 +58,33 @@ public interface DataSourceAccess
 	List<String[]> getTableFields(String tableName);
 	
 	/**
-  	 * Fetches pivot table data from the database according to the input schema.
-  	 * @param	pvtTblSchema	Schema defined for pivot table
-  	 * @return	Pivot table data
-  	 * 			null, if database connection fails
+  	 * Executes SQL query on database and fetches pivot table data without page label.
+  	 * @param	rowLabel	Row label selected as part of pivot table schema
+  	 * @param	colLabel	Column label selected as part of pivot table schema
+  	 * @param	function	Mathematical function selected as part of pivot table schema
+  	 * @param	valField	Value field selected as part of pivot table schema
+  	 * @param	tableName	Raw report table name
+  	 * @return	Pivot table data fetched from the database
   	 */
-	List<List<Object>> getPivotTableData(PivotTableSchema pvtTblSchema);
+  	List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, String tableName);
+	
+  	/**
+  	 * Executes SQL query on database and fetches pivot table data with page label.
+  	 * @param	rowLabel	Row label selected as part of pivot table schema
+  	 * @param	colLabel	Column label selected as part of pivot table schema
+  	 * @param	pageLabel	Page label selected as part of pivot table schema
+  	 * @param	function	Mathematical function selected as part of pivot table schema
+  	 * @param	valField	Value field selected as part of pivot table schema
+  	 * @param	tableName	Raw report table name
+  	 * @return	Pivot table data fetched from the database
+  	 */
+  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName);
+  	
+	/**
+  	 * Executes SQL query on the database and fetches all the values of the selected page label column 
+  	 * @param	pageLabel		Page label column selected as part of pivot table schema
+  	 * @param	tableName		Raw report table name
+  	 * @return	List of page label column values
+  	 */
+	List<String> getPageLabelValues(String pageLabel, String tableName);
 }
