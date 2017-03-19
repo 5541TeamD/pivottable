@@ -41,7 +41,6 @@ const PivotTableSchema = (props) => {
                            onChange={onColumnLabelsChanged}
                            placeholder="Select Column Labels"/>
           </Form.Field>
-          {/*
           <Form.Field>
             <label>Page Label</label>
             <Form.Dropdown disabled={selectedColumnLabels.length === 0}
@@ -50,6 +49,7 @@ const PivotTableSchema = (props) => {
                            options={pageLabels}
                            placeholder="Select Page Label"/>
           </Form.Field>
+          {/*
           <Form.Field>
             <label>Report Filter</label>
             <Form.Dropdown disabled={true}

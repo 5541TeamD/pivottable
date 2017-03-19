@@ -23,7 +23,8 @@ const C = {
   SCHEMA_RESET: 'SCHEMA_RESET',
   GENERATE_PIVOT_TABLE: 'GENERATE_PIVOT_TABLE',
   GENERATE_PIVOT_TABLE_SUCCESS: 'GENERATE_PIVOT_TABLE_SUCCESS',
-  GENERATE_PIVOT_TABLE_ERROR: 'GENERATE_PIVOT_TABLE_ERROR'
+  GENERATE_PIVOT_TABLE_ERROR: 'GENERATE_PIVOT_TABLE_ERROR',
+  PIVOT_TABLE_PAGE_CHANGED: 'PIVOT_TABLE_PAGE_CHANGED',
 }
 
 export {C}
@@ -54,13 +55,16 @@ const initialState = {
     selectedFunction: '', //name of the function
     possibleValues: [],
     selectedValue: '' //name of the value
-  }, // TODO
+  },
   pivotTableLoading: false,
+  // TODO normalize?
   pivotTable: {
     schema: {},
     rowLabels: [],
     columnLabels: [],
-    data: []
+    data: [],
+    pageLabels: [],
+    pageSelected: -1, // index of the selected page
   },
   infoMessage: '',
   errorMessage: ''
@@ -71,24 +75,22 @@ const initialState = {
  * column label index: 1
  * data index: dataIndex (usually, 2)
  */
-const insertIn2D = (rowArray, columnArray, row, dataIndex, data) => {
-  // not very efficient - TODO use a map<string, int> instead of indexOf
+const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
   //console.log('row from api is: ', row)
-  const x = rowArray.indexOf(row[0])
-  const y = columnArray.indexOf(row[1])
+  const x = rowMap[row[0]]
+  const y = columnMap[row[1]]
   //console.log('x, y, row[dataIndex]', x, y, row[dataIndex])
   data[x][y] = row[dataIndex]
 }
 
-// TODO make it generic for multiple rows
-// This code is imperative -> takes data from API and
-// returns an object with rowLabels, columnLabels, data and schema
-const mapPivotTableDataToRender = (apiData, schema) => {
-  //console.log(schema)
+const formatAPIDataToLocal = (schema, pageLabelValues, apiDataList) => {
+  // get the row labels, column labels, page labels
   let rowSet = new Set()
   let columnSet = new Set()
-  apiData.forEach (row => {
-    row.forEach ((element, idx) => {
+  // use first one to get the rows and columns
+  const apiData = apiDataList[0]
+  apiData.forEach(row => {
+    row.forEach((element, idx) => {
       if (idx === 0) { // idx < schema.rowLabels.length
         rowSet.add(element)
       } else if (idx === 1) {// idx < (schema.rowLabels.length + schema.columnLabels.length)
@@ -98,34 +100,57 @@ const mapPivotTableDataToRender = (apiData, schema) => {
     })
   })
 
-  // TODO use Map instead of array?
   const rows = Array.from(rowSet)
   const columns = Array.from(columnSet)
 
-  // create an array of arrays filled with zeros.
-  // number of rows is the same as rowLabels and
-  // columns is the same as column labels
-  let data = rows.map (val => {
-    let p = new Array(columns.length)
-    p.fill(0)
-    return p
-  })
+  const rowMap = rows.reduce((result, val, index) => {
+    result[val] = index;
+    return result;
+  }, {});
 
-  // insert data
-  apiData.forEach ( (row, idx) => {
-    const rowIndex = (schema.rowLabels.length + schema.rowLabels.length)
-    // single label on row and column for now
-    insertIn2D(rows, columns, row, rowIndex, data)
-  })
+  const columnMap = columns.reduce((result, val, index) => {
+    result[val] = index;
+  }, {})
 
   const pivotTableData = {
     schema,
     rowLabels: rows,
     columnLabels: columns,
-    data
+    pageLabels: pageLabelValues,
+    data: mapPivotTableDataToRender(apiDataList, schema, rowMap, columnMap, rows, columns),
+    pageSelected: pageLabelValues.length > 0 ? 0 : -1
   }
-  //console.log(pivotTableData)
+  console.log(pivotTableData)
   return pivotTableData
+}
+
+// TODO make it generic for multiple rows
+// This code is imperative -> takes data from API and
+// returns an object with rowLabels, columnLabels, data and schema
+const mapPivotTableDataToRender = (apiDataList, schema, rowMap, columnMap, rows, columns) => {
+  //console.log(schema)
+  apiDataList.map ( apiData => {
+
+    // create an array of arrays filled with empty string
+    // number of rows is the same as rowLabels and
+    // columns is the same as column labels
+    let data = rows.map( val => {
+      let p = new Array(columns.length)
+      p.fill('')
+      return p
+    })
+
+
+    // insert data
+    apiData.forEach((row, idx) => {
+      const rowIndex = (schema.rowLabels.length + schema.rowLabels.length)
+      // single label on row and column for now
+      insertIn2D(rowMap, columnMap, row, rowIndex, data)
+    })
+
+    // changing it so that it returns data
+    return data;
+  })
 }
 
 // note: The Spread Operator in {...state} creates a shallow copy of the state object.
@@ -295,14 +320,24 @@ const rootReducer = (state = initialState, action) => {
     case C.GENERATE_PIVOT_TABLE_SUCCESS:
       return {...state,
         pivotTableLoading: false,
-        pivotTable: mapPivotTableDataToRender(
-          action.data.data,
-          action.data.schema
+        // this function returns an array...
+        pivotTable: formatAPIDataToLocal(
+          action.data.schema,
+          action.data.pageLabelValues,
+          action.data.data
         ),
         errorMessage: ''
       }
     case C.GENERATE_PIVOT_TABLE_ERROR:
       return {...state, pivotTableLoading: false, pivotTable: initialState.pivotTable, errorMessage: 'Error generating pivot table'}
+    case C.PIVOT_TABLE_PAGE_CHANGED:
+      return {
+        ...state,
+        pivotTable: {
+          ...state.pivotTable,
+          pageSelected: action.page
+        }
+      }
     default:
       return state
   }

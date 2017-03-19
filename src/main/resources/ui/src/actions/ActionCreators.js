@@ -29,6 +29,11 @@ const tableSelected = (value) => ({
   value
 })
 
+export const pivotTablePageChanged = (value) => ({
+  type: C.PIVOT_TABLE_PAGE_CHANGED,
+  page: value
+})
+
 export const fetchRawReport = (tableName) => async (dispatch, getState) => {
   dispatch(tableSelected(tableName))
   if (!tableName)

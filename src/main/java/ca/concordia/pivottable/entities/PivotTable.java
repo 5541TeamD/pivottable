@@ -34,7 +34,6 @@ public class PivotTable {
     }
 
     /**
-     * TODO test this
      * @return json representing this entity
      */
     public String toJSON() {
