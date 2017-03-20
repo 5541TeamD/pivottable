@@ -17,6 +17,10 @@ public class PivotTableSchema {
     private String pageLabel;
     private String functionName;
     private String valueField;
+    private String filterField;
+    private String filterValue;
+    private String sortField;
+    private String sortOrder;
 
     public PivotTableSchema() {
         // empty default constructor
@@ -27,13 +31,19 @@ public class PivotTableSchema {
      */
     public PivotTableSchema(String table, List<String> columnLabels,
                             List<String> rowLabels, String pageLabel,
-                            String functionName, String valueField) {
+                            String functionName, String valueField,
+                            String filterField, String filterValue,
+                            String sortField, String sortOrder) {
         this.tableName = table;
         this.columnLabels = columnLabels;
         this.rowLabels = rowLabels;
         this.pageLabel = pageLabel;
         this.functionName = functionName;
         this.valueField = valueField;
+        this.filterField = filterField;
+        this.filterValue = filterValue;
+        this.sortField = sortField;
+        this.sortOrder = sortOrder;
     }
 
     /**
@@ -98,4 +108,35 @@ public class PivotTableSchema {
         this.valueField = valueField;
     }
 
+	public String getSortField() {
+		return sortField;
+	}
+
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(String sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public String getFilterField() {
+		return filterField;
+	}
+
+	public void setFilterField(String filterField) {
+		this.filterField = filterField;
+	}
+
+	public String getFilterValue() {
+		return filterValue;
+	}
+
+	public void setFilterValue(String filterValue) {
+		this.filterValue = filterValue;
+	}
 }

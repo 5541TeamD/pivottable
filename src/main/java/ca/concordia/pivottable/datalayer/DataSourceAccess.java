@@ -63,10 +63,15 @@ public interface DataSourceAccess
   	 * @param	colLabel	Column label selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
+  	 * @param	filterField	Field name by which pivot table data needs to be filtered
+  	 * @param	filterValue	Value of the filter field for which pivot table data needs to be displayed
+  	 * @param	sortField	Field name by which pivot table data needs to be sorted
+  	 * @param	sortOrder	Order (ascending/descending) in which pivot table data needs to be sorted
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, String tableName);
+  	List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, 
+  											String filterField, String filterValue, String sortField, String sortOrder, String tableName);
 	
   	/**
   	 * Executes SQL query on database and fetches pivot table data with page label.
@@ -75,10 +80,15 @@ public interface DataSourceAccess
   	 * @param	pageLabel	Page label selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
+  	 * @param	filterField	Field name by which pivot table data needs to be filtered
+  	 * @param	filterValue	Value of the filter field for which pivot table data needs to be displayed
+  	 * @param	sortField	Field name by which pivot table data needs to be sorted
+  	 * @param	sortOrder	Order (ascending/descending) in which pivot table data needs to be sorted
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName);
+  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, 
+  													String filterField, String filterValue, String sortField, String sortOrder, String tableName);
   	
 	/**
   	 * Executes SQL query on the database and fetches all the values of the selected page label column 

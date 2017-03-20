@@ -4,8 +4,9 @@ import ca.concordia.pivottable.datalayer.DataSourceAccess;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//TODO uncomment
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 /**
  * Handles all the operations to be performed on the data source.
@@ -52,7 +53,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
+	//TODO uncomment
+	//private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
 	
 	/**
 	 * Initiates a connection with the data source.
@@ -74,11 +76,12 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		}
 		catch (Exception dbConnGenExcpn)
 		{
-			log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
-			
+			//TODO uncomment
+			//log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
 		}		
 		
-		log.info("Initiating connection to database " + dbUrl + "...");
+		//TODO uncomment
+		//log.info("Initiating connection to database " + dbUrl + "...");
 		
 		try
 		{
@@ -87,7 +90,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		catch (SQLException dbConnSQLExcpn)
 		{
 			dbConnection = null;
-			log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
+			//TODO uncomment
+			//log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
 		}
 		
 		return dbConnection;
@@ -109,7 +113,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
     		}
     		catch (SQLException dbDisconnSQLExcpn)
     		{
-    			log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
+    			//TODO uncomment
+    			//log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
     			return false;
     		}
     	}
@@ -150,16 +155,26 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		}
   		
   		//Proceeding, if database connection is successful
-  		DatabaseMetaData dbmd = null;
   		ResultSet rsAllRawTblNames = null;
   		List<String> allRawTblList = new ArrayList<String>();
   		
   		try
   		{
   			//Fetching all table names from database
-  			dbmd = dbConnection.getMetaData();
-  			rsAllRawTblNames = dbmd.getTables(null, null, "%", null);
-  			
+  			//For MySQL database
+  			if (dbUrl.indexOf("mysql") >= 0)
+  			{
+  				DatabaseMetaData dbmd = dbConnection.getMetaData();
+  	  			rsAllRawTblNames = dbmd.getTables(null, null, "%", null);
+  			}
+  			//For PostgreSQL database
+  			else if (dbUrl.indexOf("postgresql") >= 0)
+  			{
+  				String allRawTblNamesQuery = "SELECT * FROM information_schema.tables WHERE table_schema = \'public\';";
+  				Statement stmt = dbConnection.createStatement();
+  				rsAllRawTblNames = stmt.executeQuery(allRawTblNamesQuery);
+  			}
+  			  			
   			//Creating a list of table names
   			while (rsAllRawTblNames.next())
   			{
@@ -170,9 +185,9 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		}
   		catch (SQLException allRawTblSQLExcpn)
   		{
-  			dbmd = null;
   			rsAllRawTblNames = null;
-  			log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
+  			//TODO uncomment
+  			//log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -229,7 +244,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
-  			log.info("Running query " + tblDataQuery);
+  			//TODO uncomment
+  			//log.info("Running query " + tblDataQuery);
   			rsTblData = stmtTblData.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -257,7 +273,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblData = null;
   			rsmdTblData = null;
   			tblData = null;
-  			log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
+  			//TODO uncomment
+  			//log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -295,7 +312,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
-  			log.info("Running query " + tblDataQuery);
+  			//TODO uncomment
+  			//log.info("Running query " + tblDataQuery);
   			rsTblFields = stmtTblFields.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -332,7 +350,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblFields = null;
   			rsmdTblFields = null;
   			tblFields = null;
-  			log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
+  			//TODO uncomment
+  			//log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -346,10 +365,15 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param	colLabel	Column label selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
+  	 * @param	filterField	Field name by which pivot table data needs to be filtered
+  	 * @param	filterValue	Value of the filter field for which pivot table data needs to be displayed
+  	 * @param	sortField	Field name by which pivot table data needs to be sorted
+  	 * @param	sortOrder	Order (ascending/descending) in which pivot table data needs to be sorted
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, String tableName)
+  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, 
+  													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
   		//Connecting to the data base
   		Connection dbConnection = connect();
@@ -365,24 +389,37 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		ResultSet rsPvtTblData = null;
   		ResultSetMetaData rsmdPvtTblData = null;
   		int fieldCount = 0;
+  		String sortClause = " ";
+  		String filterClause = " ";
   		List<List<Object>> pageData = new ArrayList<List<Object>>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
+  		//Generating the SQL query clause for filtering resulting data
+  		if ((filterField != null) && (filterValue != null))
+  			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
+  		
+  		//Generating the SQL query clause for sorting resulting data
+  		if ((sortField != null) && (sortOrder != null))
+  			sortClause = " ORDER BY " + sortField + " " + sortOrder;
+   		
   		//Generating the SQL query to get pivot table data without page label
   		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
   									+ colLabel + ", "
   									+ function + "("
   									+ valField + ")"
   							+ " FROM ( SELECT * FROM " + tableName
+  										+ filterClause
 										+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
 							+ " GROUP BY " + rowLabel + ", "
-											+ colLabel + ";";
+											+ colLabel 
+							+ sortClause + ";";
   		
   		//Executing the SQL query
   		try
   		{
   			stmtPvtTblData = dbConnection.createStatement();
-  			log.info("Running query " + pvtTblDataQuery);
+  			//TODO uncomment
+  			//log.info("Running query " + pvtTblDataQuery);
   			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -414,7 +451,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPvtTblData = null;
   			rsmdPvtTblData = null;
   			pvtTblData = null;
-  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+  			//TODO uncomment
+  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -429,10 +467,15 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param	pageLabel	Page label selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
+  	 * @param	filterField	Field name by which pivot table data needs to be filtered
+  	 * @param	filterValue	Value of the filter field for which pivot table data needs to be displayed
+  	 * @param	sortField	Field name by which pivot table data needs to be sorted
+  	 * @param	sortOrder	Order (ascending/descending) in which pivot table data needs to be sorted
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName)
+  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, 
+  													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
   		//Connecting to the data base
   		Connection dbConnection = connect();
@@ -448,8 +491,18 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		ResultSet rsPvtTblData = null;
   		ResultSetMetaData rsmdPvtTblData = null;
   		int fieldCount = 0;
+  		String sortClause = " ";
+  		String filterClause = " ";
   		List<String> pageLabelValues = new ArrayList<String>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Generating the SQL query clause for filtering resulting data
+  		if ((filterField != null) && (filterValue != null))
+  			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
+  		
+  		//Generating the SQL query clause for sorting resulting data
+  		if ((sortField != null) && (sortOrder != null))
+  			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
   		//Fetching all the values of the selected page label column
   		pageLabelValues = getPageLabelValues(pageLabel, tableName);
@@ -464,17 +517,20 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  									+ function + "("
 	  	  									+ valField + ")"
 	  	  							+ " FROM ( SELECT * FROM " + tableName
+	  	  										+ filterClause
 	  											+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
 	  								+ " GROUP BY " + rowLabel + ", "
 	  												+ colLabel + ", "
 	  												+ pageLabel
-	  								+ " HAVING " + pageLabel + " = \"" + pageValue + "\";";
+	  								+ " HAVING " + pageLabel + " = \'" + pageValue + "\'"
+	  								+ sortClause + ";";
 	  	  		
 	  	  		//Executing the SQL query
 	  	  		try
 	  	  		{
 	  	  			stmtPvtTblData = dbConnection.createStatement();
-	  	  			log.info("Running query " + pvtTblDataQuery);
+	  	  			//TODO uncomment
+	  	  			//log.info("Running query " + pvtTblDataQuery);
 	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
 	  	  			
 	  	  			//Fetching field count for the results returned by the SQL query executed
@@ -507,7 +563,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			rsPvtTblData = null;
 	  	  			rsmdPvtTblData = null;
 	  	  			pvtTblData = null;
-	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+	  	  			//TODO uncomment
+	  	  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
 	  	  		}
 	  		}
   		}
@@ -547,7 +604,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPageLabels = dbConnection.createStatement();
-  			log.info("Running query " + pageLabelQuery);
+  			//TODO uncomment
+  			//log.info("Running query " + pageLabelQuery);
   			rsPageLabels = stmtPageLabels.executeQuery(pageLabelQuery);
   			
   			while (rsPageLabels.next())
@@ -561,7 +619,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			stmtPageLabels = null;
   			rsPageLabels = null;
   			pageLabelValues = null;
-  			log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
+  			//TODO uncomment
+  			//log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);

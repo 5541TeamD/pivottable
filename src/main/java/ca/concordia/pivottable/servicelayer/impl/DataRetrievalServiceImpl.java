@@ -104,6 +104,10 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
   		String pageLabel = pvtTblSchema.getPageLabel();
   		String function = pvtTblSchema.getFunctionName();
   		String valField = pvtTblSchema.getValueField();
+  		String filterField = pvtTblSchema.getFilterField();
+  		String filterValue = pvtTblSchema.getFilterValue();
+  		String sortField = pvtTblSchema.getSortField();
+  		String sortOrder = pvtTblSchema.getSortOrder();
   		String tableName = pvtTblSchema.getTableName();
   		List<String> pageLabelValues = new ArrayList<String>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
@@ -113,7 +117,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
   			pageLabelValues = null;
   			
 	  		//Executing the SQL query to get pivot table data without page label
-  			pvtTblData = dataSource.getPvtTblData(rowLabel, colLabel, function, valField, tableName);
+  			pvtTblData = dataSource.getPvtTblData(rowLabel, colLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
   		else
   		{
@@ -121,7 +125,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
   			pageLabelValues = dataSource.getPageLabelValues(pageLabel, tableName);
   			
   			//Executing the SQL query to get pivot table data with page label
-  			pvtTblData = dataSource.getPvtTblData(rowLabel, colLabel, pageLabel, function, valField, tableName);
+  			pvtTblData = dataSource.getPvtTblData(rowLabel, colLabel, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
 
   		//Creating Pivot Table with the fetched information
