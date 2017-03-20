@@ -41,6 +41,5 @@ You can ctrl-c to stop the process.
 
 ####Database Connection
 
-An online or offline database is required for using the application.
-For logging into the database, its URL, username and password (optional for some databases) must be provided.
-Once connected, all the tables stored in the database will be listed and can be used to generate pivot tables.
+A connection to an online or offline MySQL database is required for using the application. To enable this connection, MySQL JDBC connector JAR file should be placed in the classpath.
+For logging into the database, its URL, username and password (optional for some databases) must be provided. Once connected, all the tables stored in the database will be listed and can be used to generate pivot tables.
