@@ -108,11 +108,11 @@ const mapStateToProps = (state) => ({
     key: val.name
   })),
   selectedColumnLabels: state.tableSchema.selectedColumnLabels.map (val => val.name),
-  pageLabels: state.tableSchema.pageLabels.map( val => ({
+  pageLabels: [{text: '', value: null, key: -1}].concat(state.tableSchema.pageLabels.map( val => ({
     text: val.alias,
     value: val.name,
     key: val.name
-  })),
+  }))),
   selectedPageLabel: state.tableSchema.selectedPageLabel,
   functionList: state.tableSchema.functionList.map( val => ({
     text: val,
@@ -137,7 +137,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(columnLabelsChanged(value))
   },
   onPageLabelChanged: (e, {value}) => {
-    pageLabelChanged(value)
+    dispatch(pageLabelChanged(value))
   },
   onReset: () => {
     dispatch(resetSchema())

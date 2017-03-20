@@ -112,9 +112,9 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
   		List<String> pageLabelValues = new ArrayList<String>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
-  		if (pageLabel == null)
+  		if (pageLabel == null || pageLabel.trim().equals(""))
   		{
-  			pageLabelValues = null;
+  			pageLabelValues = new ArrayList<>(); // empty pagelabels
   			
 	  		//Executing the SQL query to get pivot table data without page label
   			pvtTblData = dataSource.getPvtTblData(rowLabel, colLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);

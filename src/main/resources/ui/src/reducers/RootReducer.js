@@ -57,15 +57,14 @@ const initialState = {
     selectedValue: '' //name of the value
   },
   pivotTableLoading: false,
-  // TODO normalize?
-  pivotTable: {
-    schema: {},
+  // 1 pivot table data per page
+  pivotTables: [/*{
     rowLabels: [],
     columnLabels: [],
     data: [],
-    pageLabels: [],
-    pageSelected: -1, // index of the selected page
-  },
+  }*/],
+  pageLabels: [],
+  pageSelected: -1, // index of the selected page
   infoMessage: '',
   errorMessage: ''
 }
@@ -83,60 +82,47 @@ const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
   data[x][y] = row[dataIndex]
 }
 
-const formatAPIDataToLocal = (schema, pageLabelValues, apiDataList) => {
-  // get the row labels, column labels, page labels
-  let rowSet = new Set()
-  let columnSet = new Set()
-  // use first one to get the rows and columns
-  const apiData = apiDataList[0]
-  apiData.forEach(row => {
-    row.forEach((element, idx) => {
-      if (idx === 0) { // idx < schema.rowLabels.length
-        rowSet.add(element)
-      } else if (idx === 1) {// idx < (schema.rowLabels.length + schema.columnLabels.length)
-        columnSet.add(element)
-      }
-      // could optimize if break here
-    })
-  })
-
-  const rows = Array.from(rowSet)
-  const columns = Array.from(columnSet)
-
-  const rowMap = rows.reduce((result, val, index) => {
-    result[val] = index;
-    return result;
-  }, {});
-
-  const columnMap = columns.reduce((result, val, index) => {
-    result[val] = index;
-  }, {})
-
-  const pivotTableData = {
-    schema,
-    rowLabels: rows,
-    columnLabels: columns,
-    pageLabels: pageLabelValues,
-    data: mapPivotTableDataToRender(apiDataList, schema, rowMap, columnMap, rows, columns),
-    pageSelected: pageLabelValues.length > 0 ? 0 : -1
-  }
-  console.log(pivotTableData)
-  return pivotTableData
-}
-
 // TODO make it generic for multiple rows
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
-const mapPivotTableDataToRender = (apiDataList, schema, rowMap, columnMap, rows, columns) => {
-  //console.log(schema)
-  apiDataList.map ( apiData => {
+const mapPivotTableDataToRender = (schema, apiDataList) => {
+  console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+  return apiDataList.map ( apiData => {
+
+    // get the row labels, column labels, page labels
+    let rowSet = new Set()
+    let columnSet = new Set()
+    // use first one to get the rows and columns
+    apiData.forEach(row => {
+      row.forEach((element, idx) => {
+        if (idx === 0) { // idx < schema.rowLabels.length
+          rowSet.add(element)
+        } else if (idx === 1) {// idx < (schema.rowLabels.length + schema.columnLabels.length)
+          columnSet.add(element)
+        }
+        // could optimize if break here
+      })
+    })
+
+    const rows = Array.from(rowSet)
+    const columns = Array.from(columnSet)
+
+    const rowMap = rows.reduce((result, val, index) => {
+      result[val] = index
+      return result
+    }, {})
+
+    const columnMap = columns.reduce((result, val, index) => {
+      result[val] = index
+      return result
+    }, {})
 
     // create an array of arrays filled with empty string
     // number of rows is the same as rowLabels and
     // columns is the same as column labels
     let data = rows.map( val => {
       let p = new Array(columns.length)
-      p.fill('')
+      p.fill(' ')
       return p
     })
 
@@ -148,8 +134,12 @@ const mapPivotTableDataToRender = (apiDataList, schema, rowMap, columnMap, rows,
       insertIn2D(rowMap, columnMap, row, rowIndex, data)
     })
 
-    // changing it so that it returns data
-    return data;
+    //console.log(data)
+    return {
+      rowLabels: rows,
+      columnLabels: columns,
+      data
+    };
   })
 }
 
@@ -207,14 +197,18 @@ const rootReducer = (state = initialState, action) => {
           possibleValues: [],
           selectedValue: ''
         },
-        pivotTable: initialState.pivotTable,
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: [],
         errorMessage: ''
       }
     case C.FETCH_RAW_REPORT_ERROR:
       return {...state,
         rawReportLoading: false,
         rawReport: initialState.rawReport,
-        pivotTable: initialState.pivotTable,
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: [],
         errorMessage: 'There was a problem fetching the raw report'
       }
     case C.DISCONNECT:
@@ -239,7 +233,9 @@ const rootReducer = (state = initialState, action) => {
           selectedFunction: '',
           selectedValue: '',
         },
-        pivotTable: initialState.pivotTable
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: []
       }
     case C.SCHEMA_COLUMN_LABELS_SELECTED:
       return {
@@ -256,7 +252,9 @@ const rootReducer = (state = initialState, action) => {
           selectedFunction: '',
           selectedValue: '',
         },
-        pivotTable: initialState.pivotTable
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: [],
       }
     case C.SCHEMA_PAGE_LABEL_SELECTED:
       return {
@@ -264,13 +262,15 @@ const rootReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           selectedPageLabel: action.value,
-          functionList: state.rawReport.columns.find( val => {
+          /*functionList: state.rawReport.columns.find( val => {
             return val.name === action.value
-          }).type === 'TYPE_NUMERIC' ? ['sum', 'count'] : ['count'],
+          }).type === 'TYPE_NUMERIC' ? ['sum', 'count'] : ['count'],*/
           selectedFunction: '',
           selectedValue: '',
         },
-        pivotTable: initialState.pivotTable
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: []
       }
     case C.SCHEMA_FUNCTION_SELECTED:
       return {
@@ -287,7 +287,9 @@ const rootReducer = (state = initialState, action) => {
           }),
           selectedValue: ''
         },
-        pivotTable: initialState.pivotTable
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: []
       }
     case C.SCHEMA_VALUE_SELECTED:
       return {
@@ -296,7 +298,9 @@ const rootReducer = (state = initialState, action) => {
           ...state.tableSchema,
           selectedValue: action.value
         },
-        pivotTable: initialState.pivotTable
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: []
       }
     case C.SCHEMA_RESET:
       return {
@@ -313,7 +317,9 @@ const rootReducer = (state = initialState, action) => {
           possibleValues: [],
           selectedValue: ''
         },
-        pivotTable: initialState.pivotTable
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: []
       }
     case C.GENERATE_PIVOT_TABLE:
       return {...state, pivotTableLoading: true}
@@ -321,22 +327,26 @@ const rootReducer = (state = initialState, action) => {
       return {...state,
         pivotTableLoading: false,
         // this function returns an array...
-        pivotTable: formatAPIDataToLocal(
+        pivotTables: mapPivotTableDataToRender(
           action.data.schema,
-          action.data.pageLabelValues,
           action.data.data
         ),
+        pageLabels: action.data.pageLabelValues,
+        pageSelected: 0,
         errorMessage: ''
       }
     case C.GENERATE_PIVOT_TABLE_ERROR:
-      return {...state, pivotTableLoading: false, pivotTable: initialState.pivotTable, errorMessage: 'Error generating pivot table'}
+      return {...state,
+        pivotTableLoading: false,
+        pivotTables: initialState.pivotTables,
+        pageSelected: -1,
+        pageLabels: [],
+        errorMessage: 'Error generating pivot table'
+      }
     case C.PIVOT_TABLE_PAGE_CHANGED:
       return {
         ...state,
-        pivotTable: {
-          ...state.pivotTable,
-          pageSelected: action.page
-        }
+        pageSelected: action.page
       }
     default:
       return state

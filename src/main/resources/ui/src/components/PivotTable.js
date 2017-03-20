@@ -1,53 +1,55 @@
 import React, {PropTypes} from 'react'
-import {Segment, Table, Label} from 'semantic-ui-react'
+import {Segment, Table, Label, Form} from 'semantic-ui-react'
 
 import {connect} from 'react-redux'
+
+import {pivotTablePageChanged} from '../actions/ActionCreators'
 
 const PivotTable = (props) => {
   const {
     isConnected,
-    pivotTable,
+    pivotTables,
     tableSelected,
     loading,
-    onPageChanged
+    onPageChanged,
+    pageSelected,
+    pageLabels
   } = props
-  if (!isConnected || !tableSelected || !pivotTable.schema || pivotTable.pageSelected === -1) {
+  if (!isConnected || !tableSelected || pivotTables.length === 0 || pageSelected === -1) {
     return <div></div>
   }
-  const {rowLabels, columnLabels, pageLabels, data, pageSelected} = pivotTable
+  const {rowLabels, columnLabels, data} = pivotTables[pageSelected]
   // concatenate rowlabel with data to use the same
   // (almost) algorithm as rendering the raw report
-  const pageValues = pageLabels.map ( (val, index) => ({
+  const pageOptions = pageLabels.map ( (val, index) => ({
     text: val,
     value: index,
     key: index
   }))
-  const rows = data[pageSelected].map ((row, idx) => {
+  const rows = data.map ((row, idx) => {
     return [rowLabels[idx]].concat(row)
   })
 
-  const pageDropDown = pageValues.length > 0 ? (
+  console.log('rows', rows)
+
+  const pageDropDown = pageOptions.length > 0 ? (
+    <div>
       <Form.Field>
         <label>Page</label>
         <Form.Dropdown
           value={pageSelected}
           onChange={onPageChanged}
-          options={pageValues}
+          options={pageOptions}
           placeholder="Select Page"/>
       </Form.Field>
+      <hr/>
+    </div>
     ) : null;
 
   return (
     <Segment loading={loading}>
       <Label attached="top">Pivot Table: {tableSelected}</Label>
-      <Form.Field>
-        <label>Page</label>
-        <Form.Dropdown disabled={selectedColumnLabels.length === 0}
-                       value={selectedPageLabel}
-                       onChange={onPageLabelChanged}
-                       options={pageLabels}
-                       placeholder="Select Page Label"/>
-      </Form.Field>
+      {pageDropDown}
       <div className="raw-report-table">
         <Table definition={true} celled={true}>
           <Table.Header>
@@ -55,7 +57,7 @@ const PivotTable = (props) => {
               <Table.HeaderCell/>
               {columnLabels.map( (it, idx) => {
                 return (
-                  <Table.HeaderCell key={idx}>{it}</Table.HeaderCell>
+                  <Table.HeaderCell key={idx}>{`${it}`}</Table.HeaderCell>
                 )
               })}
             </Table.Row>
@@ -81,17 +83,28 @@ const PivotTable = (props) => {
 
 PivotTable.propTypes = {
   isConnected: PropTypes.bool.isRequired,
-  pivotTable: PropTypes.object.isRequired,
+  pivotTables: PropTypes.arrayOf(PropTypes.object).isRequired,
   tableSelected: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
+  pageSelected: PropTypes.number.isRequired,
+  pageLabels: PropTypes.arrayOf(PropTypes.string),
   onPageChanged: PropTypes.func
 }
 
 const mapStateToProps = (state) => ({
   isConnected: state.connectedSuccessfully,
-  pivotTable: state.pivotTable,
+  pivotTables: state.pivotTables,
+  pageSelected: state.pageSelected,
+  pageLabels: state.pageLabels,
   tableSelected: state.selectedTable,
   loading: state.pivotTableLoading,
 })
 
-export default connect(mapStateToProps) (PivotTable)
+const mapDispatchToProps = (dispatch) => ({
+  // value contains the index of the page
+  onPageChanged: (e, {value}) => {
+    dispatch(pivotTablePageChanged(value))
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps) (PivotTable)
