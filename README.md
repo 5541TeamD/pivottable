@@ -43,3 +43,15 @@ You can ctrl-c to stop the process.
 
 A connection to an online or offline MySQL database is required for using the application. To enable this connection, MySQL JDBC connector JAR file should be placed in the classpath.
 For logging into the database, its URL, username and password (optional for some databases) must be provided. Once connected, all the tables stored in the database will be listed and can be used to generate pivot tables.
+
+####Build a jar file
+
+Once the UI is built, it is possible to package all dependencies (including the mysql jdbc connector) in a single jar file. There is a gradle task `fatJar` that will manage that.
+```
+./gradlew fatJar
+```
+It produces a file `pivottable-all-1.0-SNAPSHOT.jar` in the `build/libs` directory.
+Assuming `java` is in the path, the following command will run the server on port 4567:
+```
+java -jar pivottable-all-1.0-SNAPSHOT.jar
+```
