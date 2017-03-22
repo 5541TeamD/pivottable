@@ -1,3 +1,7 @@
+plugins {
+    id 'com.moowork.node' version '1.1.1'
+}
+
 group 'ca.concordia'
 version '1.0-SNAPSHOT'
 
@@ -15,6 +19,13 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'org.slf4j:slf4j-simple:1.7.21'
     compile 'mysql:mysql-connector-java:5.1.16'
+}
+
+node {
+    version = '7.7.4'
+    download = true
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.projectDir}/src/main/resources/ui")
 }
 
 sourceSets {
@@ -43,4 +54,16 @@ task fatJar(type: Jar) {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 
+}
+
+task appNpmInstall(type: NpmTask) {
+    description = 'Installs dependencies from package.json'
+    workingDir = file("${project.projectDir}/src/main/resources/ui")
+    args = ['install']
+}
+
+task appNpmRunBuild(type: NpmTask) {
+    description = 'Builds the UI code'
+    workingDir = file("${project.projectDir}/src/main/resources/ui")
+    args = ['run', 'build']
 }
