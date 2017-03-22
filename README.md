@@ -1,14 +1,14 @@
 # Pivot Table
 This is a project for our Software Engineering class.
 
-###Getting started
+### Getting started
 You will need Java (jdk 8) and nodejs to build the project.
 
 Clone the repository:
 ```
 git clone https://github.com/5541TeamD/pivottable.git
 ```
-####Build the UI project
+#### Build the UI project
 Go to the ui project directory:  
 From the project folder
 ```
@@ -26,7 +26,7 @@ npm run build
 ```
 This will create a build folder under `src/main/resources/ui`
 
-####Launch the application
+#### Launch the application
 
 I created a Gradle task called `launchServer`
 
@@ -39,12 +39,12 @@ in the case of powershell).
 This will build the java project and run the `Application.main` function.
 You can ctrl-c to stop the process.
 
-####Database Connection
+#### Database Connection
 
 A connection to an online or offline MySQL database is required for using the application. To enable this connection, MySQL JDBC connector JAR file should be placed in the classpath.
 For logging into the database, its URL, username and password (optional for some databases) must be provided. Once connected, all the tables stored in the database will be listed and can be used to generate pivot tables.
 
-####Build a jar file
+#### Build a jar file
 
 Once the UI is built, it is possible to package all dependencies (including the mysql jdbc connector) in a single jar file. There is a gradle task `fatJar` that will manage that.
 ```
