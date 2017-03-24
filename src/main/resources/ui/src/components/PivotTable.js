@@ -30,7 +30,7 @@ const PivotTable = (props) => {
     return [rowLabels[idx]].concat(row)
   })
 
-  console.log('rows', rows)
+  //console.log('rows', rows)
 
   const pageDropDown = pageOptions.length > 0 ? (
     <div>

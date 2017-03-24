@@ -99,13 +99,37 @@ export const valueChanged = (value) => ({
   value
 })
 
+export const filterFieldSelected = (value) => ({
+  type: C.FILTER_FIELD_SELECTED,
+  value
+})
+
+export const filterValueSelected = (value) => ({
+  type: C.FILTER_VALUE_SELECTED,
+  value
+})
+
+export const sortFieldSelected = (value) => ({
+  type: C.SORT_FIELD_SELECTED,
+  value
+})
+
+export const sortOrderSelected = (value) => ({
+  type: C.SORT_ORDER_SELECTED,
+  value
+})
+
 const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
   tableName: selectedTable,
   columnLabels: tableSchema.selectedColumnLabels.map ( it => it.name),
   rowLabels: tableSchema.selectedRowLabels.map (it => it.name),
   pageLabel: tableSchema.selectedPageLabel,
   functionName: tableSchema.selectedFunction,
-  valueField: tableSchema.selectedValue
+  valueField: tableSchema.selectedValue,
+  filterField: tableSchema.selectedFilterField,
+  filterValue: tableSchema.filterValue,
+  sortField: tableSchema.selectedSortField,
+  sortOrder: tableSchema.sortOrder,
 })
 
 export const generatePivotTable = () => async(dispatch, getState) => {

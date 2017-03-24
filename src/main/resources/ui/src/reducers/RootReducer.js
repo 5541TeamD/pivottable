@@ -25,6 +25,13 @@ const C = {
   GENERATE_PIVOT_TABLE_SUCCESS: 'GENERATE_PIVOT_TABLE_SUCCESS',
   GENERATE_PIVOT_TABLE_ERROR: 'GENERATE_PIVOT_TABLE_ERROR',
   PIVOT_TABLE_PAGE_CHANGED: 'PIVOT_TABLE_PAGE_CHANGED',
+  FETCH_FILTER_FIELDS: 'FETCH_FILTER_FIELDS',
+  FETCH_FILTER_FIELDS_SUCCESS: 'FETCH_FILTER_FIELDS_SUCCESS',
+  FETCH_FILTER_FIELDS_FAILURE: 'FETCH_FILTER_FIELDS_FAILURE',
+  SORT_FIELD_SELECTED: 'SORT_FIELD_SELECTED',
+  SORT_ORDER_SELECTED: 'SORT_ORDER_SELECTED',
+  FILTER_FIELD_SELECTED: 'FILTER_FIELD_SELECTED',
+  FILTER_VALUE_SELECTED: 'FILTER_VALUE_SELECTED',
 }
 
 export {C}
@@ -51,10 +58,16 @@ const initialState = {
     selectedColumnLabels: [],
     pageLabels: [],
     selectedPageLabel: '', //name of the field
-    functionList: ['count', 'sum'],
+    functionList: ['count', 'sum'], // TODO add more functions
     selectedFunction: '', //name of the function
     possibleValues: [],
-    selectedValue: '' //name of the value
+    selectedValue: '', //name of the value
+    filterFields: [],
+    selectedFilterField: '',
+    filterValue: '',
+    sortFields: [],
+    selectedSortField: '',
+    sortOrder: 'asc',
   },
   pivotTableLoading: false,
   // 1 pivot table data per page
@@ -86,7 +99,7 @@ const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
 const mapPivotTableDataToRender = (schema, apiDataList) => {
-  console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+  //console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
   return apiDataList.map ( apiData => {
 
     // get the row labels, column labels, page labels
@@ -186,6 +199,7 @@ const rootReducer = (state = initialState, action) => {
         rawReport: action.data,
         rawReportLoading: false,
         tableSchema: {
+          ...initialState.tableSchema,
           rowLabels: action.data.columns,
           selectedRowLabels: [],
           columnLabels: [],
@@ -195,7 +209,8 @@ const rootReducer = (state = initialState, action) => {
           functionList: initialState.tableSchema.functionList,
           selectedFunction: '',
           possibleValues: [],
-          selectedValue: ''
+          selectedValue: '',
+          filterFields: action.data.columns
         },
         pivotTables: initialState.pivotTables,
         pageSelected: -1,
@@ -218,13 +233,12 @@ const rootReducer = (state = initialState, action) => {
       }
     case C.SCHEMA_ROW_LABELS_SELECTED:
       //console.log('Called the reducer for SCHEMA_ROW_LABELS_SELECTED')
+      const newSelectedRowLabels = state.tableSchema.rowLabels.filter(val => action.value.indexOf(val.name) !== -1)
       return {
         ...state,
         tableSchema: {
           ...state.tableSchema,
-          selectedRowLabels: state.tableSchema.rowLabels.filter(val => {
-            return action.value.indexOf(val.name) !== -1
-          }),
+          selectedRowLabels: newSelectedRowLabels,
           columnLabels: state.tableSchema.rowLabels.filter(val => {
             return action.value.indexOf(val.name) === -1
           }),
@@ -232,6 +246,10 @@ const rootReducer = (state = initialState, action) => {
           selectedPageLabel: '',
           selectedFunction: '',
           selectedValue: '',
+          sortFields: newSelectedRowLabels,
+          selectedSortField: '',
+          //filterFields: [],
+          selectedFilterField: '',
         },
         pivotTables: initialState.pivotTables,
         pageSelected: -1,
@@ -279,6 +297,7 @@ const rootReducer = (state = initialState, action) => {
           ...state.tableSchema,
           selectedFunction: action.value,
           possibleValues: state.tableSchema.pageLabels.filter(val => {
+            // TODO action.value in [list of functions requiring numeric value]
             if ((action.value) === 'sum') {
               return val.type === 'TYPE_NUMERIC'
             }
@@ -306,6 +325,7 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         tableSchema: {
+          ...initialState.tableSchema,
           rowLabels: state.rawReport.columns,
           selectedRowLabels: [],
           columnLabels: [],
@@ -348,6 +368,50 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         pageSelected: action.page
       }
+    case C.SORT_ORDER_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          sortOrder: action.value
+        },
+        pivotTables: initialState.pivotTables,
+      }
+    case C.SORT_FIELD_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedSortField: action.value
+        },
+        pivotTables: initialState.pivotTables,
+      }
+    case C.FILTER_FIELD_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          selectedFilterField: action.value
+        }
+      }
+
+    case C.FILTER_VALUE_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          filterValue: action.value
+        },
+        pivotTables: initialState.pivotTables,
+      }
+      // TODO might not need the 3 action types below
+    case C.FETCH_FILTER_FIELDS_FAILURE:
+      return {
+        ...state,
+        errorMsg: 'Some error occurred while fetching filter fields'
+      }
+    case C.FETCH_FILTER_FIELDS_SUCCESS:
+    case C.FETCH_FILTER_FIELDS:
     default:
       return state
   }

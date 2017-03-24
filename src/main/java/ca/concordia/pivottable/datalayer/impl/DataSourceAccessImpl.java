@@ -384,11 +384,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
   		//Generating the SQL query clause for filtering resulting data
-  		if ((filterField != null) && (filterValue != null))
+  		if ((filterField != null && filterField.length() > 0) && (filterValue != null && filterValue.length() > 0))
   			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
   		
   		//Generating the SQL query clause for sorting resulting data
-  		if ((sortField != null) && (sortOrder != null))
+  		if ((sortField != null && sortField.length() > 0) && (sortOrder != null && sortField.length() > 0))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;
    		
   		//Generating the SQL query to get pivot table data without page label
@@ -484,11 +484,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
   		//Generating the SQL query clause for filtering resulting data
-  		if ((filterField != null) && (filterValue != null))
+  		if ((filterField != null && filterField.length() > 0) && (filterValue != null && filterField.length() > 0))
   			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
   		
   		//Generating the SQL query clause for sorting resulting data
-  		if ((sortField != null) && (sortOrder != null))
+  		if ((sortField != null && sortField.length() > 0 ) && (sortOrder != null && sortOrder.length() > 0))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
   		//Fetching all the values of the selected page label column

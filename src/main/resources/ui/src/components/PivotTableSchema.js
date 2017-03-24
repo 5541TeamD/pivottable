@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Segment, Form, Button, Label} from 'semantic-ui-react'
+import {Segment, Form, Button, Label, Input} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 
 import {rowLabelsChanged,
@@ -9,7 +9,11 @@ import {rowLabelsChanged,
   resetSchema,
   functionChanged,
   valueChanged,
-  generatePivotTable
+  generatePivotTable,
+  filterFieldSelected,
+  filterValueSelected,
+  sortFieldSelected,
+  sortOrderSelected
 } from '../actions/ActionCreators'
 
 const PivotTableSchema = (props) => {
@@ -17,7 +21,17 @@ const PivotTableSchema = (props) => {
     selectedColumnLabels, pageLabels, selectedPageLabel,
     functionList, selectedFunction, possibleValues, selectedValue,
     onRowLabelsChanged, onColumnLabelsChanged, onPageLabelChanged, onReset,
-    onFunctionChanged, onValueChanged, onGeneratePivotTable
+    onFunctionChanged, onValueChanged, onGeneratePivotTable,
+    filterFields,
+    selectedFilterField,
+    filterValue,
+    sortFields,
+    selectedSortField,
+    sortOrder,
+    onFilterFieldSelected,
+    onFilterValueChanged,
+    onSortFieldSelected,
+    onSortOrderSelected
   } = props
 
   return isConnected ? (
@@ -49,14 +63,46 @@ const PivotTableSchema = (props) => {
                            options={pageLabels}
                            placeholder="Select Page Label"/>
           </Form.Field>
-          {/*
-          <Form.Field>
-            <label>Report Filter</label>
-            <Form.Dropdown disabled={true}
-                           onChange={onPageLabelChanged}
-                           placeholder="Select Report Filter"/>
-          </Form.Field>
-           */}
+          <Form.Group inline>
+            <Form.Field>
+              <label>Report Filter</label>
+              <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+                             onChange={onFilterFieldSelected}
+                             options={filterFields}
+                             value={selectedFilterField}
+                             placeholder="Select Report Filter"/>
+            </Form.Field>
+            <Form.Field>
+              <label>Filter Value</label>
+              <Input disabled={selectedFilterField === ''}
+                          type="text"
+                          onChange={onFilterValueChanged}
+                          value={filterValue}
+                          placeholder="Select Filter Value"
+              >
+              </Input>
+            </Form.Field>
+          </Form.Group>
+          <Form.Group inline>
+            <Form.Field>
+              <label>Sort Field</label>
+              <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+                             onChange={onSortFieldSelected}
+                             options={sortFields}
+                             value={selectedSortField}
+                             placeholder="Select Sort Field" />
+            </Form.Field>
+            <Form.Field>
+              <label>Sort Order</label>
+              <Form.Dropdown disabled={selectedSortField === ''}
+                             onChange={onSortOrderSelected}
+                             value={sortOrder}
+                             options={[
+                               {key: 0, text: 'Ascending', value: 'asc'},
+                               {key: 1, text: 'Descending', value: 'desc'}
+                               ]}/>
+            </Form.Field>
+          </Form.Group>
           <Form.Field>
             <label>Function</label>
             <Form.Dropdown disabled={selectedColumnLabels.length === 0}
@@ -94,7 +140,7 @@ const PivotTableSchema = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  loading: state.rawReportLoading,
+  loading: state.rawReportLoading || state.pivotTableLoading,
   isConnected: state.connectedSuccessfully,
   rowLabels: state.tableSchema.rowLabels.map ( val => ({
     text: val.alias,
@@ -125,7 +171,22 @@ const mapStateToProps = (state) => ({
     key: val.name,
     value: val.name
   })),
-  selectedValue: state.tableSchema.selectedValue
+  selectedValue: state.tableSchema.selectedValue,
+  // TODO review below ^^;
+  filterFields: ([{name: '', alias: ''}].concat(state.tableSchema.filterFields)).map( (val,idx) => ({
+    text: val.alias,
+    key: idx,
+    value: val.name
+  })),
+  selectedFilterField: state.tableSchema.selectedFilterField,
+  filterValue: state.tableSchema.filterValue,
+  sortFields: ([{name: '', alias: ''}].concat(state.tableSchema.sortFields)).map( (val,idx) => ({
+    text: val.alias,
+    key: idx,
+    value: val.name
+  })),
+  selectedSortField: state.tableSchema.selectedSortField,
+  sortOrder: state.tableSchema.sortOrder
 })
 
 
@@ -147,6 +208,18 @@ const mapDispatchToProps = (dispatch) => ({
   },
   onValueChanged: (e, {value}) => {
     dispatch(valueChanged(value))
+  },
+  onFilterFieldSelected: (e, {value}) => {
+    dispatch(filterFieldSelected(value))
+  },
+  onFilterValueChanged: (e, {value}) => {
+    dispatch(filterValueSelected(value))
+  },
+  onSortFieldSelected: (e, {value}) => {
+    dispatch(sortFieldSelected(value))
+  },
+  onSortOrderSelected: (e, {value}) => {
+    dispatch(sortOrderSelected(value))
   },
   onGeneratePivotTable: () => {
     dispatch(generatePivotTable())
