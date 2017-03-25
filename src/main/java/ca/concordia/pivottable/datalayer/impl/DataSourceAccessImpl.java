@@ -3,9 +3,11 @@ package ca.concordia.pivottable.datalayer.impl;
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Set;
 
 /**
  * Handles all the operations to be performed on the data source.
@@ -373,24 +375,54 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		}
   		
   		//Proceeding, if database connection is successful
+  		String sortClause = " ";
+  		String filterClause = " ";
+  		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Generating the SQL query clause for filtering resulting data
+  		if ((filterField != null) && (filterValue != null))
+  			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
+  		
+  		//Generating the SQL query clause for sorting resulting data
+  		if ((sortField != null) && (sortOrder != null))
+  			sortClause = " ORDER BY " + sortField + " " + sortOrder;
+  		
+  		if (function.equalsIgnoreCase("Product")
+  			|| function.equalsIgnoreCase("Standard Deviation")
+  			|| function.equalsIgnoreCase("Variance"))
+			//Generating and executing the SQL query where summary column values do not get calculated in the database
+			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, rowLabel, colLabel, function, valField, tableName, filterClause, sortClause);
+		else
+			//Generating and executing the SQL query where summary column values get calculated in the database
+			pvtTblData = executeDBCalculatedQuery(dbConnection, rowLabel, colLabel, function, valField, tableName, filterClause, sortClause);
+  		
+  		disconnect(dbConnection);
+  		
+  		return pvtTblData;
+  	}
+  	
+  	/**
+  	 * Generates and executes an SQL query (without page labels) where the summary column values get calculated in the database.
+  	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
+  	 * @param 	rowLabel		Row label selected as part of pivot table schema
+  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param 	function		Mathematical function selected as part of pivot table schema
+  	 * @param 	valField		Value field selected as part of pivot table schema
+  	 * @param 	tableName		Raw report table name
+  	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
+  	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
+  	 * @return	Pivot table data fetched from the database
+  	 */
+  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
   		ResultSet rsPvtTblData = null;
   		ResultSetMetaData rsmdPvtTblData = null;
   		int fieldCount = 0;
-  		String sortClause = " ";
-  		String filterClause = " ";
   		List<List<Object>> pageData = new ArrayList<List<Object>>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
-  		//Generating the SQL query clause for filtering resulting data
-  		if ((filterField != null && filterField.length() > 0) && (filterValue != null && filterValue.length() > 0))
-  			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
-  		
-  		//Generating the SQL query clause for sorting resulting data
-  		if ((sortField != null && sortField.length() > 0) && (sortOrder != null && sortField.length() > 0))
-  			sortClause = " ORDER BY " + sortField + " " + sortOrder;
-   		
   		//Generating the SQL query to get pivot table data without page label
   		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
   									+ colLabel + ", "
@@ -442,7 +474,111 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
   		
-  		disconnect(dbConnection);
+  		return pvtTblData;
+  	}
+  	
+  	/**
+  	 * Generates and executes an SQL query (without page labels) where the summary column values do not get calculated in the database.
+  	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
+  	 * @param 	rowLabel		Row label selected as part of pivot table schema
+  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param 	function		Mathematical function selected as part of pivot table schema
+  	 * @param 	valField		Value field selected as part of pivot table schema
+  	 * @param 	tableName		Raw report table name
+  	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
+  	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
+  	 * @return	Pivot table data fetched from the database
+  	 */
+  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	{
+  		String pvtTblDataQuery = null;  		
+  		Statement stmtPvtTblData = null;
+  		ResultSet rsPvtTblData = null;
+  		ResultSetMetaData rsmdPvtTblData = null;
+  		int fieldCount = 0;
+  		Set<List<Object>> rowColList = new HashSet<List<Object>>();
+  		List<List<Object>> pageData = new ArrayList<List<Object>>();
+  		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Generating the SQL query to get pivot table data without page label
+  		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
+  									+ colLabel + ", "
+  									+ valField + " "
+  							+ " FROM ( SELECT * FROM " + tableName
+  										+ filterClause
+										+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
+							+ sortClause + ";";
+  		
+  		//Executing the SQL query
+  		try
+  		{
+  			stmtPvtTblData = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+  			log.info("Running query " + pvtTblDataQuery);
+  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
+  			
+  			//Fetching field count for the results returned by the SQL query executed
+  			rsmdPvtTblData = rsPvtTblData.getMetaData();
+  			fieldCount = rsmdPvtTblData.getColumnCount();
+  			
+  			//Fetching pivot table row and column label values
+  			while (rsPvtTblData.next())
+  			{
+  				List<Object> recordRowCol = new ArrayList<Object>();
+  				
+  				for (int i=1; i<fieldCount; i++)
+  				{
+  					recordRowCol.add(rsPvtTblData.getObject(i));
+  				}
+  				
+  				rowColList.add(recordRowCol);
+  			}
+  			
+  			//Calculating function field values
+  			int i = 0;
+  			for (List<Object> recordRowCol : rowColList)
+  			{
+  				double result = 0;
+  				List<Integer> valueList = new ArrayList<Integer>();
+  			
+  				rsPvtTblData.beforeFirst();
+  				while (rsPvtTblData.next())
+  				{
+  					boolean getValue = true;
+  					for (i=1; i<fieldCount; i++)
+  	  				{
+  	  					if (!rsPvtTblData.getObject(i).equals(recordRowCol.get(i-1)))
+  	  					{
+  	  						getValue = false;
+  	  						break;
+  	  					}
+  	  				}
+  					
+  					if (getValue)
+  					{
+  						int currValue = (Integer)rsPvtTblData.getObject(i);
+  						valueList.add(currValue);
+  					}
+  				}
+  				
+  				result = calcFunctionValue(function, valueList);
+  				recordRowCol.add(fieldCount-1, result);
+  				pageData.add(recordRowCol);
+  			}
+  			
+  			//Storing entire pivot table data as the first page since there is only one page in this case
+  			pvtTblData.add(pageData);
+  			
+  			rsPvtTblData.close();
+  			stmtPvtTblData.close();
+  		}
+  		catch (SQLException pvtTblDataSQLExcpn)
+  		{
+  			stmtPvtTblData = null;
+  			rsPvtTblData = null;
+  			rsmdPvtTblData = null;
+  			pvtTblData = null;
+  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+  		}
   		
   		return pvtTblData;
   	}
@@ -473,27 +609,58 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		}
   		
   		//Proceeding, if database connection is successful
-  		String pvtTblDataQuery = null;
+  		String sortClause = " ";
+  		String filterClause = " ";
+  		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Generating the SQL query clause for filtering resulting data
+  		if ((filterField != null) && (filterValue != null))
+  			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
+  		
+  		//Generating the SQL query clause for sorting resulting data
+  		if ((sortField != null) && (sortOrder != null))
+  			sortClause = " ORDER BY " + sortField + " " + sortOrder;  		
+  		
+  		if (function.equalsIgnoreCase("Product")
+  			|| function.equalsIgnoreCase("Standard Deviation")
+  			|| function.equalsIgnoreCase("Variance"))
+			//Generating and executing the SQL query where summary column values do not get calculated in the database
+			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, rowLabel, colLabel, pageLabel, function, valField, tableName, filterClause, sortClause);
+		else
+			//Generating and executing the SQL query where summary column values get calculated in the database
+			pvtTblData = executeDBCalculatedQuery(dbConnection, rowLabel, colLabel, pageLabel, function, valField, tableName, filterClause, sortClause);
+  		
+  		disconnect(dbConnection);
+  		
+  		return pvtTblData;
+  	}
+  	
+  	/**
+  	 * Generates and executes an SQL query (with page labels) where the summary column values get calculated in the database.
+  	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
+  	 * @param 	rowLabel		Row label selected as part of pivot table schema
+  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param	pageLabel		Page label selected as part of pivot table schema
+  	 * @param 	function		Mathematical function selected as part of pivot table schema
+  	 * @param 	valField		Value field selected as part of pivot table schema
+  	 * @param 	tableName		Raw report table name
+  	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
+  	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
+  	 * @return	Pivot table data fetched from the database
+  	 */
+  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	{
+  		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
   		ResultSet rsPvtTblData = null;
   		ResultSetMetaData rsmdPvtTblData = null;
   		int fieldCount = 0;
-  		String sortClause = " ";
-  		String filterClause = " ";
   		List<String> pageLabelValues = new ArrayList<String>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
-  		//Generating the SQL query clause for filtering resulting data
-  		if ((filterField != null && filterField.length() > 0) && (filterValue != null && filterField.length() > 0))
-  			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
-  		
-  		//Generating the SQL query clause for sorting resulting data
-  		if ((sortField != null && sortField.length() > 0 ) && (sortOrder != null && sortOrder.length() > 0))
-  			sortClause = " ORDER BY " + sortField + " " + sortOrder;
-  		
   		//Fetching all the values of the selected page label column
   		pageLabelValues = getPageLabelValues(pageLabel, tableName);
-		
+  		
   		if (pageLabelValues != null) {
 			//Fetching pivot table data per page
 	  		for (String pageValue : pageLabelValues) 
@@ -554,9 +721,188 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  		}
   		}
   		
-  		disconnect(dbConnection);
-  		
   		return pvtTblData;
+  	}
+  	
+  	/**
+  	 * Generates and executes an SQL query (with page labels) where the summary column values do not get calculated in the database.
+  	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
+  	 * @param 	rowLabel		Row label selected as part of pivot table schema
+  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param	pageLabel		Page label selected as part of pivot table schema
+  	 * @param 	function		Mathematical function selected as part of pivot table schema
+  	 * @param 	valField		Value field selected as part of pivot table schema
+  	 * @param 	tableName		Raw report table name
+  	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
+  	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
+  	 * @return	Pivot table data fetched from the database
+  	 */
+  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	{
+  		String pvtTblDataQuery = null;  		
+  		Statement stmtPvtTblData = null;
+  		ResultSet rsPvtTblData = null;
+  		ResultSetMetaData rsmdPvtTblData = null;
+  		int fieldCount = 0;
+  		List<String> pageLabelValues = new ArrayList<String>();
+  		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Fetching all the values of the selected page label column
+  		pageLabelValues = getPageLabelValues(pageLabel, tableName);
+  		
+  		if (pageLabelValues != null) 
+  		{
+			//Fetching pivot table data per page
+	  		for (String pageValue : pageLabelValues) 
+	  		{
+	  			//Generating the page label selection clause
+	  	  		String pageLabelClause;
+	  	  		if (filterClause.trim().isEmpty())
+	  	  			pageLabelClause = " WHERE " + pageLabel + " = \'" + pageValue + "\' ";
+	  	  		else
+	  	  			pageLabelClause = " AND " + pageLabel + " = \'" + pageValue + "\' ";
+	  			
+	  			//Generating the SQL query to get pivot table data for one page label value
+	  	  		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
+	  	  									+ colLabel + ", "
+	  	  									+ valField + " "
+	  	  							+ " FROM ( SELECT * FROM " + tableName
+	  	  										+ filterClause
+	  	  										+ pageLabelClause
+	  											+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
+	  								+ sortClause + ";";
+	  	  		
+	  	  		//Executing the SQL query
+	  	  		try
+	  	  		{
+	  	  			stmtPvtTblData = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	  	  			log.info("Running query " + pvtTblDataQuery);
+	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
+	  	  			
+	  	  			//Fetching field count for the results returned by the SQL query executed
+	  	  			rsmdPvtTblData = rsPvtTblData.getMetaData();
+	  	  			fieldCount = rsmdPvtTblData.getColumnCount();
+	  	  			
+	  	  			//Fetching pivot table row and column label values for one page
+	  	  			List<List<Object>> pageData = new ArrayList<List<Object>>();
+	  	  			Set<List<Object>> rowColList = new HashSet<List<Object>>();
+	  	  		
+	  	  			while (rsPvtTblData.next())
+	  	  			{
+	  	  				List<Object> recordRowCol = new ArrayList<Object>();
+	  	  				
+	  	  				for (int i=1; i<fieldCount; i++)
+	  	  				{
+	  	  					recordRowCol.add(rsPvtTblData.getObject(i));
+	  	  				}
+	  	  				
+	  	  				rowColList.add(recordRowCol);
+	  	  			}
+	  	  			
+	  	  			//Calculating function field values
+	  	  			int i = 0;
+	  	  			for (List<Object> recordRowCol : rowColList)
+	  	  			{
+	  	  				double result = 0;
+	  	  				List<Integer> valueList = new ArrayList<Integer>();
+	  	  			
+	  	  				rsPvtTblData.beforeFirst();
+	  	  				while (rsPvtTblData.next())
+	  	  				{
+	  	  					boolean getValue = true;
+	  	  					for (i=1; i<fieldCount; i++)
+	  	  	  				{
+	  	  	  					if (!rsPvtTblData.getObject(i).equals(recordRowCol.get(i-1)))
+	  	  	  					{
+	  	  	  						getValue = false;
+	  	  	  						break;
+	  	  	  					}
+	  	  	  				}
+	  	  					
+	  	  					if (getValue)
+	  	  					{
+	  	  						int currValue = (Integer)rsPvtTblData.getObject(i);
+	  	  						valueList.add(currValue);
+	  	  					}
+	  	  				}
+	  	  				
+	  	  				result = calcFunctionValue(function, valueList);
+	  	  				recordRowCol.add(fieldCount-1, result);
+	  	  				pageData.add(recordRowCol);
+	  	  			}
+	  	  			
+	  	  			//Adding data for this particular page to the complete pivot table data set
+	  	  			pvtTblData.add(pageData);
+	  	  			
+	  	  			rsPvtTblData.close();
+	  	  			stmtPvtTblData.close();
+	  	  		}
+	  	  		catch (SQLException pvtTblDataSQLExcpn)
+	  	  		{
+	  	  			stmtPvtTblData = null;
+	  	  			rsPvtTblData = null;
+	  	  			rsmdPvtTblData = null;
+	  	  			pvtTblData = null;
+	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+	  	  		}
+	  		}
+  		}
+	  
+  		return pvtTblData;
+  	}
+  	  	
+  	/**
+  	 * Calculates different summary function values.
+  	 * @param 	functionName		Name of the function to be calculated
+  	 * @param 	valueList			List of values to be used in calculation
+  	 * @return	The result calculated
+  	 */
+  	private double calcFunctionValue(String functionName, List<Integer> valueList)
+  	{
+  		double result = 0;
+  		
+  		if (functionName.equalsIgnoreCase("Product"))
+  		{
+  			result = 1;
+  			for (int value : valueList)
+  				result *= value;
+  		}
+  		else if (functionName.equalsIgnoreCase("Variance"))
+  		{
+  			double sum = 0;
+  			for (int value : valueList)
+  				sum += value; 
+  			
+  			double avg = (sum/valueList.size());
+  			
+  			double sumSqrDiff = 0;  			
+  			for (int value : valueList)
+  			{
+  				double sqrDiff = (Math.pow((value - avg), 2));
+  				sumSqrDiff += sqrDiff; 
+  			}
+  			
+  			result = (sumSqrDiff/valueList.size());
+  		}
+  		else if (functionName.equalsIgnoreCase("Standard Deviation"))
+  		{
+  			double sum = 0;
+  			for (int value : valueList)
+  				sum += value; 
+  			
+  			double avg = (sum/valueList.size());
+  			
+  			double sumSqrDiff = 0;  			
+  			for (int value : valueList)
+  			{
+  				double sqrDiff = (Math.pow((value - avg), 2));
+  				sumSqrDiff += sqrDiff; 
+  			}
+  			
+  			result = (Math.sqrt((sumSqrDiff/valueList.size())));
+  		}
+  		
+  		return result;
   	}
   	
   	/**
