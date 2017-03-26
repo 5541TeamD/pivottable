@@ -95,56 +95,79 @@ const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
   data[x][y] = row[dataIndex]
 }
 
+const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, columnLabels, dataIndex, data) => {
+  const x = rowMaps.reduce( (sum, rowMap, index) => {
+    const sizeOfNext = (index+1) < (rowLabels.length) ? rowLabels[index+1].length : 1;
+    return sum + rowMap[row[index]]*sizeOfNext
+  }, 0);
+  const y = columnMaps.reduce( (sum, columnMap, index) => {
+    const sizeOfNext = (index+1) < columnLabels.length ? columnLabels[index+1].length : 1;
+    return sum + columnMap[row[index+rowLabelsLength]]*sizeOfNext
+  }, 0);
+  //console.log(`x: $x, y: $y, data: ${row[dataIndex]}`);
+  data[x][y] = row[dataIndex];
+};
+
 // TODO make it generic for multiple rows
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
 const mapPivotTableDataToRender = (schema, apiDataList) => {
-  //console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+  console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+
+
   return apiDataList.map ( apiData => {
 
-    // get the row labels, column labels, page labels
-    let rowSet = new Set()
-    let columnSet = new Set()
+    // get the row labels, column labels (page labels are handled in the reduce)
+    let rowSets = schema.rowLabels.map (it => new Set())
+    let columnSets = schema.columnLabels.map (it => new Set())
     // use first one to get the rows and columns
-    apiData.forEach(row => {
+    apiData.forEach( row => {
       row.forEach((element, idx) => {
-        if (idx === 0) { // idx < schema.rowLabels.length
-          rowSet.add(element)
-        } else if (idx === 1) {// idx < (schema.rowLabels.length + schema.columnLabels.length)
-          columnSet.add(element)
+        if (idx < schema.rowLabels.length) {
+          rowSets[idx].add(element)
+        } else if (idx >= schema.rowLabels.length && idx < (schema.rowLabels.length + schema.columnLabels.length)) {
+          columnSets[idx-schema.rowLabels.length].add(element)
         }
-        // could optimize if break here
+        // could optimize one loop cycle if break here in traditional for loop (vs forEach loop)
       })
     })
 
-    const rows = Array.from(rowSet)
-    const columns = Array.from(columnSet)
+    const rows = rowSets.map (rowSet => Array.from(rowSet))
+    const columns = columnSets.map (columnSet => Array.from(columnSet))
 
-    const rowMap = rows.reduce((result, val, index) => {
-      result[val] = index
-      return result
-    }, {})
+    const rowMaps = rows.map ( rowSetArray => rowSetArray.reduce((result, val, index) => {
+        result[val] = index
+        return result
+      }, {})
+    )
 
-    const columnMap = columns.reduce((result, val, index) => {
-      result[val] = index
-      return result
-    }, {})
+    const columnMaps = columns.map( columnSetArray => columnSetArray.reduce((result, val, index) => {
+        result[val] = index
+        return result
+      }, {})
+    )
 
     // create an array of arrays filled with empty string
-    // number of rows is the same as rowLabels and
-    // columns is the same as column labels
-    let data = rows.map( val => {
+    const gridRows = rows.reduce ( (product, r) => product*r.length, 1);
+    const gridColumns = columns.reduce( (product, c) => product*c.length, 1);
+    let data = new Array(gridRows)
+    data.fill(new Array(gridColumns))
+    data.forEach (col => col.fill(' '));
+    /*let data = rows.map( val => {
       let p = new Array(columns.length)
       p.fill(' ')
       return p
-    })
-
-
+    })*/
+    console.log('initial data is:', data)
+    console.log('rowMaps', rowMaps)
+    console.log('columnMaps', columnMaps)
     // insert data
-    apiData.forEach((row, idx) => {
-      const rowIndex = (schema.rowLabels.length + schema.rowLabels.length)
+    apiData.forEach( row => {
+      const rowIndex = (schema.rowLabels.length + schema.columnLabels.length)
       // single label on row and column for now
-      insertIn2D(rowMap, columnMap, row, rowIndex, data)
+      // insertIn2D(rowMap, columnMap, row, rowIndex, data)
+      // generic one
+      insertInGeneric(rowMaps, columnMaps, row, schema.rowLabels.length, rows, columns, rowIndex, data)
     })
 
     //console.log(data)

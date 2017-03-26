@@ -5,6 +5,49 @@ import {connect} from 'react-redux'
 
 import {pivotTablePageChanged} from '../actions/ActionCreators'
 
+const buildHeaderRows = (rowLabels, columnLabels) => {
+  //console.log('rows', rows)
+  let headerRows = []
+  let i = 0;
+  for (const column of columnLabels) {
+    const columnSpan = (i+1) < columnLabels.length ? columnLabels[i+1].length : 1
+    const repeatTimes = (i-1) < 0 ? 1 : columnLabels[i-1].length
+    let headerCells = [];
+    if (i == 0) {
+      headerCells.push(
+        <Table.HeaderCell className="table-definition-header-empty-cell" key="0" rowSpan={columnLabels.length} colSpan={rowLabels.length} />
+      )
+    }
+    for (let k = 0; k < repeatTimes; ++k) {
+      for (const item of column) {
+        headerCells.push(
+          <Table.HeaderCell className="table-definition-header-cell" key={Math.random()}
+                            colSpan={columnSpan}>{`${item}`}</Table.HeaderCell>
+        )
+      }
+    }
+    headerRows.push(
+      <Table.Row children={headerCells} key={i}/>
+    )
+    ++i;
+  }
+  return headerRows
+}
+
+// TODO
+const buildDataRows = (rowLabels, data) => {
+  let rows = []
+  let i = 0, j = 0;
+  for (row of data) {
+    let cells = [];
+    for (element of row) {
+      ++j;
+    }
+    ++i;
+  }
+  return rows
+}
+
 const PivotTable = (props) => {
   const {
     isConnected,
@@ -26,11 +69,13 @@ const PivotTable = (props) => {
     value: index,
     key: index
   }))
-  const rows = data.map ((row, idx) => {
+  /*const rows = data.map ((row, idx) => {
     return [rowLabels[idx]].concat(row)
-  })
+  })*/
 
-  //console.log('rows', rows)
+  const headerRows = buildHeaderRows(rowLabels, columnLabels)
+
+  const rows = buildDataRows(rowLabels, data)
 
   const pageDropDown = pageOptions.length > 0 ? (
     <div>
@@ -51,19 +96,12 @@ const PivotTable = (props) => {
       <Label attached="top">Pivot Table: {tableSelected}</Label>
       {pageDropDown}
       <div className="raw-report-table">
-        <Table definition={true} celled={true}>
+        <Table celled={true}>
           <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell/>
-              {columnLabels.map( (it, idx) => {
-                return (
-                  <Table.HeaderCell key={idx}>{`${it}`}</Table.HeaderCell>
-                )
-              })}
-            </Table.Row>
+              {headerRows}
           </Table.Header>
           <Table.Body>
-            {rows.map( (it, idx) => {
+            {/*rows.map( (it, idx) => {
               return (
                 <Table.Row key={idx}>
                   {it.map ( (cellContent, index) => {
@@ -73,7 +111,8 @@ const PivotTable = (props) => {
                   } )}
                 </Table.Row>
               )
-            }) }
+            }) */}
+            {rows}
           </Table.Body>
         </Table>
       </div>
