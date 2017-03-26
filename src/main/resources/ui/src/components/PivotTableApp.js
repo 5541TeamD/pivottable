@@ -5,7 +5,7 @@ import ConnectionForm from './ConnectionForm'
 import TableDropDown from './TableDropDown'
 import RawDataReport from './RawDataReport'
 import PivotTableSchema from './PivotTableSchema'
-import PivotTable from './PivotTable'
+import PivotTableSegment from './PivotTableSegment'
 
 const PivotTableApp = () => {
   return (
@@ -14,7 +14,7 @@ const PivotTableApp = () => {
       <TableDropDown />
       <RawDataReport />
       <PivotTableSchema />
-      <PivotTable />
+      <PivotTableSegment />
     </Segment>
   )
 }
