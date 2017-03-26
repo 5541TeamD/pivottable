@@ -407,11 +407,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		grpClause = grpClause.substring(0, grpClause.lastIndexOf(","));
   		
   		//Generating the SQL query clause for filtering resulting data
-  		if ((filterField != null) && (filterValue != null))
+  		if ((filterField != null && !filterField.trim().isEmpty()) && (filterValue != null))
   			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
   		
   		//Generating the SQL query clause for sorting resulting data
-  		if ((sortField != null) && (sortOrder != null))
+  		if ((sortField != null && !sortField.trim().isEmpty()) && (sortOrder != null))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
   		if (function.equalsIgnoreCase("Product")
@@ -663,11 +663,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		}
   		
   		//Generating the SQL query clause for filtering resulting data
-  		if ((filterField != null) && (filterValue != null))
+  		if ((filterField != null && !filterField.trim().isEmpty()) && (filterValue != null))
   			filterClause = " WHERE " + filterField + " = \'" + filterValue + "\'";
   		
   		//Generating the SQL query clause for sorting resulting data
-  		if ((sortField != null) && (sortOrder != null))
+  		if ((sortField != null && !sortField.trim().isEmpty()) && (sortOrder != null))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;  		
   		
   		if (function.equalsIgnoreCase("Product")

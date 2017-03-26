@@ -75,8 +75,8 @@ public interface DataSourceAccess
 	
   	/**
   	 * Executes SQL query on database and fetches pivot table data with page label.
-  	 * @param	rowLabel	Row label selected as part of pivot table schema
-  	 * @param	colLabel	Column label selected as part of pivot table schema
+  	 * @param	rowLabels	Row labels selected as part of pivot table schema
+  	 * @param	colLabels	Column labels selected as part of pivot table schema
   	 * @param	pageLabel	Page label selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
