@@ -38,6 +38,18 @@ const C = {
 
 export {C}
 
+const numericalFunctions = [
+  'sum',
+  'min',
+  'max',
+  'avg',
+  'product',
+  'standard deviation',
+  'variance',
+]
+
+const allFunctions = ['count'].concat(numericalFunctions)
+
 // immutable initial state (everything is immutable)
 const initialState = {
   connectionLoading: false,
@@ -60,7 +72,7 @@ const initialState = {
     selectedColumnLabels: [],
     pageLabels: [],
     selectedPageLabel: '', //name of the field
-    functionList: ['count', 'sum'], // TODO add more functions
+    functionList: allFunctions,
     selectedFunction: '', //name of the function
     possibleValues: [],
     selectedValue: '', //name of the value
@@ -118,7 +130,6 @@ const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, c
   data[x][y] = row[dataIndex];
 };
 
-// TODO make it generic for multiple rows
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
 const mapPivotTableDataToRender = (schema, apiDataList) => {
@@ -327,8 +338,7 @@ const rootReducer = (state = initialState, action) => {
           ...state.tableSchema,
           selectedFunction: action.value,
           possibleValues: state.tableSchema.pageLabels.filter(val => {
-            // TODO action.value in [list of functions requiring numeric value]
-            if ((action.value) === 'sum') {
+            if (numericalFunctions.indexOf(action.value) !== -1) {
               return val.type === 'TYPE_NUMERIC'
             }
             // else (count) -> all fields are good (need to filter out selected page!)
