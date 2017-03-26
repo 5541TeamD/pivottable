@@ -34,6 +34,7 @@ const C = {
   SORT_ORDER_SELECTED: 'SORT_ORDER_SELECTED',
   FILTER_FIELD_SELECTED: 'FILTER_FIELD_SELECTED',
   FILTER_VALUE_SELECTED: 'FILTER_VALUE_SELECTED',
+  TOGGLE_PRINTABLE_VIEW: 'TOGGLE_PRINTABLE_VIEW',
 }
 
 export {C}
@@ -93,7 +94,8 @@ const initialState = {
   pageLabels: [],
   pageSelected: -1, // index of the selected page
   infoMessage: '',
-  errorMessage: ''
+  errorMessage: '',
+  printableView: false,
 }
 
 /**
@@ -450,6 +452,11 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         errorMsg: 'Some error occurred while fetching filter fields'
+      }
+    case C.TOGGLE_PRINTABLE_VIEW:
+      return {
+        ...state,
+        printableView: action.value //!state.printableView
       }
     case C.FETCH_FILTER_FIELDS_SUCCESS:
     case C.FETCH_FILTER_FIELDS:

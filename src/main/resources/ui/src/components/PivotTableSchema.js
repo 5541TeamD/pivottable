@@ -13,7 +13,7 @@ import {rowLabelsChanged,
   filterFieldSelected,
   filterValueSelected,
   sortFieldSelected,
-  sortOrderSelected
+  sortOrderSelected,
 } from '../actions/ActionCreators'
 
 const PivotTableSchema = (props) => {
@@ -127,6 +127,7 @@ const PivotTableSchema = (props) => {
             <Button onClick={onReset}>
               Reset
             </Button>
+
           </Form.Field>
         </div>
       </Form>
@@ -223,7 +224,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   onGeneratePivotTable: () => {
     dispatch(generatePivotTable())
-  }
+  },
 })
 
 

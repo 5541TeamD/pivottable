@@ -6,9 +6,13 @@ import TableDropDown from './TableDropDown'
 import RawDataReport from './RawDataReport'
 import PivotTableSchema from './PivotTableSchema'
 import PivotTableSegment from './PivotTableSegment'
+import PrintablePivotTables from './PrintablePivotTables'
 
-const PivotTableApp = () => {
-  return (
+import {connect} from 'react-redux'
+
+const PivotTableApp = ({isPrintableView}) => {
+  return ( isPrintableView ?
+      <PrintablePivotTables/> :
     <Segment color="red">
       <ConnectionForm />
       <TableDropDown />
@@ -19,4 +23,8 @@ const PivotTableApp = () => {
   )
 }
 
-export default PivotTableApp
+const mapStateToProps = (state) => ({
+  isPrintableView: state.printableView,
+})
+
+export default connect(mapStateToProps)(PivotTableApp)

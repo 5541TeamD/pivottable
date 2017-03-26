@@ -4,7 +4,7 @@ import {Segment, Label, Form} from 'semantic-ui-react'
 
 import {connect} from 'react-redux'
 
-import {pivotTablePageChanged} from '../actions/ActionCreators'
+import {pivotTablePageChanged, printableViewChanged} from '../actions/ActionCreators'
 
 const PivotTableSegment = (props) => {
   const {
@@ -14,9 +14,11 @@ const PivotTableSegment = (props) => {
     loading,
     onPageChanged,
     pageSelected,
-    pageLabels
+    pageLabels,
+    isPrintableView,
+    onPrintableViewChanged,
   } = props
-  console.log('props', props)
+  //console.log('props', props)
   if (!isConnected || !tableSelected || pivotTables.length === 0 || pageSelected === -1) {
     return <div></div>
   }
@@ -44,6 +46,13 @@ const PivotTableSegment = (props) => {
   return (
     <Segment loading={loading}>
       <Label attached="top">Pivot Table: {tableSelected}</Label>
+      <Form.Checkbox
+        toggle={true}
+        checked={isPrintableView}
+        onChange={onPrintableViewChanged}
+        label="Simple View"
+      />
+      <br />
       {pageDropDown}
       <div className="raw-report-table">
         <PivotTable rowLabels={rowLabels} columnLabels={columnLabels} data={data} />
@@ -59,7 +68,9 @@ PivotTableSegment.propTypes = {
   loading: PropTypes.bool.isRequired,
   pageSelected: PropTypes.number.isRequired,
   pageLabels: PropTypes.arrayOf(PropTypes.string),
-  onPageChanged: PropTypes.func
+  onPageChanged: PropTypes.func,
+  onPrintableViewChanged: PropTypes.func,
+  isPrintableView: PropTypes.bool,
 }
 
 const mapStateToProps = (state) => ({
@@ -69,12 +80,16 @@ const mapStateToProps = (state) => ({
   pageLabels: state.pageLabels,
   tableSelected: state.selectedTable,
   loading: state.pivotTableLoading,
+  isPrintableView: state.printableView,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   // value contains the index of the page
   onPageChanged: (e, {value}) => {
     dispatch(pivotTablePageChanged(value))
+  },
+  onPrintableViewChanged: (e, {checked}) => {
+    dispatch(printableViewChanged(checked))
   }
 })
 
