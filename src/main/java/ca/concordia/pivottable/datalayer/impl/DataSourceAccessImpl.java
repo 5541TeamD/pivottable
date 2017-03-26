@@ -352,8 +352,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	
   	/**
   	 * Executes SQL query on database and fetches pivot table data without page label.
-  	 * @param	rowLabel	Row label selected as part of pivot table schema
-  	 * @param	colLabel	Column label selected as part of pivot table schema
+  	 * @param	rowLabels	List of row labels selected as part of pivot table schema
+  	 * @param	colLabels	List of column labels selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
   	 * @param	filterField	Field name by which pivot table data needs to be filtered
@@ -363,7 +363,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, 
+  	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String function, String valField, 
   													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
   		//Connecting to the data base
@@ -377,7 +377,34 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		//Proceeding, if database connection is successful
   		String sortClause = " ";
   		String filterClause = " ";
+  		String selectClause = " SELECT ";
+  		String grpClause = " GROUP BY ";
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Generating the SQL query select clause for selecting row labels
+  		for (String rowLabel : rowLabels)
+  		{
+  			selectClause = selectClause + rowLabel + ", ";
+  		}
+  		
+  		//Generating the SQL query select clause for selecting column labels
+  		for (String colLabel : colLabels)
+  		{
+  			selectClause = selectClause + colLabel + ", ";
+  		}
+  		
+  		//Generating the SQL query group by clause for grouping by row labels
+  		for (String rowLabel : rowLabels)
+  		{
+  			grpClause = grpClause + rowLabel + ", ";
+  		}
+  		
+  		//Generating the SQL query group by clause for grouping by column labels
+  		for (String colLabel : colLabels)
+  		{
+  			grpClause = grpClause + colLabel + ", ";
+  		}
+  		grpClause = grpClause.substring(0, grpClause.lastIndexOf(","));
   		
   		//Generating the SQL query clause for filtering resulting data
   		if ((filterField != null) && (filterValue != null))
@@ -391,10 +418,10 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			|| function.equalsIgnoreCase("Standard Deviation")
   			|| function.equalsIgnoreCase("Variance"))
 			//Generating and executing the SQL query where summary column values do not get calculated in the database
-			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, rowLabel, colLabel, function, valField, tableName, filterClause, sortClause);
+			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
 		else
 			//Generating and executing the SQL query where summary column values get calculated in the database
-			pvtTblData = executeDBCalculatedQuery(dbConnection, rowLabel, colLabel, function, valField, tableName, filterClause, sortClause);
+			pvtTblData = executeDBCalculatedQuery(dbConnection, selectClause, function, valField, tableName, grpClause, filterClause, sortClause);
   		
   		disconnect(dbConnection);
   		
@@ -404,16 +431,16 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	/**
   	 * Generates and executes an SQL query (without page labels) where the summary column values get calculated in the database.
   	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
-  	 * @param 	rowLabel		Row label selected as part of pivot table schema
-  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
   	 * @param 	function		Mathematical function selected as part of pivot table schema
   	 * @param 	valField		Value field selected as part of pivot table schema
   	 * @param 	tableName		Raw report table name
+  	 * @param	grpClause		SQL query clause used for grouping pivot table data by row and column labels as per the schema
   	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String selectClause, String function, String valField, String tableName, String grpClause, String filterClause, String sortClause) 
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
@@ -424,15 +451,13 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
   		//Generating the SQL query to get pivot table data without page label
-  		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
-  									+ colLabel + ", "
-  									+ function + "("
-  									+ valField + ")"
+  		pvtTblDataQuery = selectClause
+  							+ function + "("
+  							+ valField + ")"
   							+ " FROM ( SELECT * FROM " + tableName
   										+ filterClause
 										+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
-							+ " GROUP BY " + rowLabel + ", "
-											+ colLabel 
+							+ grpClause
 							+ sortClause + ";";
   		
   		//Executing the SQL query
@@ -480,8 +505,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	/**
   	 * Generates and executes an SQL query (without page labels) where the summary column values do not get calculated in the database.
   	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
-  	 * @param 	rowLabel		Row label selected as part of pivot table schema
-  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
   	 * @param 	function		Mathematical function selected as part of pivot table schema
   	 * @param 	valField		Value field selected as part of pivot table schema
   	 * @param 	tableName		Raw report table name
@@ -489,7 +513,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String selectClause, String function, String valField, String tableName, String filterClause, String sortClause) 
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
@@ -501,9 +525,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
   		
   		//Generating the SQL query to get pivot table data without page label
-  		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
-  									+ colLabel + ", "
-  									+ valField + " "
+  		pvtTblDataQuery = selectClause
+  							+ valField + " "
   							+ " FROM ( SELECT * FROM " + tableName
   										+ filterClause
 										+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
@@ -585,8 +608,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	
   	/**
   	 * Executes SQL query on database and fetches pivot table data with page label.
-  	 * @param	rowLabel	Row label selected as part of pivot table schema
-  	 * @param	colLabel	Column label selected as part of pivot table schema
+  	 * @param	rowLabels	List of row labels selected as part of pivot table schema
+  	 * @param	colLabels	List of column labels selected as part of pivot table schema
   	 * @param	pageLabel	Page label selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
@@ -597,7 +620,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, 
+  	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String pageLabel, String function, String valField, 
   													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
   		//Connecting to the data base
@@ -611,7 +634,33 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		//Proceeding, if database connection is successful
   		String sortClause = " ";
   		String filterClause = " ";
+  		String selectClause = " SELECT ";
+  		String grpClause = " GROUP BY ";
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
+  		
+  		//Generating the SQL query select clause for selecting row labels
+  		for (String rowLabel : rowLabels)
+  		{
+  			selectClause = selectClause + rowLabel + ", ";
+  		}
+  		
+  		//Generating the SQL query select clause for selecting column labels
+  		for (String colLabel : colLabels)
+  		{
+  			selectClause = selectClause + colLabel + ", ";
+  		}
+  		
+  		//Generating the SQL query group by clause for grouping by row labels
+  		for (String rowLabel : rowLabels)
+  		{
+  			grpClause = grpClause + rowLabel + ", ";
+  		}
+  		
+  		//Generating the SQL query group by clause for grouping by column labels
+  		for (String colLabel : colLabels)
+  		{
+  			grpClause = grpClause + colLabel + ", ";
+  		}
   		
   		//Generating the SQL query clause for filtering resulting data
   		if ((filterField != null) && (filterValue != null))
@@ -625,10 +674,10 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			|| function.equalsIgnoreCase("Standard Deviation")
   			|| function.equalsIgnoreCase("Variance"))
 			//Generating and executing the SQL query where summary column values do not get calculated in the database
-			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, rowLabel, colLabel, pageLabel, function, valField, tableName, filterClause, sortClause);
+			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
 		else
 			//Generating and executing the SQL query where summary column values get calculated in the database
-			pvtTblData = executeDBCalculatedQuery(dbConnection, rowLabel, colLabel, pageLabel, function, valField, tableName, filterClause, sortClause);
+			pvtTblData = executeDBCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, grpClause, filterClause, sortClause);
   		
   		disconnect(dbConnection);
   		
@@ -638,17 +687,17 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	/**
   	 * Generates and executes an SQL query (with page labels) where the summary column values get calculated in the database.
   	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
-  	 * @param 	rowLabel		Row label selected as part of pivot table schema
-  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
   	 * @param	pageLabel		Page label selected as part of pivot table schema
   	 * @param 	function		Mathematical function selected as part of pivot table schema
   	 * @param 	valField		Value field selected as part of pivot table schema
   	 * @param 	tableName		Raw report table name
+  	 * @param	grpClause		SQL query clause used for grouping pivot table data by row and column labels as per the schema
   	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String grpClause, String filterClause, String sortClause) 
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
@@ -666,16 +715,14 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  		for (String pageValue : pageLabelValues) 
 	  		{
 	  			//Generating the SQL query to get pivot table data for one page label value
-	  	  		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
-	  	  									+ colLabel + ", "
-	  	  									+ function + "("
-	  	  									+ valField + ")"
+	  	  		pvtTblDataQuery = selectClause
+	  	  							+ function + "("
+	  	  							+ valField + ")"
 	  	  							+ " FROM ( SELECT * FROM " + tableName
 	  	  										+ filterClause
 	  											+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
-	  								+ " GROUP BY " + rowLabel + ", "
-	  												+ colLabel + ", "
-	  												+ pageLabel
+	  								+ grpClause
+	  								+ pageLabel
 	  								+ " HAVING " + pageLabel + " = \'" + pageValue + "\'"
 	  								+ sortClause + ";";
 	  	  		
@@ -727,8 +774,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	/**
   	 * Generates and executes an SQL query (with page labels) where the summary column values do not get calculated in the database.
   	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
-  	 * @param 	rowLabel		Row label selected as part of pivot table schema
-  	 * @param 	colLabel		Column label selected as part of pivot table schema
+  	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
   	 * @param	pageLabel		Page label selected as part of pivot table schema
   	 * @param 	function		Mathematical function selected as part of pivot table schema
   	 * @param 	valField		Value field selected as part of pivot table schema
@@ -737,7 +783,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String rowLabel, String colLabel, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
@@ -763,9 +809,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			pageLabelClause = " AND " + pageLabel + " = \'" + pageValue + "\' ";
 	  			
 	  			//Generating the SQL query to get pivot table data for one page label value
-	  	  		pvtTblDataQuery = "SELECT " + rowLabel + ", " 
-	  	  									+ colLabel + ", "
-	  	  									+ valField + " "
+	  	  		pvtTblDataQuery = selectClause
+	  	  							+ valField + " "
 	  	  							+ " FROM ( SELECT * FROM " + tableName
 	  	  										+ filterClause
 	  	  										+ pageLabelClause

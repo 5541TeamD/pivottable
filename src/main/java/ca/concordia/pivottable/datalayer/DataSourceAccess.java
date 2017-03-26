@@ -59,8 +59,8 @@ public interface DataSourceAccess
 	
 	/**
   	 * Executes SQL query on database and fetches pivot table data without page label.
-  	 * @param	rowLabel	Row label selected as part of pivot table schema
-  	 * @param	colLabel	Column label selected as part of pivot table schema
+  	 * @param	rowLabels	List of row labels selected as part of pivot table schema
+  	 * @param	colLabels	List of column labels selected as part of pivot table schema
   	 * @param	function	Mathematical function selected as part of pivot table schema
   	 * @param	valField	Value field selected as part of pivot table schema
   	 * @param	filterField	Field name by which pivot table data needs to be filtered
@@ -70,7 +70,7 @@ public interface DataSourceAccess
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String function, String valField, 
+  	List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String function, String valField, 
   											String filterField, String filterValue, String sortField, String sortOrder, String tableName);
 	
   	/**
@@ -87,7 +87,7 @@ public interface DataSourceAccess
   	 * @param	tableName	Raw report table name
   	 * @return	Pivot table data fetched from the database
   	 */
-  	public List<List<List<Object>>> getPvtTblData(String rowLabel, String colLabel, String pageLabel, String function, String valField, 
+  	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String pageLabel, String function, String valField, 
   													String filterField, String filterValue, String sortField, String sortOrder, String tableName);
   	
 	/**
