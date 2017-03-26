@@ -36,7 +36,7 @@ const ConnectionForm = (props) => {
           </Form.Field>
           <Form.Field>
           <Button primary={true} onClick={onCheckConnection(dataSource, userName, password)} disabled={!dataSource || !userName }>
-            Connect
+            Check Connection
           </Button>
           </Form.Field>
         </div>
@@ -50,7 +50,7 @@ const ConnectionForm = (props) => {
           </Form.Field>
           <Form.Field>
             <Button color="red" onClick={onDisconnect} >
-              Disconnect
+              Reset
             </Button>
           </Form.Field>
         </div>

@@ -29,6 +29,11 @@ const tableSelected = (value) => ({
   value
 })
 
+export const pivotTablePageChanged = (value) => ({
+  type: C.PIVOT_TABLE_PAGE_CHANGED,
+  page: value
+})
+
 export const fetchRawReport = (tableName) => async (dispatch, getState) => {
   dispatch(tableSelected(tableName))
   if (!tableName)
@@ -94,13 +99,37 @@ export const valueChanged = (value) => ({
   value
 })
 
+export const filterFieldSelected = (value) => ({
+  type: C.FILTER_FIELD_SELECTED,
+  value
+})
+
+export const filterValueSelected = (value) => ({
+  type: C.FILTER_VALUE_SELECTED,
+  value
+})
+
+export const sortFieldSelected = (value) => ({
+  type: C.SORT_FIELD_SELECTED,
+  value
+})
+
+export const sortOrderSelected = (value) => ({
+  type: C.SORT_ORDER_SELECTED,
+  value
+})
+
 const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
   tableName: selectedTable,
   columnLabels: tableSchema.selectedColumnLabels.map ( it => it.name),
   rowLabels: tableSchema.selectedRowLabels.map (it => it.name),
   pageLabel: tableSchema.selectedPageLabel,
   functionName: tableSchema.selectedFunction,
-  valueField: tableSchema.selectedValue
+  valueField: tableSchema.selectedValue,
+  filterField: tableSchema.selectedFilterField,
+  filterValue: tableSchema.filterValue,
+  sortField: tableSchema.selectedSortField,
+  sortOrder: tableSchema.sortOrder,
 })
 
 export const generatePivotTable = () => async(dispatch, getState) => {
@@ -117,3 +146,7 @@ export const generatePivotTable = () => async(dispatch, getState) => {
     dispatch({type: C.GENERATE_PIVOT_TABLE_ERROR})
   }
 }
+
+export const printableViewChanged = (value) => (
+  {type: C.TOGGLE_PRINTABLE_VIEW, value}
+)

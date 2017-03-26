@@ -1,66 +1,102 @@
 import React, {PropTypes} from 'react'
-import {Segment, Table, Label} from 'semantic-ui-react'
+import {Table} from 'semantic-ui-react'
 
-import {connect} from 'react-redux'
 
-const PivotTable = (props) => {
-  const {isConnected, pivotTable, tableSelected, loading} = props
-  if (!isConnected || !tableSelected || !pivotTable.schema) {
-    return <div></div>
+
+import {multiplyByArrayLength} from '../utils'
+
+const buildHeaderRows = (rowLabels, columnLabels) => {
+  //console.log('rows', rows)
+  let headerRows = []
+  let i = 0;
+  for (const column of columnLabels) {
+    let columnSpan = 1
+    if ( (i+1) < columnLabels.length ) {
+      columnSpan = columnLabels.slice(i+1).reduce(multiplyByArrayLength,1)
+    }
+    let repeatTimes = 1
+    if (i-1 >= 0) {
+      repeatTimes = columnLabels.slice(0, i).reduce(multiplyByArrayLength,1)
+    }
+    let headerCells = [];
+    if (i === 0) {
+      headerCells.push(
+        <Table.HeaderCell className="table-definition-header-empty-cell" key="0" rowSpan={columnLabels.length} colSpan={rowLabels.length} />
+      )
+    }
+    for (let k = 0; k < repeatTimes; ++k) {
+      for (const item of column) {
+        headerCells.push(
+          <Table.HeaderCell className="table-definition-header-cell" key={Math.random()}
+                            colSpan={columnSpan}>{`${item}`}</Table.HeaderCell>
+        )
+      }
+    }
+    headerRows.push(
+      <Table.Row children={headerCells} key={i}/>
+    )
+    ++i;
   }
-  const {rowLabels, columnLabels, data} = pivotTable
-  // concatenate rowlabel with data to use the same
-  // (almost) algorithm as rendering the raw report
-  const rows = data.map ((row, idx) => {
-    return [rowLabels[idx]].concat(row)
-  })
+  return headerRows
+}
+
+const buildDataRows = (rowLabels, data) => {
+  let rows = []
+  let i = 0;
+  for (const row of data) {
+    let cells = [];
+    for (let k = 0; k < rowLabels.length; ++k) {
+      let rowSpan = 1
+      if ((k + 1) < rowLabels.length) {
+        rowSpan = rowLabels.slice(k + 1).reduce(multiplyByArrayLength, 1)
+      }
+      if (i % rowSpan === 0) {
+        const normalizedI = i % (rowSpan * rowLabels[k].length);
+        const y = Math.floor( normalizedI / rowSpan);
+        cells.push(
+          <Table.Cell rowSpan={rowSpan} key={Math.random()} className="table-definition-column-cell">
+            {`${rowLabels[k][y]}`}
+          </Table.Cell>
+        )
+      }
+    }
+    for (const element of row) {
+      cells.push(
+        <Table.Cell key={Math.random()}>{`${element}`}</Table.Cell>
+      )
+    }
+    rows.push(
+      <Table.Row key={i} children={cells}/>
+    )
+    ++i;
+  }
+  return rows
+}
+
+const PivotTable = ({rowLabels, columnLabels, data}) => {
+
+  const headerRows = buildHeaderRows(rowLabels, columnLabels)
+
+  const rows = buildDataRows(rowLabels, data)
 
   return (
-    <Segment loading={loading}>
-      <Label attached="top">Pivot Table: {tableSelected}</Label>
-      <div className="raw-report-table">
-        <Table definition={true} celled={true}>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell/>
-              {columnLabels.map( (it, idx) => {
-                return (
-                  <Table.HeaderCell key={idx}>{it}</Table.HeaderCell>
-                )
-              })}
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {rows.map( (it, idx) => {
-              return (
-                <Table.Row key={idx}>
-                  {it.map ( (cellContent, index) => {
-                    return (
-                      <Table.Cell key={index}>{cellContent}</Table.Cell>
-                    )
-                  } )}
-                </Table.Row>
-              )
-            }) }
-          </Table.Body>
-        </Table>
-      </div>
-    </Segment>
+    <div>
+      <Table celled={true}>
+        <Table.Header>
+            {headerRows}
+        </Table.Header>
+        <Table.Body>
+          {rows}
+        </Table.Body>
+      </Table>
+    </div>
   )
 }
 
 PivotTable.propTypes = {
-  isConnected: PropTypes.bool.isRequired,
-  pivotTable: PropTypes.object.isRequired,
-  tableSelected: PropTypes.string.isRequired,
-  loading: PropTypes.bool.isRequired
+  data: PropTypes.array,
+  rowLabels: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  columnLabels: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
 }
 
-const mapStateToProps = (state) => ({
-  isConnected: state.connectedSuccessfully,
-  pivotTable: state.pivotTable,
-  tableSelected: state.selectedTable,
-  loading: state.pivotTableLoading
-})
-
-export default connect(mapStateToProps) (PivotTable)
+export default  PivotTable
