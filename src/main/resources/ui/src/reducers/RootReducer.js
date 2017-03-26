@@ -1,4 +1,6 @@
 
+import {multiplyByArrayLength} from '../utils'
+
 // action types
 const C = {
   FETCH_TABLE_LIST: 'FETCH_TABLE_LIST',
@@ -87,24 +89,32 @@ const initialState = {
  * column label index: 1
  * data index: dataIndex (usually, 2)
  */
-const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
+/*const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
   //console.log('row from api is: ', row)
   const x = rowMap[row[0]]
   const y = columnMap[row[1]]
-  //console.log('x, y, row[dataIndex]', x, y, row[dataIndex])
+  //console.log(`x: ${x}, y: ${y}, data: ${row[dataIndex]}`);
   data[x][y] = row[dataIndex]
-}
+} */
 
 const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, columnLabels, dataIndex, data) => {
   const x = rowMaps.reduce( (sum, rowMap, index) => {
-    const sizeOfNext = (index+1) < (rowLabels.length) ? rowLabels[index+1].length : 1;
-    return sum + rowMap[row[index]]*sizeOfNext
+    //const sizeOfSpan = (index+1) < (rowLabels.length) ? rowLabels[index+1].length : 1;
+    let sizeOfSpan = 1;
+    if (index+1 < rowLabels.length) {
+      sizeOfSpan = rowLabels.slice(index+1).reduce(multiplyByArrayLength, 1);
+    }
+    return sum + rowMap[row[index]]*sizeOfSpan
   }, 0);
   const y = columnMaps.reduce( (sum, columnMap, index) => {
-    const sizeOfNext = (index+1) < columnLabels.length ? columnLabels[index+1].length : 1;
-    return sum + columnMap[row[index+rowLabelsLength]]*sizeOfNext
+    //const sizeOfSpan = (index+1) < columnLabels.length ? columnLabels[index+1].length : 1;
+    let sizeOfSpan = 1;
+    if (index+1 < columnLabels.length) {
+      sizeOfSpan = columnLabels.slice(index+1).reduce(multiplyByArrayLength, 1);
+    }
+    return sum + columnMap[row[index+rowLabelsLength]]*sizeOfSpan
   }, 0);
-  //console.log(`x: $x, y: $y, data: ${row[dataIndex]}`);
+  //console.log(`x: ${x}, y: ${y}, data: ${row[dataIndex]}`);
   data[x][y] = row[dataIndex];
 };
 
@@ -148,29 +158,26 @@ const mapPivotTableDataToRender = (schema, apiDataList) => {
     )
 
     // create an array of arrays filled with empty string
-    const gridRows = rows.reduce ( (product, r) => product*r.length, 1);
-    const gridColumns = columns.reduce( (product, c) => product*c.length, 1);
+    const gridRows = rows.reduce ( multiplyByArrayLength, 1);
+    const gridColumns = columns.reduce( multiplyByArrayLength, 1);
     let data = new Array(gridRows)
-    data.fill(new Array(gridColumns))
-    data.forEach (col => col.fill(' '));
-    /*let data = rows.map( val => {
-      let p = new Array(columns.length)
-      p.fill(' ')
-      return p
-    })*/
-    console.log('initial data is:', data)
-    console.log('rowMaps', rowMaps)
-    console.log('columnMaps', columnMaps)
+    for (let i=0; i < data.length; ++i) {
+      let col = new Array(gridColumns)
+      data[i] = col.fill(' ')
+    }
+
+    //console.log('rowMaps', rowMaps)
+    //console.log('columnMaps', columnMaps)
     // insert data
     apiData.forEach( row => {
       const rowIndex = (schema.rowLabels.length + schema.columnLabels.length)
       // single label on row and column for now
-      // insertIn2D(rowMap, columnMap, row, rowIndex, data)
+      // insertIn2D(rowMaps[0], columnMaps[0], row, rowIndex, data)
       // generic one
       insertInGeneric(rowMaps, columnMaps, row, schema.rowLabels.length, rows, columns, rowIndex, data)
     })
 
-    //console.log(data)
+    //console.log('final data set is', data)
     return {
       rowLabels: rows,
       columnLabels: columns,
@@ -415,7 +422,8 @@ const rootReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           selectedFilterField: action.value
-        }
+        },
+        pivotTables: initialState.pivotTables
       }
 
     case C.FILTER_VALUE_SELECTED:

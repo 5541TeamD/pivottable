@@ -5,15 +5,23 @@ import {connect} from 'react-redux'
 
 import {pivotTablePageChanged} from '../actions/ActionCreators'
 
+import {multiplyByArrayLength} from '../utils'
+
 const buildHeaderRows = (rowLabels, columnLabels) => {
   //console.log('rows', rows)
   let headerRows = []
   let i = 0;
   for (const column of columnLabels) {
-    const columnSpan = (i+1) < columnLabels.length ? columnLabels[i+1].length : 1
-    const repeatTimes = (i-1) < 0 ? 1 : columnLabels[i-1].length
+    let columnSpan = 1
+    if ( (i+1) < columnLabels.length ) {
+      columnSpan = columnLabels.slice(i+1).reduce(multiplyByArrayLength,1)
+    }
+    let repeatTimes = 1
+    if (i-1 >= 0) {
+      repeatTimes = columnLabels.slice(0, i).reduce(multiplyByArrayLength,1)
+    }
     let headerCells = [];
-    if (i == 0) {
+    if (i === 0) {
       headerCells.push(
         <Table.HeaderCell className="table-definition-header-empty-cell" key="0" rowSpan={columnLabels.length} colSpan={rowLabels.length} />
       )
@@ -37,12 +45,32 @@ const buildHeaderRows = (rowLabels, columnLabels) => {
 // TODO
 const buildDataRows = (rowLabels, data) => {
   let rows = []
-  let i = 0, j = 0;
-  for (row of data) {
+  let i = 0;
+  for (const row of data) {
     let cells = [];
-    for (element of row) {
-      ++j;
+    for (let k = 0; k < rowLabels.length; ++k) {
+      let rowSpan = 1
+      if ((k + 1) < rowLabels.length) {
+        rowSpan = rowLabels.slice(k + 1).reduce(multiplyByArrayLength, 1)
+      }
+      if (i % rowSpan === 0) {
+        const normalizedI = i % (rowSpan * rowLabels[k].length);
+        const y = Math.floor( normalizedI / rowSpan);
+        cells.push(
+          <Table.Cell rowSpan={rowSpan} key={Math.random()} className="table-definition-column-cell">
+            {`${rowLabels[k][y]}`}
+          </Table.Cell>
+        )
+      }
     }
+    for (const element of row) {
+      cells.push(
+        <Table.Cell key={Math.random()}>{`${element}`}</Table.Cell>
+      )
+    }
+    rows.push(
+      <Table.Row key={i} children={cells}/>
+    )
     ++i;
   }
   return rows

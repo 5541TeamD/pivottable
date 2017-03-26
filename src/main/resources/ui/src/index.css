@@ -12,7 +12,7 @@ body {
 .ui.table thead th.table-definition-header-cell {
   cursor: auto;
   background: #f9fafb;
-  text-align: inherit;
+  text-align: center;
   color: rgba(0,0,0,.87);
   padding: .92857143em .78571429em;
   vertical-align: inherit;
@@ -25,6 +25,7 @@ body {
   background: rgba(0,0,0,.03);
   font-weight: 700;
   color: rgba(0,0,0,.95);
+  border-left: 1px solid rgba(34, 36, 38, 0.1) !important;
 }
 
 .ui.table thead th.table-definition-header-empty-cell {
