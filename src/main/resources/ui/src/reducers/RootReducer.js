@@ -1,4 +1,6 @@
 
+import {multiplyByArrayLength} from '../utils'
+
 // action types
 const C = {
   FETCH_TABLE_LIST: 'FETCH_TABLE_LIST',
@@ -32,9 +34,22 @@ const C = {
   SORT_ORDER_SELECTED: 'SORT_ORDER_SELECTED',
   FILTER_FIELD_SELECTED: 'FILTER_FIELD_SELECTED',
   FILTER_VALUE_SELECTED: 'FILTER_VALUE_SELECTED',
+  TOGGLE_PRINTABLE_VIEW: 'TOGGLE_PRINTABLE_VIEW',
 }
 
 export {C}
+
+const numericalFunctions = [
+  'sum',
+  'min',
+  'max',
+  'avg',
+  'product',
+  'standard deviation',
+  'variance',
+]
+
+const allFunctions = ['count'].concat(numericalFunctions)
 
 // immutable initial state (everything is immutable)
 const initialState = {
@@ -58,7 +73,7 @@ const initialState = {
     selectedColumnLabels: [],
     pageLabels: [],
     selectedPageLabel: '', //name of the field
-    functionList: ['count', 'sum'], // TODO add more functions
+    functionList: allFunctions,
     selectedFunction: '', //name of the function
     possibleValues: [],
     selectedValue: '', //name of the value
@@ -79,7 +94,8 @@ const initialState = {
   pageLabels: [],
   pageSelected: -1, // index of the selected page
   infoMessage: '',
-  errorMessage: ''
+  errorMessage: '',
+  printableView: false,
 }
 
 /**
@@ -87,67 +103,94 @@ const initialState = {
  * column label index: 1
  * data index: dataIndex (usually, 2)
  */
-const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
+/*const insertIn2D = (rowMap, columnMap, row, dataIndex, data) => {
   //console.log('row from api is: ', row)
   const x = rowMap[row[0]]
   const y = columnMap[row[1]]
-  //console.log('x, y, row[dataIndex]', x, y, row[dataIndex])
+  //console.log(`x: ${x}, y: ${y}, data: ${row[dataIndex]}`);
   data[x][y] = row[dataIndex]
-}
+} */
 
-// TODO make it generic for multiple rows
+const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, columnLabels, dataIndex, data) => {
+  const x = rowMaps.reduce( (sum, rowMap, index) => {
+    //const sizeOfSpan = (index+1) < (rowLabels.length) ? rowLabels[index+1].length : 1;
+    let sizeOfSpan = 1;
+    if (index+1 < rowLabels.length) {
+      sizeOfSpan = rowLabels.slice(index+1).reduce(multiplyByArrayLength, 1);
+    }
+    return sum + rowMap[row[index]]*sizeOfSpan
+  }, 0);
+  const y = columnMaps.reduce( (sum, columnMap, index) => {
+    //const sizeOfSpan = (index+1) < columnLabels.length ? columnLabels[index+1].length : 1;
+    let sizeOfSpan = 1;
+    if (index+1 < columnLabels.length) {
+      sizeOfSpan = columnLabels.slice(index+1).reduce(multiplyByArrayLength, 1);
+    }
+    return sum + columnMap[row[index+rowLabelsLength]]*sizeOfSpan
+  }, 0);
+  //console.log(`x: ${x}, y: ${y}, data: ${row[dataIndex]}`);
+  data[x][y] = row[dataIndex];
+};
+
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
 const mapPivotTableDataToRender = (schema, apiDataList) => {
-  //console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+  console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+
+
   return apiDataList.map ( apiData => {
 
-    // get the row labels, column labels, page labels
-    let rowSet = new Set()
-    let columnSet = new Set()
+    // get the row labels, column labels (page labels are handled in the reduce)
+    let rowSets = schema.rowLabels.map (it => new Set())
+    let columnSets = schema.columnLabels.map (it => new Set())
     // use first one to get the rows and columns
-    apiData.forEach(row => {
+    apiData.forEach( row => {
       row.forEach((element, idx) => {
-        if (idx === 0) { // idx < schema.rowLabels.length
-          rowSet.add(element)
-        } else if (idx === 1) {// idx < (schema.rowLabels.length + schema.columnLabels.length)
-          columnSet.add(element)
+        if (idx < schema.rowLabels.length) {
+          rowSets[idx].add(element)
+        } else if (idx >= schema.rowLabels.length && idx < (schema.rowLabels.length + schema.columnLabels.length)) {
+          columnSets[idx-schema.rowLabels.length].add(element)
         }
-        // could optimize if break here
+        // could optimize one loop cycle if break here in traditional for loop (vs forEach loop)
       })
     })
 
-    const rows = Array.from(rowSet)
-    const columns = Array.from(columnSet)
+    const rows = rowSets.map (rowSet => Array.from(rowSet))
+    const columns = columnSets.map (columnSet => Array.from(columnSet))
 
-    const rowMap = rows.reduce((result, val, index) => {
-      result[val] = index
-      return result
-    }, {})
+    const rowMaps = rows.map ( rowSetArray => rowSetArray.reduce((result, val, index) => {
+        result[val] = index
+        return result
+      }, {})
+    )
 
-    const columnMap = columns.reduce((result, val, index) => {
-      result[val] = index
-      return result
-    }, {})
+    const columnMaps = columns.map( columnSetArray => columnSetArray.reduce((result, val, index) => {
+        result[val] = index
+        return result
+      }, {})
+    )
 
     // create an array of arrays filled with empty string
-    // number of rows is the same as rowLabels and
-    // columns is the same as column labels
-    let data = rows.map( val => {
-      let p = new Array(columns.length)
-      p.fill(' ')
-      return p
-    })
+    const gridRows = rows.reduce ( multiplyByArrayLength, 1);
+    const gridColumns = columns.reduce( multiplyByArrayLength, 1);
+    let data = new Array(gridRows)
+    for (let i=0; i < data.length; ++i) {
+      let col = new Array(gridColumns)
+      data[i] = col.fill(' ')
+    }
 
-
+    //console.log('rowMaps', rowMaps)
+    //console.log('columnMaps', columnMaps)
     // insert data
-    apiData.forEach((row, idx) => {
-      const rowIndex = (schema.rowLabels.length + schema.rowLabels.length)
+    apiData.forEach( row => {
+      const rowIndex = (schema.rowLabels.length + schema.columnLabels.length)
       // single label on row and column for now
-      insertIn2D(rowMap, columnMap, row, rowIndex, data)
+      // insertIn2D(rowMaps[0], columnMaps[0], row, rowIndex, data)
+      // generic one
+      insertInGeneric(rowMaps, columnMaps, row, schema.rowLabels.length, rows, columns, rowIndex, data)
     })
 
-    //console.log(data)
+    //console.log('final data set is', data)
     return {
       rowLabels: rows,
       columnLabels: columns,
@@ -297,8 +340,7 @@ const rootReducer = (state = initialState, action) => {
           ...state.tableSchema,
           selectedFunction: action.value,
           possibleValues: state.tableSchema.pageLabels.filter(val => {
-            // TODO action.value in [list of functions requiring numeric value]
-            if ((action.value) === 'sum') {
+            if (numericalFunctions.indexOf(action.value) !== -1) {
               return val.type === 'TYPE_NUMERIC'
             }
             // else (count) -> all fields are good (need to filter out selected page!)
@@ -392,7 +434,8 @@ const rootReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           selectedFilterField: action.value
-        }
+        },
+        pivotTables: initialState.pivotTables
       }
 
     case C.FILTER_VALUE_SELECTED:
@@ -409,6 +452,11 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         errorMsg: 'Some error occurred while fetching filter fields'
+      }
+    case C.TOGGLE_PRINTABLE_VIEW:
+      return {
+        ...state,
+        printableView: action.value //!state.printableView
       }
     case C.FETCH_FILTER_FIELDS_SUCCESS:
     case C.FETCH_FILTER_FIELDS:

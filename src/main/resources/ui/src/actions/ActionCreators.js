@@ -146,3 +146,7 @@ export const generatePivotTable = () => async(dispatch, getState) => {
     dispatch({type: C.GENERATE_PIVOT_TABLE_ERROR})
   }
 }
+
+export const printableViewChanged = (value) => (
+  {type: C.TOGGLE_PRINTABLE_VIEW, value}
+)
