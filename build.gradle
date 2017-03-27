@@ -15,6 +15,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'org.slf4j:slf4j-simple:1.7.21'
     compile 'mysql:mysql-connector-java:5.1.16'
+	compile 'postgresql:postgresql:42.0.0'
 }
 
 sourceSets {
