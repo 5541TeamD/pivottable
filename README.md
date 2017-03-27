@@ -20,7 +20,7 @@ Install UI dependencies:
 ```
 npm install
 ```
-After is has finished installing the dependencies, you can proceed to build the UI
+After it has finished installing the dependencies, you can proceed to build the UI
 ```
 npm run build
 ```
@@ -38,3 +38,20 @@ In windows, omitting the `./` might be required (or using .\\ instead in
 in the case of powershell).  
 This will build the java project and run the `Application.main` function.
 You can ctrl-c to stop the process.
+
+####Database Connection
+
+A connection to an online or offline MySQL database is required for using the application. To enable this connection, MySQL JDBC connector JAR file should be placed in the classpath.
+For logging into the database, its URL, username and password (optional for some databases) must be provided. Once connected, all the tables stored in the database will be listed and can be used to generate pivot tables.
+
+####Build a jar file
+
+Once the UI is built, it is possible to package all dependencies (including the mysql jdbc connector) in a single jar file. There is a gradle task `fatJar` that will manage that.
+```
+./gradlew fatJar
+```
+It produces a file `pivottable-all-1.0-SNAPSHOT.jar` in the `build/libs` directory.
+Assuming `java` is in the path, the following command will run the server on port 4567:
+```
+java -jar pivottable-all-1.0-SNAPSHOT.jar
+```

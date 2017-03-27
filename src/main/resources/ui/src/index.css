@@ -3,3 +3,35 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.raw-report-table {
+  overflow: scroll;
+  max-height: 500px;
+}
+
+.ui.table thead th.table-definition-header-cell {
+  cursor: auto;
+  background: #f9fafb;
+  text-align: center;
+  color: rgba(0,0,0,.87);
+  padding: .92857143em .78571429em;
+  vertical-align: inherit;
+  font-weight: 700;
+  text-transform: none;
+  border-bottom: 1px solid rgba(34,36,38,.1);
+}
+
+.table-definition-column-cell {
+  background: rgba(0,0,0,.03);
+  font-weight: 700;
+  color: rgba(0,0,0,.95);
+  border-left: 1px solid rgba(34, 36, 38, 0.1) !important;
+}
+
+.ui.table thead th.table-definition-header-empty-cell {
+  pointer-events: none;
+  background: 0 0;
+  font-weight: 400;
+  color: rgba(0,0,0,.4);
+  box-shadow: -1px -1px 0 1px #fff;
+}

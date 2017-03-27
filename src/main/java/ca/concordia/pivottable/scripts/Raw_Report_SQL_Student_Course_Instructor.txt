@@ -1,13 +1,14 @@
 --Table Creation Scripts
 CREATE TABLE student_course_instructor
-(student_id			INTEGER
+(student_id			VARCHAR (50)
 ,student_name		VARCHAR (50)
 ,program_name		VARCHAR (50)
 ,course_id			VARCHAR (8)
 ,course_name		VARCHAR (50)
 ,course_level		VARCHAR (50)
+,marks				INTEGER
 ,grade				VARCHAR (2)
-,instructor_id		INTEGER
+,instructor_id		VARCHAR (50)
 ,instructor_name	VARCHAR (50)
 ,department_name	VARCHAR (50)
 ,office_location	VARCHAR (50)
@@ -15,168 +16,180 @@ CREATE TABLE student_course_instructor
 
 --Data Insertion Scripts
 INSERT INTO student_course_instructor
-VALUES (45678934
+VALUES ('45678934'
 	,'Alan Jones'
 	,'Master of Computer Science'
 	,'COMP1235'
 	,'Software Engineering'
 	,'Undergraduate'
+	,80
 	,'B+'
-	,786735	
+	,'786735'	
 	,'Albert Griffins'
 	,'Computer Science'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (45678934
+VALUES ('45678934'
 	,'Alan Jones'
 	,'Master of Computer Science'
 	,'SOEN2345'
 	,'Advanced Programming Practices'
 	,'Graduate'
+	,86
 	,'A'
-	,789654
+	,'789654'
 	,'John Porter'
 	,'Software Engineering'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (45678934
+VALUES ('45678934'
 	,'Alan Jones'
 	,'Master of Computer Science'
 	,'SOEN6756'
 	,'Parallel Programming'
 	,'Graduate'
-	,'A-'
-	,789436	
+	,90
+	,'A'
+	,'789436'	
 	,'Samantha Smith'
 	,'Software Engineering'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (65835457
+VALUES ('65835457'
 	,'Sarah Parker'
 	,'Master of Applied Computer Science'
 	,'SOEN2345'
 	,'Advanced Programming Practices'
 	,'Graduate'
+	,87
 	,'A'
-	,789654
+	,'789654'
 	,'John Porter'
 	,'Software Engineering'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (65835457
+VALUES ('65835457'
 	,'Sarah Parker'
 	,'Master of Applied Computer Science'
 	,'MATH3745'
 	,'Cryptography'
 	,'Graduate'
-	,'B+'
-	,783343
+	,79
+	,'B-'
+	,'783343'
 	,'Selena Roberts'
 	,'Mathematics'
 	,'Hall Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (65835457
+VALUES ('65835457'
 	,'Sarah Parker'
 	,'Master of Applied Computer Science'
 	,'COMP3409'
 	,'Compiler Design'
 	,'Graduate'
+	,95
 	,'A+'
-	,786768
+	,'786768'
 	,'Helena Smith'
 	,'Computer Science'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (65835457
+VALUES ('65835457'
 	,'Sarah Parker'
 	,'Master of Applied Computer Science'
 	,'MATH3345'
 	,'Advanced Mathematics'
 	,'Graduate'
+	,91
 	,'A'
-	,781123
+	,'781123'
 	,'James Burrows'
 	,'Mathematics'
 	,'Hall Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (65835457
+VALUES ('65835457'
 	,'Sarah Parker'
 	,'Master of Applied Computer Science'
 	,'COMP909'
 	,'Operating Systems'
 	,'Undergraduate'
+	,74
 	,'B-'
-	,780087
+	,'780087'
 	,'Kelly McDonald'
 	,'Computer Science'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (76894356
+VALUES ('76894356'
 	,'Ronald Bradley'
 	,'Bachelor of Science'
 	,'SOEN567'
 	,'Introduction to Programming Practices'
 	,'Undergraduate'
-	,'B'
-	,789654
+	,76
+	,'B-'
+	,'789654'
 	,'John Porter'
 	,'Software Engineering'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (76894356
+VALUES ('76894356'
 	,'Ronald Bradley'
 	,'Bachelor of Science'
 	,'COMP1235'
 	,'Software Engineering'
 	,'Undergraduate'
-	,'B+'
-	,786735
+	,77
+	,'B-'
+	,'786735'
 	,'Albert Griffins'
 	,'Computer Science'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (76894356
+VALUES ('76894356'
 	,'Ronald Bradley'
 	,'Bachelor of Science'
 	,'COMP243'
 	,'Database Management Systems'
 	,'Undergraduate'
-	,'A-'
-	,786583
+	,82
+	,'B+'
+	,'786583'
 	,'Jonathan Williams'
 	,'Computer Science'
 	,'EV Building'
 );
 
 INSERT INTO student_course_instructor
-VALUES (76894356
+VALUES ('76894356'
 	,'Ronald Bradley'
 	,'Bachelor of Science'
 	,'COMP678'
 	,'Data Structures and Algorithms'
 	,'Undergraduate'
+	,87
 	,'A'
-	,786583
+	,'786583'
 	,'Jonathan Williams'
 	,'Computer Science'
 	,'EV Building'

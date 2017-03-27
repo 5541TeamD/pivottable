@@ -18,30 +18,32 @@ const RawDataReport = (props) => {
   return (
     <Segment loading={loading}>
       <Label attached="top">Raw Data: {tableSelected}</Label>
-      <Table celled={true}>
-        <Table.Header>
-          <Table.Row>
-            {rawReport.columns.map( (it, idx) => {
+      <div className="raw-report-table">
+        <Table celled={true}>
+          <Table.Header>
+            <Table.Row>
+              {rawReport.columns.map( (it, idx) => {
+                return (
+                  <Table.HeaderCell key={idx}>{it.alias}</Table.HeaderCell>
+                )
+              })}
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {rows.map( (it, idx) => {
               return (
-                <Table.HeaderCell key={idx}>{it.alias}</Table.HeaderCell>
+                <Table.Row key={idx}>
+                  {it.map ( (cellContent, index) => {
+                    return (
+                      <Table.Cell key={index}>{cellContent}</Table.Cell>
+                    )
+                  } )}
+                </Table.Row>
               )
-            })}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {rows.map( (it, idx) => {
-            return (
-              <Table.Row key={idx}>
-                {it.map ( (cellContent, index) => {
-                  return (
-                    <Table.Cell key={index}>{cellContent}</Table.Cell>
-                  )
-                } )}
-              </Table.Row>
-            )
-          }) }
-        </Table.Body>
-      </Table>
+            }) }
+          </Table.Body>
+        </Table>
+      </div>
     </Segment>
   )
 }

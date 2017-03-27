@@ -1,7 +1,6 @@
 package ca.concordia.pivottable.entities;
 
 import com.google.gson.Gson;
-
 import java.util.List;
 
 /**
@@ -11,8 +10,10 @@ import java.util.List;
 public class PivotTable {
 
     private PivotTableSchema schema;
+    
+    private List<String> pageLabelValues;
 
-    private List<List<Object>> data;
+    private List<List<List<Object>>> data;
 
     /**
      * Default constructor
@@ -26,13 +27,13 @@ public class PivotTable {
      * @param schema
      * @param data
      */
-    public PivotTable(PivotTableSchema schema, List<List<Object>> data) {
+    public PivotTable(PivotTableSchema schema, List<String> pageLabelValues, List<List<List<Object>>> data) {
         this.schema = schema;
+        this.pageLabelValues = pageLabelValues;
         this.data = data;
     }
 
     /**
-     * TODO test this
      * @return json representing this entity
      */
     public String toJSON() {
@@ -48,12 +49,20 @@ public class PivotTable {
     public void setSchema(PivotTableSchema schema) {
         this.schema = schema;
     }
+    
+    public List<String> getPageLabelValues() {
+		return pageLabelValues;
+	}
 
-    public List<List<Object>> getData() {
+	public void setPageLabelValues(List<String> pageLabelValues) {
+		this.pageLabelValues = pageLabelValues;
+	}
+
+	public void setData(List<List<List<Object>>> data) {
+		this.data = data;
+	}
+
+	public List<List<List<Object>>> getData() {
         return data;
-    }
-
-    public void setData(List<List<Object>> data) {
-        this.data = data;
     }
 }

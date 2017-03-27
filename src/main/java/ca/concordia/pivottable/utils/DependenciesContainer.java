@@ -1,6 +1,7 @@
 package ca.concordia.pivottable.utils;
 
 import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
+import ca.concordia.pivottable.servicelayer.impl.CredentialsServiceDefault;
 import ca.concordia.pivottable.servicelayer.impl.DataRetrievalServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,9 @@ public class DependenciesContainer {
             case "datasourceaccess":
                 return new DataSourceAccessImpl();
             case "dataretrievalservice":
-                return new DataRetrievalServiceImpl(get("dataSourceAccess"));
+                return new DataRetrievalServiceImpl(get("dataSourceAccess"), get("CredentialsService"));
+            case "credentialsservice":
+                return new CredentialsServiceDefault();
             default:
                 throw new InstantiationException("No dependency wired " + name + ". Developer needs to specify this.");
         }

@@ -2,6 +2,7 @@ package ca.concordia.pivottable.entities;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -16,6 +17,10 @@ public class PivotTableSchema {
     private String pageLabel;
     private String functionName;
     private String valueField;
+    private String filterField;
+    private String filterValue;
+    private String sortField;
+    private String sortOrder;
 
     public PivotTableSchema() {
         // empty default constructor
@@ -26,23 +31,30 @@ public class PivotTableSchema {
      */
     public PivotTableSchema(String table, List<String> columnLabels,
                             List<String> rowLabels, String pageLabel,
-                            String functionName, String valueField) {
+                            String functionName, String valueField,
+                            String filterField, String filterValue,
+                            String sortField, String sortOrder) {
         this.tableName = table;
         this.columnLabels = columnLabels;
         this.rowLabels = rowLabels;
         this.pageLabel = pageLabel;
         this.functionName = functionName;
         this.valueField = valueField;
+        this.filterField = filterField;
+        this.filterValue = filterValue;
+        this.sortField = sortField;
+        this.sortOrder = sortOrder;
     }
 
     /**
      * Creates an instance of PivotTableSchema from a json string.
-     * @param json The string containing the json
+     * @param json The string containing the json: note, the server returns it in a data object
      * @return a PivotTableSchema object
      */
     public static PivotTableSchema fromJSON(String json) {
         Gson gson = new Gson();
-        return gson.fromJson(json, PivotTableSchema.class);
+        JsonObject obj = gson.fromJson(json, JsonObject.class);
+        return gson.fromJson(obj.get("data"), PivotTableSchema.class);
     }
 
     // Getters and setters
@@ -96,4 +108,35 @@ public class PivotTableSchema {
         this.valueField = valueField;
     }
 
+	public String getSortField() {
+		return sortField;
+	}
+
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(String sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public String getFilterField() {
+		return filterField;
+	}
+
+	public void setFilterField(String filterField) {
+		this.filterField = filterField;
+	}
+
+	public String getFilterValue() {
+		return filterValue;
+	}
+
+	public void setFilterValue(String filterValue) {
+		this.filterValue = filterValue;
+	}
 }
