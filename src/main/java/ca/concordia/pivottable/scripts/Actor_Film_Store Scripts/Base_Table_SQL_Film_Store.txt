@@ -1,0 +1,99 @@
+-- Table Creation Scripts
+CREATE TABLE film_store
+(film_id			VARCHAR (50)
+,store_id			VARCHAR (50)
+,inventory_id		VARCHAR (50)
+,store_location		VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO film_store
+VALUES ('666030'
+	,'191901'
+	,'144'
+	,'Montreal'
+);
+
+INSERT INTO film_store
+VALUES ('666030'
+	,'191901'
+	,'145'
+	,'Montreal'
+);
+
+INSERT INTO film_store
+VALUES ('666046'
+	,'191902'
+	,'207'
+	,'Toronto'
+);
+
+INSERT INTO film_store
+VALUES ('666046'
+	,'191902'
+	,'208'
+	,'Toronto'
+);
+
+INSERT INTO film_store
+VALUES ('666046'
+	,'191902'
+	,'209'
+	,'Toronto'
+);
+
+INSERT INTO film_store
+VALUES ('666050'
+	,'191901'
+	,'222'
+	,'Montreal'
+);
+
+INSERT INTO film_store
+VALUES ('666050'
+	,'191901'
+	,'223'
+	,'Montreal'
+);
+
+INSERT INTO film_store
+VALUES ('666050'
+	,'191901'
+	,'224'
+	,'Montreal'
+);
+
+INSERT INTO film_store
+VALUES ('666050'
+	,'191902'
+	,'225'
+	,'Toronto'
+);
+
+INSERT INTO film_store
+VALUES ('666050'
+	,'191902'
+	,'226'
+	,'Toronto'
+);
+
+INSERT INTO film_store
+VALUES ('666075'
+	,'191903'
+	,'339'
+	,'Ottawa'
+);
+
+INSERT INTO film_store
+VALUES ('666075'
+	,'191903'
+	,'340'
+	,'Ottawa'
+);
+
+INSERT INTO film_store
+VALUES ('666075'
+	,'191903'
+	,'341'
+	,'Ottawa'
+);

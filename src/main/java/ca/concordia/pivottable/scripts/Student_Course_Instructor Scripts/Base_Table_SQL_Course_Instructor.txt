@@ -1,0 +1,78 @@
+-- Table Creation Scripts
+CREATE TABLE course_instructor
+(course_id			VARCHAR (8)
+,course_name		VARCHAR (50)
+,course_level		VARCHAR (50)
+,instructor_id		VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO course_instructor
+VALUES ('COMP1235'
+	,'Software Engineering'
+	,'Undergraduate'
+	,'786735'
+);
+
+INSERT INTO course_instructor
+VALUES ('SOEN2345'
+	,'Advanced Programming Practices'
+	,'Graduate'
+	,'789654'
+);
+
+INSERT INTO course_instructor
+VALUES ('SOEN6756'
+	,'Parallel Programming'
+	,'Graduate'
+	,'789436'
+);
+
+INSERT INTO course_instructor
+VALUES ('MATH3745'
+	,'Cryptography'
+	,'Graduate'
+	,'783343'
+);
+
+INSERT INTO course_instructor
+VALUES ('COMP3409'
+	,'Compiler Design'
+	,'Graduate'
+	,'786768'
+);
+
+INSERT INTO course_instructor
+VALUES ('MATH3345'
+	,'Advanced Mathematics'
+	,'Graduate'
+	,'781123'
+);
+
+INSERT INTO course_instructor
+VALUES ('COMP909'
+	,'Operating Systems'
+	,'Undergraduate'
+	,'780087'
+);
+
+INSERT INTO course_instructor
+VALUES ('SOEN567'
+	,'Introduction to Programming Practices'
+	,'Undergraduate'
+	,'789654'
+);
+
+INSERT INTO course_instructor
+VALUES ('COMP243'
+	,'Database Management Systems'
+	,'Undergraduate'
+	,'786583'
+);
+
+INSERT INTO course_instructor
+VALUES ('COMP678'
+	,'Data Structures and Algorithms'
+	,'Undergraduate'
+	,'786583'
+);

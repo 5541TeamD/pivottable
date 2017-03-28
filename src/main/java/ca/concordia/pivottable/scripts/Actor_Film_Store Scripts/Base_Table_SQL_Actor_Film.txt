@@ -1,0 +1,71 @@
+-- Table Creation Scripts
+CREATE TABLE actor_film
+(actor_id			VARCHAR (50)
+,actor_first_name	VARCHAR (50)
+,actor_last_name	VARCHAR (50)
+,film_id			VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO actor_film
+VALUES ('111009'
+	,'Joe'
+	,'Swank'
+	,'666030'
+);
+
+INSERT INTO actor_film
+VALUES ('111163'
+	,'Christopher'
+	,'West'
+	,'666030'
+);
+
+INSERT INTO actor_film
+VALUES ('111178'
+	,'Lisa'
+	,'Monroe'
+	,'666030'
+);
+
+INSERT INTO actor_film
+VALUES ('111059'
+	,'Dustin'
+	,'Tautou'
+	,'666046'
+);
+
+INSERT INTO actor_film
+VALUES ('111065'
+	,'Angela'
+	,'Hudson'
+	,'666046'
+);
+
+INSERT INTO actor_film
+VALUES ('111084'
+	,'James'
+	,'Pitt'
+	,'666046'
+);
+
+INSERT INTO actor_film
+VALUES ('111070'
+	,'Michelle'
+	,'McConaughey'
+	,'666050'
+);
+
+INSERT INTO actor_film
+VALUES ('111055'
+	,'Fay'
+	,'Kilmer'
+	,'666075'
+);
+
+INSERT INTO actor_film
+VALUES ('111150'
+	,'Jayne'
+	,'Nolte'
+	,'666075'
+);

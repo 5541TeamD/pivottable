@@ -1,0 +1,7 @@
+-- Join Script
+SELECT a.actor_id, a.actor_first_name, a.actor_last_name,
+		f.film_id, f.film_title, f.film_release_year, f.film_language,
+        s.store_id, s.inventory_id, s.store_location
+FROM actor_film a, film f, film_store s
+WHERE a.film_id = f.film_id
+AND f.film_id = s.film_id;

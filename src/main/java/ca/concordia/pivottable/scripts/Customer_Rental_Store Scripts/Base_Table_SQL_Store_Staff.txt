@@ -1,0 +1,22 @@
+-- Table Creation Scripts
+CREATE TABLE store_staff
+(store_id				VARCHAR (50)
+,staff_id				VARCHAR (50)
+,staff_first_name		VARCHAR (50)
+,staff_last_name		VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO store_staff
+VALUES ('191901'
+	,'202001'
+	,'Mike'
+	,'Hillyer'
+);
+
+INSERT INTO store_staff
+VALUES ('191902'
+	,'202002'
+	,'Jon'
+	,'Stephens'
+);

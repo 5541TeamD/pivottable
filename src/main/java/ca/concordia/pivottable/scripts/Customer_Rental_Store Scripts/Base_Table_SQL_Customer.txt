@@ -1,0 +1,33 @@
+-- Table Creation Scripts
+CREATE TABLE customer
+(customer_id			VARCHAR (50)
+,customer_first_name	VARCHAR (50)
+,customer_last_name		VARCHAR (50)
+,customer_email			VARCHAR (50)
+,customer_status		VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO customer
+VALUES ('333318'
+	,'Brian'
+	,'Wyman'
+	,'BRIAN.WYMAN@dcustomer.org'
+	,'active'
+);
+
+INSERT INTO customer
+VALUES ('333061'
+	,'Katherine'
+	,'Rivera'
+	,'KATHERINE.RIVERA@dcustomer.org'
+	,'active'
+);
+
+INSERT INTO customer
+VALUES ('333281'
+	,'Leona'
+	,'Obrien'
+	,'LEONA.OBRIEN@dcustomer.org'
+	,'active'
+);

@@ -1,0 +1,16 @@
+-- Table Creation Scripts
+CREATE TABLE store
+(store_id				VARCHAR (50)
+,store_location			VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO store
+VALUES ('191901'
+	,'Montreal'
+);
+
+INSERT INTO store
+VALUES ('191902'
+	,'Toronto'
+);

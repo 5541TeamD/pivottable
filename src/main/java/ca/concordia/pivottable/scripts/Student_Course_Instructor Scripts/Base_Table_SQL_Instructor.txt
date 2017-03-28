@@ -1,0 +1,64 @@
+-- Table Creation Scripts
+CREATE TABLE instructor
+(instructor_id		VARCHAR (50)
+,instructor_name	VARCHAR (50)
+,department_name	VARCHAR (50)
+,office_location	VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO instructor
+VALUES ('786735'	
+	,'Albert Griffins'
+	,'Computer Science'
+	,'EV Building'
+);
+
+INSERT INTO instructor
+VALUES ('789654'
+	,'John Porter'
+	,'Software Engineering'
+	,'EV Building'
+);
+
+INSERT INTO instructor
+VALUES ('789436'	
+	,'Samantha Smith'
+	,'Software Engineering'
+	,'EV Building'
+);
+
+INSERT INTO instructor
+VALUES ('783343'
+	,'Selena Roberts'
+	,'Mathematics'
+	,'Hall Building'
+);
+
+INSERT INTO instructor
+VALUES ('786768'
+	,'Helena Smith'
+	,'Computer Science'
+	,'EV Building'
+);
+
+INSERT INTO instructor
+VALUES ('781123'
+	,'James Burrows'
+	,'Mathematics'
+	,'Hall Building'
+);
+
+INSERT INTO instructor
+VALUES ('780087'
+	,'Kelly McDonald'
+	,'Computer Science'
+	,'EV Building'
+);
+
+INSERT INTO instructor
+VALUES ('786583'
+	,'Jonathan Williams'
+	,'Computer Science'
+	,'EV Building'
+);

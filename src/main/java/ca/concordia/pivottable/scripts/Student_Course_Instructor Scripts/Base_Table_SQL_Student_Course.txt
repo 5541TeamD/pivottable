@@ -1,0 +1,118 @@
+-- Table Creation Scripts
+CREATE TABLE student_course
+(student_id			VARCHAR (50)
+,student_name		VARCHAR (50)
+,program_name		VARCHAR (50)
+,course_id			VARCHAR (8)
+,marks				INTEGER
+,grade				VARCHAR (2)
+);
+
+-- Data Insertion Scripts
+INSERT INTO student_course
+VALUES ('45678934'
+	,'Alan Jones'
+	,'Master of Computer Science'
+	,'COMP1235'
+	,80
+	,'B+'
+);
+
+INSERT INTO student_course
+VALUES ('45678934'
+	,'Alan Jones'
+	,'Master of Computer Science'
+	,'SOEN2345'
+	,86
+	,'A'
+);
+
+INSERT INTO student_course
+VALUES ('45678934'
+	,'Alan Jones'
+	,'Master of Computer Science'
+	,'SOEN6756'
+	,90
+	,'A'
+);
+
+INSERT INTO student_course
+VALUES ('65835457'
+	,'Sarah Parker'
+	,'Master of Applied Computer Science'
+	,'SOEN2345'
+	,87
+	,'A'
+);
+
+INSERT INTO student_course
+VALUES ('65835457'
+	,'Sarah Parker'
+	,'Master of Applied Computer Science'
+	,'MATH3745'
+	,79
+	,'B-'
+);
+
+INSERT INTO student_course
+VALUES ('65835457'
+	,'Sarah Parker'
+	,'Master of Applied Computer Science'
+	,'COMP3409'
+	,95
+	,'A+'
+);
+
+INSERT INTO student_course
+VALUES ('65835457'
+	,'Sarah Parker'
+	,'Master of Applied Computer Science'
+	,'MATH3345'
+	,91
+	,'A'
+);
+
+INSERT INTO student_course
+VALUES ('65835457'
+	,'Sarah Parker'
+	,'Master of Applied Computer Science'
+	,'COMP909'
+	,74
+	,'B-'
+);
+
+INSERT INTO student_course
+VALUES ('76894356'
+	,'Ronald Bradley'
+	,'Bachelor of Science'
+	,'SOEN567'
+	,76
+	,'B-'
+);
+
+INSERT INTO student_course
+VALUES ('76894356'
+	,'Ronald Bradley'
+	,'Bachelor of Science'
+	,'COMP1235'
+	,77
+	,'B-'
+);
+
+INSERT INTO student_course
+VALUES ('76894356'
+	,'Ronald Bradley'
+	,'Bachelor of Science'
+	,'COMP243'
+	,82
+	,'B+'
+);
+
+INSERT INTO student_course
+VALUES ('76894356'
+	,'Ronald Bradley'
+	,'Bachelor of Science'
+	,'COMP678'
+	,87
+	,'A'
+);

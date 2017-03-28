@@ -1,0 +1,9 @@
+-- Join Script
+SELECT c.customer_id, c.customer_first_name, c.customer_last_name, c.customer_email, c.customer_status
+		,s.store_id, s.store_location
+        ,ss.staff_id, ss.staff_first_name, ss.staff_last_name
+		,r.inventory_id, r.film_title, r.payment_id, r.rental_id, r.amount, r.payment_date, r.return_date
+FROM customer c, store s, store_staff ss, rental r
+WHERE c.customer_id = r.customer_id
+AND s.store_id = r.store_id
+AND ss.staff_id = r.staff_id;

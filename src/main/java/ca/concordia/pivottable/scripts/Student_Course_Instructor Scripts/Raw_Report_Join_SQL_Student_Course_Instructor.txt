@@ -1,0 +1,8 @@
+-- Join Script
+SELECT s.student_id, s.student_name, s.program_name, 
+		c.course_id, c.course_name, c.course_level
+		,s.marks, s.grade, 
+		i.instructor_id, i.instructor_name, i.department_name, i.office_location
+FROM student_course s, course_instructor c, instructor i
+WHERE s.course_id = c.course_id
+AND c.instructor_id = i.instructor_id;

@@ -1,0 +1,36 @@
+-- Table Creation Scripts
+CREATE TABLE film
+(film_id			VARCHAR (50)
+,film_title			VARCHAR (50)
+,film_release_year	VARCHAR (50)
+,film_language		VARCHAR (50)
+);
+
+-- Data Insertion Scripts
+INSERT INTO film
+VALUES ('666030'
+	,'Anything Savannah'
+	,'2006'
+	,'English'
+);
+
+INSERT INTO film
+VALUES ('666046'
+	,'Autumn Crow'
+	,'2006'
+	,'English'
+);
+
+INSERT INTO film
+VALUES ('666050'
+	,'Baked Cleopatra'
+	,'2010'
+	,'English'
+);
+
+INSERT INTO film
+VALUES ('666075'
+	,'Bird Independence'
+	,'2009'
+	,'English'
+);
