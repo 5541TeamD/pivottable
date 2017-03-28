@@ -51,7 +51,7 @@ const PrintablePivotTables = (props) => {
     )
   })
   return (
-    <div>
+    <div className="raw-report-table-visible" >
       {checkbox}
       <br />
       {tables}

@@ -4,7 +4,7 @@ body {
   font-family: sans-serif;
 }
 
-.raw-report-table {
+div.raw-report-table {
   overflow: scroll;
   max-height: 500px;
 }
@@ -34,4 +34,18 @@ body {
   font-weight: 400;
   color: rgba(0,0,0,.4);
   box-shadow: -1px -1px 0 1px #fff;
+}
+
+div.raw-report-table-visible {
+  overflow: visible;
+}
+
+@media print
+{
+  table { page-break-after:auto }
+  tr    { page-break-inside:avoid; page-break-after:auto }
+  td    { page-break-inside:avoid; page-break-after:auto }
+  thead { display:table-header-group }
+  tfoot { display:table-footer-group }
+  body  { overflow: visible }
 }
