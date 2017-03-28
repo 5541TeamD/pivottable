@@ -1,4 +1,4 @@
---Table Creation Scripts
+-- Table Creation Scripts
 CREATE TABLE actor_film_store
 (actor_id			VARCHAR (50)
 ,actor_first_name	VARCHAR (50)
@@ -12,7 +12,7 @@ CREATE TABLE actor_film_store
 ,store_location		VARCHAR (50)
 );
 
---Data Insertion Scripts
+-- Data Insertion Scripts
 INSERT INTO actor_film_store
 VALUES ('111009'
 	,'Joe'

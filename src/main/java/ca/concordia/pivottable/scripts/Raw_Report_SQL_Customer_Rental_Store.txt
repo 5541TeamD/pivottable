@@ -1,4 +1,4 @@
---Table Creation Scripts
+-- Table Creation Scripts
 CREATE TABLE customer_rental_store
 (customer_id			VARCHAR (50)
 ,customer_first_name	VARCHAR (50)
@@ -19,7 +19,7 @@ CREATE TABLE customer_rental_store
 ,return_date			VARCHAR (50)
 );
 
---Data Insertion Scripts
+-- Data Insertion Scripts
 INSERT INTO customer_rental_store
 VALUES ('333318'
 	,'Brian'

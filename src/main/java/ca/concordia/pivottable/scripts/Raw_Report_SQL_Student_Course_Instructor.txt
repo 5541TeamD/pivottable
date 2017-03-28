@@ -1,4 +1,4 @@
---Table Creation Scripts
+-- Table Creation Scripts
 CREATE TABLE student_course_instructor
 (student_id			VARCHAR (50)
 ,student_name		VARCHAR (50)
@@ -14,7 +14,7 @@ CREATE TABLE student_course_instructor
 ,office_location	VARCHAR (50)
 );
 
---Data Insertion Scripts
+-- Data Insertion Scripts
 INSERT INTO student_course_instructor
 VALUES ('45678934'
 	,'Alan Jones'

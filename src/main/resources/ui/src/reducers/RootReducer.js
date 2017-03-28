@@ -276,7 +276,10 @@ const rootReducer = (state = initialState, action) => {
       }
     case C.SCHEMA_ROW_LABELS_SELECTED:
       //console.log('Called the reducer for SCHEMA_ROW_LABELS_SELECTED')
-      const newSelectedRowLabels = state.tableSchema.rowLabels.filter(val => action.value.indexOf(val.name) !== -1)
+      // const newSelectedRowLabels = state.tableSchema.rowLabels.filter(val => action.value.indexOf(val.name) !== -1)
+      const newSelectedRowLabels = action.value.map ( name => {
+        return state.tableSchema.rowLabels.find ( val => val.name === name );
+      })
       return {
         ...state,
         tableSchema: {
@@ -299,13 +302,17 @@ const rootReducer = (state = initialState, action) => {
         pageLabels: []
       }
     case C.SCHEMA_COLUMN_LABELS_SELECTED:
+      //const newSelectedColumnLabels =  state.tableSchema.columnLabels.filter (val => {
+      //  return action.value.indexOf(val.name) !== -1
+      //}) // below one preserves selection order
+      const newSelectedColumnLabels = action.value.map ( name => {
+        return state.tableSchema.columnLabels.find ( val => val.name === name );
+      })
       return {
         ...state,
         tableSchema: {
           ...state.tableSchema,
-          selectedColumnLabels: state.tableSchema.columnLabels.filter (val => {
-            return action.value.indexOf(val.name) !== -1
-          }),
+          selectedColumnLabels: newSelectedColumnLabels,
           pageLabels: state.tableSchema.columnLabels.filter(val => {
             return action.value.indexOf(val.name) === -1
           }),

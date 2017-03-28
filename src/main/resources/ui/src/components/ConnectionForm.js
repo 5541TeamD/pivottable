@@ -46,7 +46,7 @@ const ConnectionForm = (props) => {
             <Label>{userName}</Label>
           </Form.Field>
           <Form.Field>
-            <Label basic>Connected to {dataSource}</Label>
+            <Label basic>Using data source: {dataSource}</Label>
           </Form.Field>
           <Form.Field>
             <Button color="red" onClick={onDisconnect} >
