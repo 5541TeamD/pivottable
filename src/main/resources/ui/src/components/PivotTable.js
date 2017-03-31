@@ -41,7 +41,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
         hi === (schemaRowLabels.length-1)) {
         headerCells.push(
           <Table.HeaderCell
-            className="table-definition-header-cell"
+            className="table-definition-header-cell-label"
             key={getNextId()}
           >
             <div>
@@ -56,7 +56,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
       } else if (hi === (schemaRowLabels.length-1)) {
           headerCells.push(
             <Table.HeaderCell
-              className="table-definition-header-cell"
+              className="table-definition-header-cell-label"
               key={getNextId()}
             >
               {`${schemaColumnLabels[i]}`}
@@ -65,7 +65,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
       } else if (i === (schemaColumnLabels.length-1)) {
           headerCells.push(
             <Table.HeaderCell
-              className="table-definition-header-cell"
+              className="table-definition-header-cell-label"
               key={getNextId()}
             >
               {`${schemaRowLabels[hi]}`}
@@ -73,7 +73,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
           )
       } else {
         headerCells.push(<Table.HeaderCell
-          className="table-definition-header-cell"
+          className="table-definition-header-cell-label box-shadow-cell"
           key={getNextId()}
         />);
       }
