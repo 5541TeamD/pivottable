@@ -35,6 +35,7 @@ const C = {
   FILTER_FIELD_SELECTED: 'FILTER_FIELD_SELECTED',
   FILTER_VALUE_SELECTED: 'FILTER_VALUE_SELECTED',
   TOGGLE_PRINTABLE_VIEW: 'TOGGLE_PRINTABLE_VIEW',
+  SCHEMA_LABEL_ALIAS_CHANGED: 'SCHEMA_LABEL_ALIAS_CHANGED',
 }
 
 export {C}
@@ -83,6 +84,7 @@ const initialState = {
     sortFields: [],
     selectedSortField: '',
     sortOrder: 'asc',
+    aliasMap: {}, // stores the [name:alias] for each value
   },
   pivotTableLoading: false,
   // 1 pivot table data per page
@@ -135,7 +137,7 @@ const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, c
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
 const mapPivotTableDataToRender = (schema, apiDataList) => {
-  console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+  //console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
 
 
   return apiDataList.map ( apiData => {
@@ -194,7 +196,8 @@ const mapPivotTableDataToRender = (schema, apiDataList) => {
     return {
       rowLabels: rows,
       columnLabels: columns,
-      data
+      data,
+      schema
     };
   })
 }
@@ -384,7 +387,8 @@ const rootReducer = (state = initialState, action) => {
           functionList: initialState.tableSchema.functionList,
           selectedFunction: '',
           possibleValues: [],
-          selectedValue: ''
+          selectedValue: '',
+          aliasMap: {},
         },
         pivotTables: initialState.pivotTables,
         pageSelected: -1,
@@ -464,6 +468,14 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         printableView: action.value //!state.printableView
+      }
+    case C.SCHEMA_LABEL_ALIAS_CHANGED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          aliasMap: {...state.tableSchema.aliasMap, [action.name]: action.value}
+        }
       }
     case C.FETCH_FILTER_FIELDS_SUCCESS:
     case C.FETCH_FILTER_FIELDS:

@@ -28,12 +28,14 @@ div.raw-report-table {
   border-left: 1px solid rgba(34, 36, 38, 0.1) !important;
 }
 
-.ui.table thead th.table-definition-header-empty-cell {
+.ui.table thead th.table-definition-header-cell-label {
   pointer-events: none;
   background: 0 0;
   font-weight: 400;
-  color: rgba(0,0,0,.4);
-  box-shadow: -1px -1px 0 1px #fff;
+}
+
+.box-shadow-cell {
+  box-shadow: -1px -1px 0 1px #fff !important;
 }
 
 div.raw-report-table-visible {

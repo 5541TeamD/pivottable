@@ -29,23 +29,37 @@ const PrintablePivotTables = (props) => {
     </div>)
   }
   if (pivotTables.length > 0 && pageLabels.length === 0) {
-    const {columnLabels, rowLabels, data} = pivotTables[0]
+    const {columnLabels, rowLabels, data, schema} = pivotTables[0]
     return (
       <div>
         {checkbox}
         <br />
-        <PivotTable columnLabels={columnLabels} rowLabels={rowLabels} data={data}/>
+        <PivotTable
+          columnLabels={columnLabels}
+          rowLabels={rowLabels}
+          data={data}
+          schema={schema}
+        />
       </div>
     )
   }
 
   const tables = pivotTables.map ( (pivotTable, pageNumber) => {
-    const {columnLabels, rowLabels, data} = pivotTable
+    const {columnLabels, rowLabels, data, schema} = pivotTable
+    let pageAlias = schema.aliasMap[schema.pageLabel]
+    if (!pageAlias) {
+      pageAlias = schema.pageLabel
+    }
     return (
       <div key={pageNumber}>
-        <span><label>Page: </label>{pageLabels[pageNumber]}</span>
+        <span><label>{`${pageAlias}: `}</label>{pageLabels[pageNumber]}</span>
         <hr/>
-        <PivotTable columnLabels={columnLabels} rowLabels={rowLabels} data={data}/>
+        <PivotTable
+          columnLabels={columnLabels}
+          rowLabels={rowLabels}
+          data={data}
+          schema={schema}
+        />
         <br />
       </div>
     )

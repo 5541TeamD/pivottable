@@ -1,10 +1,9 @@
 package ca.concordia.pivottable.entities;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * POJO representing a pivot table schema
@@ -22,6 +21,13 @@ public class PivotTableSchema {
     private String sortField;
     private String sortOrder;
 
+    /**
+     * Map to store the values the user wants.
+     * keys: values from the row, column or page labels.
+     * values: User customized the label values.
+     */
+    private Map<String, String> aliasMap;
+
     public PivotTableSchema() {
         // empty default constructor
     }
@@ -33,7 +39,8 @@ public class PivotTableSchema {
                             List<String> rowLabels, String pageLabel,
                             String functionName, String valueField,
                             String filterField, String filterValue,
-                            String sortField, String sortOrder) {
+                            String sortField, String sortOrder,
+                            Map<String, String> aliasMap) {
         this.tableName = table;
         this.columnLabels = columnLabels;
         this.rowLabels = rowLabels;
@@ -44,6 +51,7 @@ public class PivotTableSchema {
         this.filterValue = filterValue;
         this.sortField = sortField;
         this.sortOrder = sortOrder;
+        this.aliasMap = aliasMap;
     }
 
     /**
@@ -53,8 +61,7 @@ public class PivotTableSchema {
      */
     public static PivotTableSchema fromJSON(String json) {
         Gson gson = new Gson();
-        JsonObject obj = gson.fromJson(json, JsonObject.class);
-        return gson.fromJson(obj.get("data"), PivotTableSchema.class);
+        return gson.fromJson(json, PivotTableSchema.class);
     }
 
     // Getters and setters
@@ -139,4 +146,12 @@ public class PivotTableSchema {
 	public void setFilterValue(String filterValue) {
 		this.filterValue = filterValue;
 	}
+
+    public Map<String, String> getAliasMap() {
+        return aliasMap;
+    }
+
+    public void setAliasMap(Map<String, String> aliasMap) {
+        this.aliasMap = aliasMap;
+    }
 }

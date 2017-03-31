@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Segment, Form, Button, Label, Input} from 'semantic-ui-react'
+import {Segment, Form, Button, Label, Input, Modal} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 
 import {rowLabelsChanged,
@@ -14,6 +14,7 @@ import {rowLabelsChanged,
   filterValueSelected,
   sortFieldSelected,
   sortOrderSelected,
+  aliasChanged,
 } from '../actions/ActionCreators'
 
 const PivotTableSchema = (props) => {
@@ -31,8 +32,21 @@ const PivotTableSchema = (props) => {
     onFilterFieldSelected,
     onFilterValueChanged,
     onSortFieldSelected,
-    onSortOrderSelected
+    onSortOrderSelected,
+    allColumns,
+    aliasMap,
+    onAliasChanged,
   } = props
+
+  const aliasFields = allColumns.filter (item => {
+    const finderFunc = (field => field === item.name);
+    return (
+      item.name === selectedValue ||
+      item.name === selectedPageLabel ||
+      selectedRowLabels.findIndex(finderFunc) >= 0 ||
+      selectedColumnLabels.findIndex(finderFunc) >= 0
+    )
+  })
 
   return isConnected ? (
     <Segment loading={loading}>
@@ -120,6 +134,31 @@ const PivotTableSchema = (props) => {
                            placeholder="Select Value to apply function on"/>
           </Form.Field>
           <Form.Field>
+              <Modal closeIcon={true}
+                   trigger={<Form.Button>Customize labels</Form.Button>}>
+              <Modal.Header>
+                Customize the text of the labels to show in the pivot table
+              </Modal.Header>
+              <Modal.Content>
+                <Form as="div">
+                  {aliasFields.map( (item, indx) => (
+                    <Form.Field key={indx}>
+                      <label>{item.name}</label>
+                      <Form.Input
+                        name={item.name}
+                        value={
+                          (aliasMap[item.name] !== undefined)
+                            ? aliasMap[item.name]
+                            : item.alias
+                        }
+                        onChange={onAliasChanged} />
+                    </Form.Field>
+                  ))}
+                </Form>
+              </Modal.Content>
+            </Modal>
+          </Form.Field>
+          <Form.Field>
             <Button primary={true} onClick={onGeneratePivotTable}
                     disabled={!selectedValue}>
               Generate Pivot Table
@@ -127,6 +166,7 @@ const PivotTableSchema = (props) => {
             <Button onClick={onReset}>
               Reset
             </Button>
+
 
           </Form.Field>
         </div>
@@ -137,12 +177,13 @@ const PivotTableSchema = (props) => {
     <div>
     </div>
     )
-
 }
 
 const mapStateToProps = (state) => ({
   loading: state.rawReportLoading || state.pivotTableLoading,
   isConnected: state.connectedSuccessfully,
+  allColumns: state.tableSchema.rowLabels,
+  aliasMap: state.tableSchema.aliasMap,
   rowLabels: state.tableSchema.rowLabels.map ( val => ({
     text: val.alias,
     value: val.name,
@@ -225,6 +266,9 @@ const mapDispatchToProps = (dispatch) => ({
   onGeneratePivotTable: () => {
     dispatch(generatePivotTable())
   },
+  onAliasChanged: (e, {name, value}) => {
+    dispatch(aliasChanged(name,value))
+  }
 })
 
 

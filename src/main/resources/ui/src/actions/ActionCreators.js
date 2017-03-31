@@ -130,6 +130,7 @@ const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
   filterValue: tableSchema.filterValue,
   sortField: tableSchema.selectedSortField,
   sortOrder: tableSchema.sortOrder,
+  aliasMap: tableSchema.aliasMap
 })
 
 export const generatePivotTable = () => async(dispatch, getState) => {
@@ -150,3 +151,9 @@ export const generatePivotTable = () => async(dispatch, getState) => {
 export const printableViewChanged = (value) => (
   {type: C.TOGGLE_PRINTABLE_VIEW, value}
 )
+
+export const aliasChanged = (name, value) => ({
+  type: C.SCHEMA_LABEL_ALIAS_CHANGED,
+  name,
+  value
+})

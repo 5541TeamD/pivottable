@@ -41,7 +41,7 @@ export const getRawReport = (tableName, dataSource, username, password) => {
 
 
 export const getPivotTable = (schema, dataSource, username, password) => {
-  return instance.post('/api/pivottable', {data: schema}, {
+  return instance.post('/api/pivottable', schema, {
     headers: buildCustomHeader(dataSource, username, password),
   })
 }
