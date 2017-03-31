@@ -63,6 +63,17 @@ public class PivotTableSchema {
         Gson gson = new Gson();
         return gson.fromJson(json, PivotTableSchema.class);
     }
+    
+    /**
+	 * Creates a JSON string from an instance of PivotTableSchema.
+	 * @return	A JSON string
+	 */
+	public String toJSON() 
+	{
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
+  
 
     // Getters and setters
 

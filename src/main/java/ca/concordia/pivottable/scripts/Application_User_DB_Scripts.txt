@@ -1,0 +1,28 @@
+-- Database Creation Script
+CREATE DATABASE app_user_db;
+
+-- Table Creation Script
+CREATE TABLE application_user
+(username			VARCHAR (100)	NOT NULL
+,passwordHash		VARCHAR (255)	NOT NULL
+,PRIMARY KEY (username, passwordHash)
+);
+
+CREATE TABLE shareable_schema
+(schema_id				INTEGER 		PRIMARY KEY		AUTO_INCREMENT
+,schema_name			VARCHAR (100)	NOT NULL
+,owner_username			VARCHAR (100)
+,db_url					VARCHAR (100)	NOT NULL
+,db_username			VARCHAR (100)	NOT NULL
+,db_password			VARCHAR (255)
+,pivot_table_schema		TEXT			NOT NULL
+,FOREIGN KEY (owner_username) REFERENCES application_user(username) ON DELETE SET NULL
+);
+
+CREATE TABLE shared_schema
+(shared_username		VARCHAR (100)	NOT NULL
+,shared_schema_id		INTEGER			NOT NULL
+,PRIMARY KEY (shared_username, shared_schema_id)
+,FOREIGN KEY (shared_username) REFERENCES application_user(username)
+,FOREIGN KEY (shared_schema_id) REFERENCES shareable_schema(schema_id)
+);
