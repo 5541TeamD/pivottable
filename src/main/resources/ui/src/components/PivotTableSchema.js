@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Segment, Form, Button, Label, Input, Grid, Modal} from 'semantic-ui-react'
+import {Segment, Form, Button, Label, Input, Modal} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 
 import {rowLabelsChanged,
@@ -37,6 +37,16 @@ const PivotTableSchema = (props) => {
     aliasMap,
     onAliasChanged,
   } = props
+
+  const aliasFields = allColumns.filter (item => {
+    const finderFunc = (field => field === item.name);
+    return (
+      item.name === selectedValue ||
+      item.name === selectedPageLabel ||
+      selectedRowLabels.findIndex(finderFunc) >= 0 ||
+      selectedColumnLabels.findIndex(finderFunc) >= 0
+    )
+  })
 
   return isConnected ? (
     <Segment loading={loading}>
@@ -131,8 +141,8 @@ const PivotTableSchema = (props) => {
               </Modal.Header>
               <Modal.Content>
                 <Form as="div">
-                  {allColumns.map( item => (
-                    <Form.Field>
+                  {aliasFields.map( (item, indx) => (
+                    <Form.Field key={indx}>
                       <label>{item.name}</label>
                       <Form.Input
                         name={item.name}

@@ -22,17 +22,21 @@ const PivotTableSegment = (props) => {
   if (!isConnected || !tableSelected || pivotTables.length === 0 || pageSelected === -1) {
     return <div></div>
   }
-  const {rowLabels, columnLabels, data} = pivotTables[pageSelected]
+  const {rowLabels, columnLabels, data, schema} = pivotTables[pageSelected]
   const pageOptions = pageLabels.map ( (val, index) => ({
     text: val,
     value: index,
     key: index
   }))
+  let pageAlias = schema.aliasMap[schema.pageLabel]
+  if (!pageAlias) {
+    pageAlias = schema.pageLabel
+  }
 
   const pageDropDown = pageOptions.length > 0 ? (
       <div>
         <Form.Field>
-          <label>Page</label>
+          <label>{`${pageAlias}`}</label>
           <Form.Dropdown
             value={pageSelected}
             onChange={onPageChanged}
@@ -55,7 +59,12 @@ const PivotTableSegment = (props) => {
       <br />
       {pageDropDown}
       <div className="raw-report-table">
-        <PivotTable rowLabels={rowLabels} columnLabels={columnLabels} data={data} />
+        <PivotTable
+          rowLabels={rowLabels}
+          columnLabels={columnLabels}
+          data={data}
+          schema={schema}
+        />
       </div>
     </Segment>
   )

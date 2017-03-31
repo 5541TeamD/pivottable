@@ -130,6 +130,7 @@ const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
   filterValue: tableSchema.filterValue,
   sortField: tableSchema.selectedSortField,
   sortOrder: tableSchema.sortOrder,
+  aliasMap: tableSchema.aliasMap
 })
 
 export const generatePivotTable = () => async(dispatch, getState) => {

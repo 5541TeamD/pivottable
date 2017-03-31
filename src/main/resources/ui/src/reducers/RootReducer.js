@@ -137,7 +137,7 @@ const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, c
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
 const mapPivotTableDataToRender = (schema, apiDataList) => {
-  console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
+  //console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
 
 
   return apiDataList.map ( apiData => {
@@ -196,7 +196,8 @@ const mapPivotTableDataToRender = (schema, apiDataList) => {
     return {
       rowLabels: rows,
       columnLabels: columns,
-      data
+      data,
+      schema
     };
   })
 }
