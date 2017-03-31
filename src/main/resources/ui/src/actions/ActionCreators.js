@@ -150,3 +150,9 @@ export const generatePivotTable = () => async(dispatch, getState) => {
 export const printableViewChanged = (value) => (
   {type: C.TOGGLE_PRINTABLE_VIEW, value}
 )
+
+export const aliasChanged = (name, value) => ({
+  type: C.SCHEMA_LABEL_ALIAS_CHANGED,
+  name,
+  value
+})
