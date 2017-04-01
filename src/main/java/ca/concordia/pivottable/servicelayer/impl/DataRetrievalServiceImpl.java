@@ -1,18 +1,21 @@
 package ca.concordia.pivottable.servicelayer.impl;
 
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
+import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.servicelayer.DataRetrievalService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import ca.concordia.pivottable.entities.DataSet;
 import ca.concordia.pivottable.entities.DataType;
 import ca.concordia.pivottable.entities.DataField;
 import ca.concordia.pivottable.entities.PivotTable;
 import ca.concordia.pivottable.entities.PivotTableSchema;
+//TODO
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles retrieval of data from the data source and its supply to the Controller.
@@ -21,6 +24,12 @@ import ca.concordia.pivottable.entities.PivotTableSchema;
  * @author Jyotsana Gupta
  */
 public class DataRetrievalServiceImpl implements DataRetrievalService {
+	/**
+	 * Used for logging information, warning and error messages during application run.
+	 */
+	//TODO
+	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
+	
 	/**
 	 * Data source object used for performing data retrieval operations.
 	 */
@@ -256,6 +265,11 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
  						{
  							long lValue = (Long)dimRecord.get(dimRecord.size()-1);
 							value = (double) lValue;
+ 						}
+ 						//TODO for debugging
+ 						catch (Exception e)
+ 						{
+ 							log.error("SQLException occurred in service layer... " + e.getMessage());
  						}
  						valueList.add(value);
  					}
