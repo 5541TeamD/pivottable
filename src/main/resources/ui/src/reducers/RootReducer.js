@@ -36,6 +36,7 @@ const C = {
   FILTER_VALUE_SELECTED: 'FILTER_VALUE_SELECTED',
   TOGGLE_PRINTABLE_VIEW: 'TOGGLE_PRINTABLE_VIEW',
   SCHEMA_LABEL_ALIAS_CHANGED: 'SCHEMA_LABEL_ALIAS_CHANGED',
+  SCHEMA_SUMMARY_FUNCTION_SELECTED: 'SCHEMA_SUMMARY_FUNCTION_SELECTED',
 }
 
 export {C}
@@ -85,6 +86,7 @@ const initialState = {
     selectedSortField: '',
     sortOrder: 'asc',
     aliasMap: {}, // stores the [name:alias] for each value
+    summaryFunction: '',
   },
   pivotTableLoading: false,
   // 1 pivot table data per page
@@ -475,6 +477,14 @@ const rootReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           aliasMap: {...state.tableSchema.aliasMap, [action.name]: action.value}
+        }
+      }
+    case C.SCHEMA_SUMMARY_FUNCTION_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          summaryFunction: action.value
         }
       }
     case C.FETCH_FILTER_FIELDS_SUCCESS:
