@@ -45,6 +45,8 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	public DataRetrievalServiceImpl(DataSourceAccess dataSource, CredentialsService credentialsService)
 	{
+		//TODO
+		log.info("inside constructor of DataRetrievalServiceImpl");
 		this.credentials = credentialsService;
 		this.dataSource = dataSource;
 		dataSource.setCredentials(credentials.getDataSource(), credentials.getUsername(), credentials.getPassword());		
@@ -162,6 +164,9 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	private List<List<List<List<Object>>>> getDimSummaryDetails(List<List<List<Object>>> pvtTblData, String tableSummFuncName, int rowLabelCount, int colLabelCount)
 	{
+		//TODO
+		try
+		{
 		List<List<List<List<Object>>>> tblRowColList = new ArrayList<List<List<List<Object>>>>();
 		
 		List<List<List<Object>>> tableRowList = getOneDimensionValues(pvtTblData, rowLabelCount, 0);
@@ -176,6 +181,12 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
  		tblRowColList.add(tblColSummList);
  		
  		return tblRowColList;
+		}
+		catch (Exception e)
+		{
+			//TODO
+			log.error("exception in getDimSummaryDetails()... " + e.getMessage());
+		}
 	}
 	
 	/**

@@ -621,6 +621,12 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			//TODO
   			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
+  		//TODO
+  		catch (Exception e)
+  		{
+  			//TODO
+			log.error("exception in executeExplicitlyCalculatedQuery() without page label... " + e.getMessage());
+  		}
   		
   		return pvtTblData;
   	}
@@ -916,6 +922,12 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			pvtTblData = null;
 	  	  			//TODO
 	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+	  	  		}
+	  	  		//TODO
+	  	  		catch (Exception e)
+	  	  		{
+	  	  			//TODO
+	  				log.error("exception in executeExplicitlyCalculatedQuery() with page label... " + e.getMessage());
 	  	  		}
 	  		}
   		}
