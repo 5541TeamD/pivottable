@@ -14,6 +14,14 @@ public class PivotTable {
     private List<String> pageLabelValues;
 
     private List<List<List<Object>>> data;
+    
+    private List<List<List<Object>>> rowSummDetails;
+	
+    private List<List<List<Object>>> colSummDetails;
+	
+    private List<Double> pageSummDetails;
+    
+    private double tableSummDetails;
 
     /**
      * Default constructor
@@ -27,10 +35,16 @@ public class PivotTable {
      * @param schema
      * @param data
      */
-    public PivotTable(PivotTableSchema schema, List<String> pageLabelValues, List<List<List<Object>>> data) {
+    public PivotTable(PivotTableSchema schema, List<String> pageLabelValues, List<List<List<Object>>> data,
+    					List<List<List<Object>>> rowSummDetails, List<List<List<Object>>> colSummDetails,
+    					List<Double> pageSummDetails, double tableSummDetails) {
         this.schema = schema;
         this.pageLabelValues = pageLabelValues;
         this.data = data;
+        this.rowSummDetails = rowSummDetails;
+        this.colSummDetails = colSummDetails;
+        this.pageSummDetails = pageSummDetails;
+        this.tableSummDetails = tableSummDetails;
     }
 
     /**
@@ -41,19 +55,38 @@ public class PivotTable {
         return gson.toJson(this);
     }
 
-
     public PivotTableSchema getSchema() {
         return schema;
-    }
-
-    public void setSchema(PivotTableSchema schema) {
-        this.schema = schema;
     }
     
     public List<String> getPageLabelValues() {
 		return pageLabelValues;
 	}
+    
+    public List<List<List<Object>>> getData() {
+        return data;
+    }
 
+	public List<List<List<Object>>> getRowSummDetails() {
+		return rowSummDetails;
+	}
+
+	public List<List<List<Object>>> getColSummDetails() {
+		return colSummDetails;
+	}
+
+	public List<Double> getPageSummDetails() {
+		return pageSummDetails;
+	}
+
+	public double getTableSummDetails() {
+		return tableSummDetails;
+	}
+	
+	public void setSchema(PivotTableSchema schema) {
+        this.schema = schema;
+    }
+    
 	public void setPageLabelValues(List<String> pageLabelValues) {
 		this.pageLabelValues = pageLabelValues;
 	}
@@ -62,7 +95,19 @@ public class PivotTable {
 		this.data = data;
 	}
 
-	public List<List<List<Object>>> getData() {
-        return data;
-    }
+	public void setRowSummDetails(List<List<List<Object>>> rowSummDetails) {
+		this.rowSummDetails = rowSummDetails;
+	}
+
+	public void setColSummDetails(List<List<List<Object>>> colSummDetails) {
+		this.colSummDetails = colSummDetails;
+	}
+
+	public void setPageSummDetails(List<Double> pageSummDetails) {
+		this.pageSummDetails = pageSummDetails;
+	}
+
+	public void setTableSummDetails(double tableSummDetails) {
+		this.tableSummDetails = tableSummDetails;
+	}
 }
