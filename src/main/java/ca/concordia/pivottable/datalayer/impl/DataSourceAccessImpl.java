@@ -579,7 +579,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			for (List<Object> recordRowCol : rowColList)
   			{
   				double result = 0;
-  				List<Double> valueList = new ArrayList<Double>();
+  				List<Integer> valueList = new ArrayList<Integer>();
   			
   				rsPvtTblData.beforeFirst();
   				while (rsPvtTblData.next())
@@ -596,7 +596,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   					
   					if (getValue)
   					{
-  						double currValue = (Double)rsPvtTblData.getObject(i);
+  						int currValue = (Integer)rsPvtTblData.getObject(i);
   						valueList.add(currValue);
   					}
   				}
@@ -881,7 +881,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			for (List<Object> recordRowCol : rowColList)
 	  	  			{
 	  	  				double result = 0;
-	  	  				List<Double> valueList = new ArrayList<Double>();
+	  	  				List<Integer> valueList = new ArrayList<Integer>();
 	  	  			
 	  	  				rsPvtTblData.beforeFirst();
 	  	  				while (rsPvtTblData.next())
@@ -898,7 +898,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  					
 	  	  					if (getValue)
 	  	  					{
-	  	  						double currValue = (Double)rsPvtTblData.getObject(i);
+	  	  						int currValue = (Integer)rsPvtTblData.getObject(i);
 	  	  						valueList.add(currValue);
 	  	  					}
 	  	  				}
@@ -935,7 +935,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		return pvtTblData;
   	}
   	  	
-  	private double calcFunctionValue(String functionName, List<Double> valueList)
+  	private double calcFunctionValue(String functionName, List<Integer> valueList)
   	{
   		double result = 0;
   		
