@@ -13,7 +13,6 @@ import ca.concordia.pivottable.entities.DataType;
 import ca.concordia.pivottable.entities.DataField;
 import ca.concordia.pivottable.entities.PivotTable;
 import ca.concordia.pivottable.entities.PivotTableSchema;
-//TODO
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +26,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
-	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
+	private Logger log = LoggerFactory.getLogger(DataRetrievalServiceImpl.class);
 	
 	/**
 	 * Data source object used for performing data retrieval operations.
@@ -45,8 +43,6 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	public DataRetrievalServiceImpl(DataSourceAccess dataSource, CredentialsService credentialsService)
 	{
-		//TODO
-		log.info("inside constructor of DataRetrievalServiceImpl");
 		this.credentials = credentialsService;
 		this.dataSource = dataSource;
 		dataSource.setCredentials(credentials.getDataSource(), credentials.getUsername(), credentials.getPassword());		
@@ -142,6 +138,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
   		}
   		
   		//Fetching pivot table row, column, page and table level summary details
+  		log.info("Fetching pivot table row, column, page and table level summary details.");
   		List<List<List<List<Object>>>> oneDimSummaryDetails = getDimSummaryDetails(pvtTblData, tableSummFuncName, rowLabels.size(), colLabels.size());
   		List<List<List<Object>>> rowSummDetails = oneDimSummaryDetails.get(0);
   		List<List<List<Object>>> colSummDetails = oneDimSummaryDetails.get(1);
@@ -166,9 +163,6 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	{
 		List<List<List<List<Object>>>> tblRowColList = new ArrayList<List<List<List<Object>>>>();
 		
-		//TODO
-		try
-		{
 		List<List<List<Object>>> tableRowList = getOneDimensionValues(pvtTblData, rowLabelCount, 0);
  		
  		List<List<List<Object>>> tableColList = getOneDimensionValues(pvtTblData, colLabelCount, rowLabelCount);
@@ -179,12 +173,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
  		
  		tblRowColList.add(tblRowSummList);
  		tblRowColList.add(tblColSummList);
-		}
-		catch (Exception e)
-		{
-			//TODO
-			log.error("exception in getDimSummaryDetails()... " + e.getMessage());
-		}
+		
  		return tblRowColList;
 	}
 	
@@ -275,11 +264,6 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
  						{
  							long lValue = (Long)dimRecord.get(dimRecord.size()-1);
 							value = (double) lValue;
- 						}
- 						//TODO for debugging
- 						catch (Exception e)
- 						{
- 							log.error("SQLException occurred in service layer... " + e.getMessage());
  						}
  						valueList.add(value);
  					}

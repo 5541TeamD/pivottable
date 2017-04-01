@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-//TODO
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Set;
@@ -55,7 +54,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
 	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
 	
 	/**
@@ -78,11 +76,9 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		}
 		catch (Exception dbConnGenExcpn)
 		{
-			//TODO
 			log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
 		}		
 		
-		//TODO
 		log.info("Initiating connection to database " + dbUrl + "...");
 		
 		try
@@ -92,7 +88,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		catch (SQLException dbConnSQLExcpn)
 		{
 			dbConnection = null;
-			//TODO
 			log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
 		}
 		
@@ -115,7 +110,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
     		}
     		catch (SQLException dbDisconnSQLExcpn)
     		{
-    			//TODO
     			log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
     			return false;
     		}
@@ -188,7 +182,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		catch (SQLException allRawTblSQLExcpn)
   		{
   			rsAllRawTblNames = null;
-  			//TODO
   			log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
   		
@@ -246,7 +239,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
-  			//TODO
   			log.info("Running query " + tblDataQuery);
   			rsTblData = stmtTblData.executeQuery(tblDataQuery);
   			
@@ -275,7 +267,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblData = null;
   			rsmdTblData = null;
   			tblData = null;
-  			//TODO
   			log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
   		}
   		
@@ -314,7 +305,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
-  			//TODO
   			log.info("Running query " + tblDataQuery);
   			rsTblFields = stmtTblFields.executeQuery(tblDataQuery);
   			
@@ -352,7 +342,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblFields = null;
   			rsmdTblFields = null;
   			tblFields = null;
-  			//TODO
   			log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
   		
@@ -425,18 +414,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		if ((sortField != null && !sortField.trim().isEmpty()) && (sortOrder != null))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
-  		/*
-  		if (function.equalsIgnoreCase("Product")
-  			|| function.equalsIgnoreCase("Standard Deviation")
-  			|| function.equalsIgnoreCase("Variance"))
-			//Generating and executing the SQL query where summary column values do not get calculated in the database
-			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
-		else
-			//Generating and executing the SQL query where summary column values get calculated in the database
-			pvtTblData = executeDBCalculatedQuery(dbConnection, selectClause, function, valField, tableName, grpClause, filterClause, sortClause);
-  		*/
-  		
-  		pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
+  		//Generating and executing the SQL query
+  		pvtTblData = executeQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
   		
   		disconnect(dbConnection);
   		
@@ -444,83 +423,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	}
   	
   	/**
-  	 * Generates and executes an SQL query (without page labels) where the summary column values get calculated in the database.
-  	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
-  	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
-  	 * @param 	function		Mathematical function selected as part of pivot table schema
-  	 * @param 	valField		Value field selected as part of pivot table schema
-  	 * @param 	tableName		Raw report table name
-  	 * @param	grpClause		SQL query clause used for grouping pivot table data by row and column labels as per the schema
-  	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
-  	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
-  	 * @return	Pivot table data fetched from the database
-  	 */
-  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String selectClause, String function, String valField, String tableName, String grpClause, String filterClause, String sortClause) 
-  	{
-  		String pvtTblDataQuery = null;  		
-  		Statement stmtPvtTblData = null;
-  		ResultSet rsPvtTblData = null;
-  		ResultSetMetaData rsmdPvtTblData = null;
-  		int fieldCount = 0;
-  		List<List<Object>> pageData = new ArrayList<List<Object>>();
-  		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
-  		
-  		//Generating the SQL query to get pivot table data without page label
-  		pvtTblDataQuery = selectClause
-  							+ function + "("
-  							+ valField + ")"
-  							+ " FROM ( SELECT * FROM " + tableName
-  										+ filterClause
-										+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
-							+ grpClause
-							+ sortClause + ";";
-  		
-  		//Executing the SQL query
-  		try
-  		{
-  			stmtPvtTblData = dbConnection.createStatement();
-  			//TODO
-  			log.info("Running query " + pvtTblDataQuery);
-  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
-  			
-  			//Fetching field count for the results returned by the SQL query executed
-  			rsmdPvtTblData = rsPvtTblData.getMetaData();
-  			fieldCount = rsmdPvtTblData.getColumnCount();
-  			
-  			//Fetching pivot table data
-  			while (rsPvtTblData.next())
-  			{
-  				List<Object> tblRecord = new ArrayList<Object>();
-  				
-  				for (int i=1; i<=fieldCount; i++)
-  				{
-  					tblRecord.add(rsPvtTblData.getObject(i));
-  				}
-  				
-  				pageData.add(tblRecord);
-  			}
-  			
-  			//Storing entire pivot table data as the first page since there is only one page in this case
-  			pvtTblData.add(pageData);
-  			
-  			rsPvtTblData.close();
-  			stmtPvtTblData.close();
-  		}
-  		catch (SQLException pvtTblDataSQLExcpn)
-  		{
-  			stmtPvtTblData = null;
-  			rsPvtTblData = null;
-  			rsmdPvtTblData = null;
-  			pvtTblData = null;
-  			//TODO
-  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
-  		}
-  		
-  		return pvtTblData;
-  	}
-  	
-  	/**
-  	 * Generates and executes an SQL query (without page labels) where the summary column values do not get calculated in the database.
+  	 * Generates and executes an SQL query (without page labels).
   	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
   	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
   	 * @param 	function		Mathematical function selected as part of pivot table schema
@@ -530,7 +433,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String selectClause, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeQuery(Connection dbConnection, String selectClause, String function, String valField, String tableName, String filterClause, String sortClause) 
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
@@ -553,7 +456,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPvtTblData = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-  			//TODO
   			log.info("Running query " + pvtTblDataQuery);
   			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
   			
@@ -627,14 +529,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPvtTblData = null;
   			rsmdPvtTblData = null;
   			pvtTblData = null;
-  			//TODO
   			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
-  		}
-  		//TODO
-  		catch (Exception e)
-  		{
-  			//TODO
-			log.error("exception in executeExplicitlyCalculatedQuery() without page label... " + e.getMessage());
   		}
   		
   		return pvtTblData;
@@ -702,20 +597,10 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		
   		//Generating the SQL query clause for sorting resulting data
   		if ((sortField != null && !sortField.trim().isEmpty()) && (sortOrder != null))
-  			sortClause = " ORDER BY " + sortField + " " + sortOrder;  		
+  			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
-  		/*
-  		if (function.equalsIgnoreCase("Product")
-  			|| function.equalsIgnoreCase("Standard Deviation")
-  			|| function.equalsIgnoreCase("Variance"))
-			//Generating and executing the SQL query where summary column values do not get calculated in the database
-			pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
-		else
-			//Generating and executing the SQL query where summary column values get calculated in the database
-			pvtTblData = executeDBCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, grpClause, filterClause, sortClause);
-  		*/
-  		
-  		pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
+  		//Generating and executing the SQL query
+  		pvtTblData = executeQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
   		
   		disconnect(dbConnection);
   		
@@ -723,96 +608,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	}
   	
   	/**
-  	 * Generates and executes an SQL query (with page labels) where the summary column values get calculated in the database.
-  	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
-  	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
-  	 * @param	pageLabel		Page label selected as part of pivot table schema
-  	 * @param 	function		Mathematical function selected as part of pivot table schema
-  	 * @param 	valField		Value field selected as part of pivot table schema
-  	 * @param 	tableName		Raw report table name
-  	 * @param	grpClause		SQL query clause used for grouping pivot table data by row and column labels as per the schema
-  	 * @param 	filterClause	SQL query clause used for filtering pivot table data as per the schema
-  	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
-  	 * @return	Pivot table data fetched from the database
-  	 */
-  	private List<List<List<Object>>> executeDBCalculatedQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String grpClause, String filterClause, String sortClause) 
-  	{
-  		String pvtTblDataQuery = null;  		
-  		Statement stmtPvtTblData = null;
-  		ResultSet rsPvtTblData = null;
-  		ResultSetMetaData rsmdPvtTblData = null;
-  		int fieldCount = 0;
-  		List<String> pageLabelValues = new ArrayList<String>();
-  		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
-  		
-  		//Fetching all the values of the selected page label column
-  		pageLabelValues = getPageLabelValues(pageLabel, tableName);
-  		
-  		if (pageLabelValues != null) {
-			//Fetching pivot table data per page
-	  		for (String pageValue : pageLabelValues) 
-	  		{
-	  			//Generating the SQL query to get pivot table data for one page label value
-	  	  		pvtTblDataQuery = selectClause
-	  	  							+ function + "("
-	  	  							+ valField + ")"
-	  	  							+ " FROM ( SELECT * FROM " + tableName
-	  	  										+ filterClause
-	  											+ " LIMIT " + String.valueOf(ROW_LIMIT) + " ) as sublist"
-	  								+ grpClause
-	  								+ pageLabel
-	  								+ " HAVING " + pageLabel + " = \'" + pageValue + "\'"
-	  								+ sortClause + ";";
-	  	  		
-	  	  		//Executing the SQL query
-	  	  		try
-	  	  		{
-	  	  			stmtPvtTblData = dbConnection.createStatement();
-	  	  			//TODO
-	  	  			log.info("Running query " + pvtTblDataQuery);
-	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
-	  	  			
-	  	  			//Fetching field count for the results returned by the SQL query executed
-	  	  			rsmdPvtTblData = rsPvtTblData.getMetaData();
-	  	  			fieldCount = rsmdPvtTblData.getColumnCount();
-	  	  			
-	  	  			//Fetching pivot table data for one page
-	  	  			List<List<Object>> pageData = new ArrayList<List<Object>>();
-	  	  			while (rsPvtTblData.next())
-	  	  			{
-	  	  				List<Object> tblRecord = new ArrayList<Object>();
-	  	  				
-	  	  				for (int i=1; i<=fieldCount; i++)
-	  	  				{
-	  	  					tblRecord.add(rsPvtTblData.getObject(i));
-	  	  				}
-	  	  				
-	  	  				pageData.add(tblRecord);
-	  	  			}
-	  	  			
-	  	  			//Adding data for this particular page to the complete pivot table data set
-	  	  			pvtTblData.add(pageData);
-	  	  			
-	  	  			rsPvtTblData.close();
-	  	  			stmtPvtTblData.close();
-	  	  		}
-	  	  		catch (SQLException pvtTblDataSQLExcpn)
-	  	  		{
-	  	  			stmtPvtTblData = null;
-	  	  			rsPvtTblData = null;
-	  	  			rsmdPvtTblData = null;
-	  	  			pvtTblData = null;
-	  	  			//TODO
-	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
-	  	  		}
-	  		}
-  		}
-  		
-  		return pvtTblData;
-  	}
-  	
-  	/**
-  	 * Generates and executes an SQL query (with page labels) where the summary column values do not get calculated in the database.
+  	 * Generates and executes an SQL query (with page labels).
   	 * @param 	dbConnection	An object of type Connection referring to the data source connection used for executing the query
   	 * @param 	selectClause	SQL query clause used for selecting row and column labels values as per the schema
   	 * @param	pageLabel		Page label selected as part of pivot table schema
@@ -823,7 +619,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeExplicitlyCalculatedQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
@@ -861,7 +657,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  		try
 	  	  		{
 	  	  			stmtPvtTblData = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-	  	  			//TODO
 	  	  			log.info("Running query " + pvtTblDataQuery);
 	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
 	  	  			
@@ -939,21 +734,20 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			rsPvtTblData = null;
 	  	  			rsmdPvtTblData = null;
 	  	  			pvtTblData = null;
-	  	  			//TODO
 	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
-	  	  		}
-	  	  		//TODO
-	  	  		catch (Exception e)
-	  	  		{
-	  	  			//TODO
-	  				log.error("exception in executeExplicitlyCalculatedQuery() with page label... " + e.getMessage());
 	  	  		}
 	  		}
   		}
 	  
   		return pvtTblData;
   	}
-  	  	
+  	
+  	/**
+  	 * Calculates different summary function values.
+  	 * @param 	functionName		Name of the function to be calculated
+  	 * @param 	valueList			List of values to be used in calculation
+  	 * @return	The result calculated
+  	 */  	  	
   	private double calcFunctionValue(String functionName, List<Integer> valueList)
   	{
   		double result = 0;
@@ -963,10 +757,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			result = 0;
   			for (double value : valueList)
   				result += value;
-  		}
-  		else if (functionName.equalsIgnoreCase("Count"))
-  		{
-  			result = valueList.size();
   		}
   		else if (functionName.equalsIgnoreCase("Min"))
   		{
@@ -1037,63 +827,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		return result;
   	}
   	
-  	
-  	/**
-  	 * Calculates different summary function values.
-  	 * @param 	functionName		Name of the function to be calculated
-  	 * @param 	valueList			List of values to be used in calculation
-  	 * @return	The result calculated
-  	 */
-  	/*
-  	private double calcFunctionValue(String functionName, List<Integer> valueList)
-  	{
-  		double result = 0;
-  		
-  		if (functionName.equalsIgnoreCase("Product"))
-  		{
-  			result = 1;
-  			for (int value : valueList)
-  				result *= value;
-  		}
-  		else if (functionName.equalsIgnoreCase("Variance"))
-  		{
-  			double sum = 0;
-  			for (int value : valueList)
-  				sum += value; 
-  			
-  			double avg = (sum/valueList.size());
-  			
-  			double sumSqrDiff = 0;  			
-  			for (int value : valueList)
-  			{
-  				double sqrDiff = (Math.pow((value - avg), 2));
-  				sumSqrDiff += sqrDiff; 
-  			}
-  			
-  			result = (sumSqrDiff/valueList.size());
-  		}
-  		else if (functionName.equalsIgnoreCase("Standard Deviation"))
-  		{
-  			double sum = 0;
-  			for (int value : valueList)
-  				sum += value; 
-  			
-  			double avg = (sum/valueList.size());
-  			
-  			double sumSqrDiff = 0;  			
-  			for (int value : valueList)
-  			{
-  				double sqrDiff = (Math.pow((value - avg), 2));
-  				sumSqrDiff += sqrDiff; 
-  			}
-  			
-  			result = (Math.sqrt((sumSqrDiff/valueList.size())));
-  		}
-  		
-  		return result;
-  	}
-  	*/
-  	
   	/**
   	 * Executes SQL query on the database and fetches all the values of the selected page label column 
   	 * @param	pageLabel		Page label column selected as part of pivot table schema
@@ -1124,7 +857,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPageLabels = dbConnection.createStatement();
-  			//TODO
   			log.info("Running query " + pageLabelQuery);
   			rsPageLabels = stmtPageLabels.executeQuery(pageLabelQuery);
   			
@@ -1139,7 +871,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			stmtPageLabels = null;
   			rsPageLabels = null;
   			pageLabelValues = null;
-  			//TODO
   			log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
   		}
   		
