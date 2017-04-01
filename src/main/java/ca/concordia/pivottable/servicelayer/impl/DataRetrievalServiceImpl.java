@@ -164,11 +164,11 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 */
 	private List<List<List<List<Object>>>> getDimSummaryDetails(List<List<List<Object>>> pvtTblData, String tableSummFuncName, int rowLabelCount, int colLabelCount)
 	{
+		List<List<List<List<Object>>>> tblRowColList = new ArrayList<List<List<List<Object>>>>();
+		
 		//TODO
 		try
 		{
-		List<List<List<List<Object>>>> tblRowColList = new ArrayList<List<List<List<Object>>>>();
-		
 		List<List<List<Object>>> tableRowList = getOneDimensionValues(pvtTblData, rowLabelCount, 0);
  		
  		List<List<List<Object>>> tableColList = getOneDimensionValues(pvtTblData, colLabelCount, rowLabelCount);
@@ -179,14 +179,13 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
  		
  		tblRowColList.add(tblRowSummList);
  		tblRowColList.add(tblColSummList);
- 		
- 		return tblRowColList;
 		}
 		catch (Exception e)
 		{
 			//TODO
 			log.error("exception in getDimSummaryDetails()... " + e.getMessage());
 		}
+ 		return tblRowColList;
 	}
 	
 	/**
