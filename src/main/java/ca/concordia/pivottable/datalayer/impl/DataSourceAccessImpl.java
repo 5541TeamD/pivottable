@@ -5,8 +5,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//TODO
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import java.util.Set;
 
 /**
@@ -54,7 +55,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
+	//TODO
+	//private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
 	
 	/**
 	 * Initiates a connection with the data source.
@@ -76,10 +78,12 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		}
 		catch (Exception dbConnGenExcpn)
 		{
-			log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
+			//TODO
+			//log.error("Unexpected exception occurred while attempting DB connection... " + dbConnGenExcpn.getMessage());
 		}		
 		
-		log.info("Initiating connection to database " + dbUrl + "...");
+		//TODO
+		//log.info("Initiating connection to database " + dbUrl + "...");
 		
 		try
 		{
@@ -88,7 +92,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		catch (SQLException dbConnSQLExcpn)
 		{
 			dbConnection = null;
-			log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
+			//TODO
+			//log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
 		}
 		
 		return dbConnection;
@@ -110,7 +115,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
     		}
     		catch (SQLException dbDisconnSQLExcpn)
     		{
-    			log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
+    			//TODO
+    			//log.error("SQLException occurred while disconnecting from database... " + dbDisconnSQLExcpn.getMessage());
     			return false;
     		}
     	}
@@ -182,7 +188,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		catch (SQLException allRawTblSQLExcpn)
   		{
   			rsAllRawTblNames = null;
-  			log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
+  			//TODO
+  			//log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -239,7 +246,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblData = dbConnection.createStatement();
-  			log.info("Running query " + tblDataQuery);
+  			//TODO
+  			//log.info("Running query " + tblDataQuery);
   			rsTblData = stmtTblData.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -267,7 +275,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblData = null;
   			rsmdTblData = null;
   			tblData = null;
-  			log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
+  			//TODO
+  			//log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -305,7 +314,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtTblFields = dbConnection.createStatement();
-  			log.info("Running query " + tblDataQuery);
+  			//TODO
+  			//log.info("Running query " + tblDataQuery);
   			rsTblFields = stmtTblFields.executeQuery(tblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -342,7 +352,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsTblFields = null;
   			rsmdTblFields = null;
   			tblFields = null;
-  			log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
+  			//TODO
+  			//log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
@@ -414,6 +425,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		if ((sortField != null && !sortField.trim().isEmpty()) && (sortOrder != null))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
+  		/*
   		if (function.equalsIgnoreCase("Product")
   			|| function.equalsIgnoreCase("Standard Deviation")
   			|| function.equalsIgnoreCase("Variance"))
@@ -422,6 +434,9 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		else
 			//Generating and executing the SQL query where summary column values get calculated in the database
 			pvtTblData = executeDBCalculatedQuery(dbConnection, selectClause, function, valField, tableName, grpClause, filterClause, sortClause);
+  		*/
+  		
+  		pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
   		
   		disconnect(dbConnection);
   		
@@ -464,7 +479,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPvtTblData = dbConnection.createStatement();
-  			log.info("Running query " + pvtTblDataQuery);
+  			//TODO
+  			//log.info("Running query " + pvtTblDataQuery);
   			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -496,7 +512,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPvtTblData = null;
   			rsmdPvtTblData = null;
   			pvtTblData = null;
-  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+  			//TODO
+  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
   		
   		return pvtTblData;
@@ -536,7 +553,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPvtTblData = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-  			log.info("Running query " + pvtTblDataQuery);
+  			//TODO
+  			//log.info("Running query " + pvtTblDataQuery);
   			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
   			
   			//Fetching field count for the results returned by the SQL query executed
@@ -561,7 +579,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			for (List<Object> recordRowCol : rowColList)
   			{
   				double result = 0;
-  				List<Integer> valueList = new ArrayList<Integer>();
+  				List<Double> valueList = new ArrayList<Double>();
   			
   				rsPvtTblData.beforeFirst();
   				while (rsPvtTblData.next())
@@ -578,7 +596,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   					
   					if (getValue)
   					{
-  						int currValue = (Integer)rsPvtTblData.getObject(i);
+  						double currValue = (Double)rsPvtTblData.getObject(i);
   						valueList.add(currValue);
   					}
   				}
@@ -600,7 +618,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPvtTblData = null;
   			rsmdPvtTblData = null;
   			pvtTblData = null;
-  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+  			//TODO
+  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
   		}
   		
   		return pvtTblData;
@@ -670,6 +689,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		if ((sortField != null && !sortField.trim().isEmpty()) && (sortOrder != null))
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;  		
   		
+  		/*
   		if (function.equalsIgnoreCase("Product")
   			|| function.equalsIgnoreCase("Standard Deviation")
   			|| function.equalsIgnoreCase("Variance"))
@@ -678,6 +698,9 @@ public class DataSourceAccessImpl implements DataSourceAccess
 		else
 			//Generating and executing the SQL query where summary column values get calculated in the database
 			pvtTblData = executeDBCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, grpClause, filterClause, sortClause);
+  		*/
+  		
+  		pvtTblData = executeExplicitlyCalculatedQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
   		
   		disconnect(dbConnection);
   		
@@ -730,7 +753,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  		try
 	  	  		{
 	  	  			stmtPvtTblData = dbConnection.createStatement();
-	  	  			log.info("Running query " + pvtTblDataQuery);
+	  	  			//TODO
+	  	  			//log.info("Running query " + pvtTblDataQuery);
 	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
 	  	  			
 	  	  			//Fetching field count for the results returned by the SQL query executed
@@ -763,7 +787,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			rsPvtTblData = null;
 	  	  			rsmdPvtTblData = null;
 	  	  			pvtTblData = null;
-	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+	  	  			//TODO
+	  	  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
 	  	  		}
 	  		}
   		}
@@ -821,7 +846,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  		try
 	  	  		{
 	  	  			stmtPvtTblData = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-	  	  			log.info("Running query " + pvtTblDataQuery);
+	  	  			//TODO
+	  	  			//log.info("Running query " + pvtTblDataQuery);
 	  	  			rsPvtTblData = stmtPvtTblData.executeQuery(pvtTblDataQuery);
 	  	  			
 	  	  			//Fetching field count for the results returned by the SQL query executed
@@ -849,7 +875,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			for (List<Object> recordRowCol : rowColList)
 	  	  			{
 	  	  				double result = 0;
-	  	  				List<Integer> valueList = new ArrayList<Integer>();
+	  	  				List<Double> valueList = new ArrayList<Double>();
 	  	  			
 	  	  				rsPvtTblData.beforeFirst();
 	  	  				while (rsPvtTblData.next())
@@ -866,7 +892,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  					
 	  	  					if (getValue)
 	  	  					{
-	  	  						int currValue = (Integer)rsPvtTblData.getObject(i);
+	  	  						double currValue = (Double)rsPvtTblData.getObject(i);
 	  	  						valueList.add(currValue);
 	  	  					}
 	  	  				}
@@ -888,7 +914,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			rsPvtTblData = null;
 	  	  			rsmdPvtTblData = null;
 	  	  			pvtTblData = null;
-	  	  			log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
+	  	  			//TODO
+	  	  			//log.error("SQLException occurred while fetching pivot table data... " + pvtTblDataSQLExcpn.getMessage());
 	  	  		}
 	  		}
   		}
@@ -896,12 +923,97 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		return pvtTblData;
   	}
   	  	
+  	private double calcFunctionValue(String functionName, List<Double> valueList)
+  	{
+  		double result = 0;
+  		
+  		if (functionName.equalsIgnoreCase("Sum"))
+  		{
+  			result = 0;
+  			for (double value : valueList)
+  				result += value;
+  		}
+  		else if (functionName.equalsIgnoreCase("Count"))
+  		{
+  			result = valueList.size();
+  		}
+  		else if (functionName.equalsIgnoreCase("Min"))
+  		{
+  			result = valueList.get(0);
+  			for (double value : valueList)
+  			{
+  				if (value < result)
+  					result = value;
+  			}
+  		}
+  		else if (functionName.equalsIgnoreCase("Max"))
+  		{
+  			result = valueList.get(0);
+  			for (double value : valueList)
+  			{
+  				if (value > result)
+  					result = value;
+  			}
+  		}
+  		else if (functionName.equalsIgnoreCase("Avg"))
+  		{
+  			result = 0;
+  			for (double value : valueList)
+  				result += value;
+  			result = (result / (valueList.size()));
+  		}
+  		else if (functionName.equalsIgnoreCase("Product"))
+  		{
+  			result = 1;
+  			for (double value : valueList)
+  				result *= value;
+  		}
+  		else if (functionName.equalsIgnoreCase("Variance"))
+  		{
+  			double sum = 0;
+  			for (double value : valueList)
+  				sum += value; 
+  			
+  			double avg = (sum/valueList.size());
+  			
+  			double sumSqrDiff = 0;  			
+  			for (double value : valueList)
+  			{
+  				double sqrDiff = (Math.pow((value - avg), 2));
+  				sumSqrDiff += sqrDiff; 
+  			}
+  			
+  			result = (sumSqrDiff/valueList.size());
+  		}
+  		else if (functionName.equalsIgnoreCase("Standard Deviation"))
+  		{
+  			double sum = 0;
+  			for (double value : valueList)
+  				sum += value; 
+  			
+  			double avg = (sum/valueList.size());
+  			
+  			double sumSqrDiff = 0;  			
+  			for (double value : valueList)
+  			{
+  				double sqrDiff = (Math.pow((value - avg), 2));
+  				sumSqrDiff += sqrDiff; 
+  			}
+  			
+  			result = (Math.sqrt((sumSqrDiff/valueList.size())));
+  		}
+  		
+  		return result;
+  	}
+  	
+  	
   	/**
   	 * Calculates different summary function values.
   	 * @param 	functionName		Name of the function to be calculated
   	 * @param 	valueList			List of values to be used in calculation
   	 * @return	The result calculated
   	 */
+  	/*
   	private double calcFunctionValue(String functionName, List<Integer> valueList)
   	{
   		double result = 0;
@@ -949,6 +1061,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		
   		return result;
   	}
+  	*/
   	
   	/**
   	 * Executes SQL query on the database and fetches all the values of the selected page label column 
@@ -980,7 +1093,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		try
   		{
   			stmtPageLabels = dbConnection.createStatement();
-  			log.info("Running query " + pageLabelQuery);
+  			//TODO
+  			//log.info("Running query " + pageLabelQuery);
   			rsPageLabels = stmtPageLabels.executeQuery(pageLabelQuery);
   			
   			while (rsPageLabels.next())
@@ -994,7 +1108,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			stmtPageLabels = null;
   			rsPageLabels = null;
   			pageLabelValues = null;
-  			log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
+  			//TODO
+  			//log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
   		}
   		
   		disconnect(dbConnection);
