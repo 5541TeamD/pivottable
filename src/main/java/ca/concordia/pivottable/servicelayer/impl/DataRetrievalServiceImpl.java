@@ -157,7 +157,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 		
 		List<List<List<Object>>> tableRowList = getOneDimensionValues(pvtTblData, rowLabelCount, 0);
  		
- 		List<List<List<Object>>> tableColList = getOneDimensionValues(pvtTblData, rowLabelCount, rowLabelCount);
+ 		List<List<List<Object>>> tableColList = getOneDimensionValues(pvtTblData, colLabelCount, rowLabelCount);
  		
  		List<List<List<Object>>> tblRowSummList = getOneDimensionSummary(tableRowList, tableSummFuncName);
  		
