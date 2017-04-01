@@ -580,6 +580,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			{
   				double result = 0;
   				List<Integer> valueList = new ArrayList<Integer>();
+  				List<String> countValueList = new ArrayList<String>();
   			
   				rsPvtTblData.beforeFirst();
   				while (rsPvtTblData.next())
@@ -596,12 +597,20 @@ public class DataSourceAccessImpl implements DataSourceAccess
   					
   					if (getValue)
   					{
-  						int currValue = (Integer)rsPvtTblData.getObject(i);
-  						valueList.add(currValue);
+  						if (function.equalsIgnoreCase("count"))
+							countValueList.add((String)rsPvtTblData.getObject(i));
+						else
+						{
+							int currValue = (Integer)rsPvtTblData.getObject(i);
+							valueList.add(currValue);
+						}
   					}
   				}
   				
-  				result = calcFunctionValue(function, valueList);
+  				if (function.equalsIgnoreCase("count"))
+  					result = countValueList.size();
+  				else
+  					result = calcFunctionValue(function, valueList);
   				recordRowCol.add(fieldCount-1, result);
   				pageData.add(recordRowCol);
   			}
@@ -882,6 +891,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  			{
 	  	  				double result = 0;
 	  	  				List<Integer> valueList = new ArrayList<Integer>();
+	  	  				List<String> countValueList = new ArrayList<String>();
 	  	  			
 	  	  				rsPvtTblData.beforeFirst();
 	  	  				while (rsPvtTblData.next())
@@ -898,12 +908,21 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  					
 	  	  					if (getValue)
 	  	  					{
-	  	  						int currValue = (Integer)rsPvtTblData.getObject(i);
-	  	  						valueList.add(currValue);
+	  	  						if (function.equalsIgnoreCase("count"))
+	  	  							countValueList.add((String)rsPvtTblData.getObject(i));
+	  	  						else
+	  	  						{
+		  	  						int currValue = (Integer)rsPvtTblData.getObject(i);
+		  	  						valueList.add(currValue);
+	  	  						}
 	  	  					}
 	  	  				}
 	  	  				
-	  	  				result = calcFunctionValue(function, valueList);
+	  	  				if (function.equalsIgnoreCase("count"))
+							result = countValueList.size();
+						else
+							result = calcFunctionValue(function, valueList);
+	  	  				
 	  	  				recordRowCol.add(fieldCount-1, result);
 	  	  				pageData.add(recordRowCol);
 	  	  			}
