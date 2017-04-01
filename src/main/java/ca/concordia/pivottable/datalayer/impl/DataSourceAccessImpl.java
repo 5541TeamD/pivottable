@@ -598,7 +598,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   					if (getValue)
   					{
   						if (function.equalsIgnoreCase("count"))
-							countValueList.add((String)rsPvtTblData.getObject(i));
+							countValueList.add(rsPvtTblData.getObject(i).toString());
 						else
 						{
 							int currValue = (Integer)rsPvtTblData.getObject(i);
@@ -909,7 +909,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	  	  					if (getValue)
 	  	  					{
 	  	  						if (function.equalsIgnoreCase("count"))
-	  	  							countValueList.add((String)rsPvtTblData.getObject(i));
+	  	  							countValueList.add(rsPvtTblData.getObject(i).toString());
 	  	  						else
 	  	  						{
 		  	  						int currValue = (Integer)rsPvtTblData.getObject(i);
