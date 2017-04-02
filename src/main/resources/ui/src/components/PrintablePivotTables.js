@@ -4,7 +4,7 @@ import PivotTable from './PivotTable'
 import {printableViewChanged} from '../actions/ActionCreators'
 import {connect} from 'react-redux'
 
-import {Checkbox} from 'semantic-ui-react'
+import {Checkbox, Label} from 'semantic-ui-react'
 
 const PrintablePivotTables = (props) => {
   const {
@@ -13,7 +13,8 @@ const PrintablePivotTables = (props) => {
     tableSelected,
     pageLabels,
     onPrintableViewChanged,
-    isPrintableView
+    isPrintableView,
+    tableSummary
   } = props;
   const checkbox = (
     <Checkbox
@@ -30,10 +31,13 @@ const PrintablePivotTables = (props) => {
   }
   if (pivotTables.length > 0 && pageLabels.length === 0) {
     const {columnLabels, rowLabels, data, schema, rowSummaryData, colSummaryData, pageSummary} = pivotTables[0]
+    const {valueField, functionName} = schema;
+    const valueAlias = schema.aliasMap[valueField] ? schema.aliasMap[valueField] : valueField;
     return (
       <div>
         {checkbox}
         <br />
+        <h3>{`${functionName}(${valueAlias})`}</h3>
         <PivotTable
           columnLabels={columnLabels}
           rowLabels={rowLabels}
@@ -41,6 +45,7 @@ const PrintablePivotTables = (props) => {
           schema={schema}
           rowSummaryData={rowSummaryData}
           colSummaryData={colSummaryData}
+          pageSummary={pageSummary}
         />
       </div>
     )
@@ -52,8 +57,13 @@ const PrintablePivotTables = (props) => {
     if (!pageAlias) {
       pageAlias = schema.pageLabel
     }
+    const {valueField, functionName} = schema;
+    const valueAlias = schema.aliasMap[valueField] ? schema.aliasMap[valueField] : valueField;
     return (
       <div key={pageNumber}>
+        {pageNumber === 0 ? (
+            <h3>{`${functionName}(${valueAlias})`}</h3>
+          ): null}
         <span><label>{`${pageAlias}: `}</label>{pageLabels[pageNumber]}</span>
         <hr/>
         <PivotTable
@@ -63,6 +73,7 @@ const PrintablePivotTables = (props) => {
           schema={schema}
           rowSummaryData={rowSummaryData}
           colSummaryData={colSummaryData}
+          pageSummary={pageSummary}
         />
         <br />
       </div>
@@ -73,6 +84,8 @@ const PrintablePivotTables = (props) => {
       {checkbox}
       <br />
       {tables}
+      <br />
+      <Label basic size="large">{`Report Summary: ${tableSummary}`}</Label>
     </div>
   )
 }
@@ -84,6 +97,7 @@ PrintablePivotTables.propTypes = {
   pageLabels: PropTypes.arrayOf(PropTypes.string),
   onPrintableViewChanged: PropTypes.func,
   isPrintableView: PropTypes.bool,
+  tableSummary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -92,6 +106,7 @@ const mapStateToProps = (state) => ({
   pageLabels: state.pageLabels,
   tableSelected: state.selectedTable,
   isPrintableView: state.printableView,
+  tableSummary: state.tableSummary,
 })
 
 const mapDispatchToProps = (dispatch) => ({

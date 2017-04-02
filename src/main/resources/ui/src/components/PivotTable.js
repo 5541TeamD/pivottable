@@ -90,11 +90,11 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
     if (i === 0) {
       headerCells.push(
         <Table.HeaderCell
-          className="table-definition-header-empty-cell"
+          className="table-definition-header-cell"
           key={getNextId()}
           rowSpan={columnLabels.length}
           colSpan={rowLabels.length}>
-          {tableSummFuncName}
+          {tableSummFuncName.toUpperCase()}
         </Table.HeaderCell>
       )
     }
@@ -106,7 +106,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
   return headerRows
 }
 
-const buildDataRows = (rowLabels, data, rowSummary, colSummary) => {
+const buildDataRows = (rowLabels, data, rowSummary) => {
   let rows = []
   let i = 0;
   for (const row of data) {
@@ -131,7 +131,7 @@ const buildDataRows = (rowLabels, data, rowSummary, colSummary) => {
         <Table.Cell key={getNextId()}>{`${element}`}</Table.Cell>
       )
     }
-    // summary rows
+    // row summaries
     for (let k = 0; k < rowSummary.length; ++k) {
       /*let rowSpan = 1
       if ( k > 0) {
@@ -156,26 +156,77 @@ const buildDataRows = (rowLabels, data, rowSummary, colSummary) => {
   return rows
 }
 
-const PivotTable = ({rowLabels, columnLabels, data, schema, colSummaryData, rowSummaryData}) => {
+const buildFooterRows = (columnLabels, rowSummary, colSummary, schema, pageSummary, data) => {
+  let footerRows = [];
+  const {tableSummFuncName} = schema;
+  let i = 0;
+  for (const summary of colSummary) {
+    /*let columnSpan = 1
+    if ( i > 0 ) {
+      columnSpan = columnLabels.slice(0, i+1).reduce(multiplyByArrayLength,1)
+    }*/
+    // we can compute the span easier -> divide data length over summary.length
+    const columnSpan = data.length > 0 ? (data[0].length) / summary.length : 1
+    let footerCells = [];
+    if (i === 0) {
+      footerCells.push(
+        <Table.HeaderCell className="table-definition-header-cell"
+                          key={getNextId()}
+                          rowSpan={colSummary.length}
+                          colSpan={rowSummary.length}>
+          <strong>{tableSummFuncName.toUpperCase()}</strong>
+        </Table.HeaderCell>
+      )
+    }
+    for (const item of summary) {
+      footerCells.push(
+        <Table.HeaderCell
+          key={getNextId()}
+          colSpan={columnSpan}
+          className="table-definition-header-cell">
+          <strong>{`${item}`}</strong>
+        </Table.HeaderCell>
+      )
+    }
+    if (i === 0) {
+      footerCells.push(
+        <Table.HeaderCell
+          key={getNextId()}
+          rowSpan={columnLabels.length}
+          colSpan={rowSummary.length}
+          className="table-definition-column-cell">
+          <strong>{`${pageSummary}`}</strong>
+        </Table.HeaderCell>
+      )
+    }
+    footerRows.push(
+      <Table.Row children={footerCells} key={getNextId()}/>
+    )
+    ++i;
+  }
+  return footerRows
+}
+
+const PivotTable = ({rowLabels, columnLabels, data, schema, colSummaryData, rowSummaryData, pageSummary}) => {
 
   const headerRows = buildHeaderRows(rowLabels, columnLabels, schema)
 
-  const rows = buildDataRows(rowLabels, data, rowSummaryData, colSummaryData)
+  const rows = buildDataRows(rowLabels, data, rowSummaryData)
 
-  const {valueField, functionName} = schema;
-
-  const valueAlias = schema.aliasMap[valueField] ? schema.aliasMap[valueField] : valueField;
+  const footerRows = buildFooterRows(columnLabels, rowSummaryData, colSummaryData, schema, pageSummary, data);
 
   return (
     <div>
-      <h3>{`${functionName}(${valueAlias})`}</h3>
       <Table celled={true}>
         <Table.Header>
-            {headerRows}
+          {headerRows}
         </Table.Header>
         <Table.Body>
           {rows}
         </Table.Body>
+        <Table.Footer>
+          {footerRows}
+        </Table.Footer>
       </Table>
     </div>
   )
@@ -188,7 +239,7 @@ PivotTable.propTypes = {
   schema: PropTypes.object.isRequired,
   rowSummaryData: PropTypes.array,
   colSummaryData: PropTypes.array,
-  pageSummary: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
+  pageSummary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default  PivotTable
