@@ -157,17 +157,23 @@ const extractSummaryData = (pageIndex, infoMaps, infoArray, numberOfPages, summa
       // each value goes into a location
       // summary is an array of size dimension+1;
       const location = infoMaps.reduce( (sum, infoMap, index) => {
+        // this time span does not indicate how many cells it spans,
+        // but rather how many of the previous dimensions's values it spans.
         let sizeOfSpan = 1;
         if (index+1 < infoArray.length) {
-          sizeOfSpan = infoArray.slice(index+1).reduce(multiplyByArrayLength, 1);
+          sizeOfSpan = infoArray.slice(index+1, dimension).reduce(multiplyByArrayLength, 1);
         }
-        //let sizeOfSpan = infoArray[index].length * infoArray.slice(0, index).reduce(multiplyByArrayLength,1);
-        if (index === 0) {
-          console.log(`summary: ${summary}; dimension: ${dimension}; spanMultiplier: ${sizeOfSpan}`)
+        if (index >= dimension) {
+          return sum;
+        } else {
+          const addedTerm = infoMap[summary[index]] * sizeOfSpan;
+          //if (isNaN(addedTerm)) {
+          //  console.log('This should not happen.');
+          //}
+          return sum + addedTerm;
         }
-        // no need to calculate how many cells this dimension spans
-        return sum + infoMap[summary[index]]*sizeOfSpan
       }, 0);
+
       summaryArray[location] = summary[dimension];
     })
     return summaryArray;
