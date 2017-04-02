@@ -15,6 +15,7 @@ import {rowLabelsChanged,
   sortFieldSelected,
   sortOrderSelected,
   aliasChanged,
+  summaryFunctionChanged,
 } from '../actions/ActionCreators'
 
 const PivotTableSchema = (props) => {
@@ -36,6 +37,8 @@ const PivotTableSchema = (props) => {
     allColumns,
     aliasMap,
     onAliasChanged,
+    onSummaryFunctionChanged,
+    selectedSummaryFunction,
   } = props
 
   const aliasFields = allColumns.filter (item => {
@@ -52,7 +55,6 @@ const PivotTableSchema = (props) => {
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Pivot Table Schema</Label>
       <Form as="div">
-        <div>
           <Form.Field>
             <label>Row Labels</label>
             <Form.Dropdown multiple options={rowLabels}
@@ -134,8 +136,16 @@ const PivotTableSchema = (props) => {
                            placeholder="Select Value to apply function on"/>
           </Form.Field>
           <Form.Field>
+            <label>Summary Function</label>
+            <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+                           onChange={onSummaryFunctionChanged}
+                           options={functionList}
+                           value={selectedSummaryFunction}
+                           placeholder="Select Summary Function"/>
+          </Form.Field>
+          <Form.Field>
               <Modal closeIcon={true}
-                   trigger={<Form.Button>Customize labels</Form.Button>}>
+                   trigger={<Form.Button disabled={!selectedValue}>Customize labels</Form.Button>}>
               <Modal.Header>
                 Customize the text of the labels to show in the pivot table
               </Modal.Header>
@@ -160,19 +170,16 @@ const PivotTableSchema = (props) => {
           </Form.Field>
           <Form.Field>
             <Button primary={true} onClick={onGeneratePivotTable}
-                    disabled={!selectedValue}>
+                    disabled={(!selectedValue || !selectedSummaryFunction)}>
               Generate Pivot Table
             </Button>
             <Button onClick={onReset}>
               Reset
             </Button>
-
-
           </Form.Field>
-        </div>
       </Form>
     </Segment>
-    )
+  )
     : (
     <div>
     </div>
@@ -228,7 +235,8 @@ const mapStateToProps = (state) => ({
     value: val.name
   })),
   selectedSortField: state.tableSchema.selectedSortField,
-  sortOrder: state.tableSchema.sortOrder
+  sortOrder: state.tableSchema.sortOrder,
+  selectedSummaryFunction: state.tableSchema.summaryFunction,
 })
 
 
@@ -267,7 +275,10 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(generatePivotTable())
   },
   onAliasChanged: (e, {name, value}) => {
-    dispatch(aliasChanged(name,value))
+    dispatch(aliasChanged(name, value))
+  },
+  onSummaryFunctionChanged: (e, {value}) => {
+    dispatch(summaryFunctionChanged(value))
   }
 })
 

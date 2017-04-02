@@ -20,6 +20,7 @@ public class PivotTableSchema {
     private String filterValue;
     private String sortField;
     private String sortOrder;
+    private String tableSummFuncName;
 
     /**
      * Map to store the values the user wants.
@@ -40,6 +41,7 @@ public class PivotTableSchema {
                             String functionName, String valueField,
                             String filterField, String filterValue,
                             String sortField, String sortOrder,
+                            String tableSummFuncName,
                             Map<String, String> aliasMap) {
         this.tableName = table;
         this.columnLabels = columnLabels;
@@ -51,6 +53,7 @@ public class PivotTableSchema {
         this.filterValue = filterValue;
         this.sortField = sortField;
         this.sortOrder = sortOrder;
+        this.tableSummFuncName = tableSummFuncName;
         this.aliasMap = aliasMap;
     }
 
@@ -156,6 +159,14 @@ public class PivotTableSchema {
 
 	public void setFilterValue(String filterValue) {
 		this.filterValue = filterValue;
+	}
+	
+	public String getTableSummFuncName() {
+		return tableSummFuncName;
+	}
+	
+	public void setTableSummFuncName(String tableSummFuncName) {
+		this.tableSummFuncName = tableSummFuncName;
 	}
 
     public Map<String, String> getAliasMap() {

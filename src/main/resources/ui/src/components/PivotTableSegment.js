@@ -17,12 +17,13 @@ const PivotTableSegment = (props) => {
     pageLabels,
     isPrintableView,
     onPrintableViewChanged,
+    tableSummary,
   } = props
   //console.log('props', props)
   if (!isConnected || !tableSelected || pivotTables.length === 0 || pageSelected === -1) {
     return <div></div>
   }
-  const {rowLabels, columnLabels, data, schema} = pivotTables[pageSelected]
+  const {rowLabels, columnLabels, data, schema, rowSummaryData, colSummaryData, pageSummary} = pivotTables[pageSelected]
   const pageOptions = pageLabels.map ( (val, index) => ({
     text: val,
     value: index,
@@ -32,6 +33,10 @@ const PivotTableSegment = (props) => {
   if (!pageAlias) {
     pageAlias = schema.pageLabel
   }
+
+  const {valueField, functionName} = schema;
+
+  const valueAlias = schema.aliasMap[valueField] ? schema.aliasMap[valueField] : valueField;
 
   const pageDropDown = pageOptions.length > 0 ? (
       <div>
@@ -57,6 +62,7 @@ const PivotTableSegment = (props) => {
         label="Simple View"
       />
       <br />
+      <h3>{`${functionName}(${valueAlias})`}</h3>
       {pageDropDown}
       <div className="raw-report-table">
         <PivotTable
@@ -64,7 +70,12 @@ const PivotTableSegment = (props) => {
           columnLabels={columnLabels}
           data={data}
           schema={schema}
+          rowSummaryData={rowSummaryData}
+          colSummaryData={colSummaryData}
+          pageSummary={pageSummary}
         />
+        <br />
+        <Label basic size="large">{`Report Summary: ${tableSummary}`}</Label>
       </div>
     </Segment>
   )
@@ -80,6 +91,7 @@ PivotTableSegment.propTypes = {
   onPageChanged: PropTypes.func,
   onPrintableViewChanged: PropTypes.func,
   isPrintableView: PropTypes.bool,
+  tableSummary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -90,6 +102,7 @@ const mapStateToProps = (state) => ({
   tableSelected: state.selectedTable,
   loading: state.pivotTableLoading,
   isPrintableView: state.printableView,
+  tableSummary: state.tableSummary,
 })
 
 const mapDispatchToProps = (dispatch) => ({

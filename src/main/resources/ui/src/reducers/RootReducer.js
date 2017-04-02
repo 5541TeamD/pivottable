@@ -36,6 +36,7 @@ const C = {
   FILTER_VALUE_SELECTED: 'FILTER_VALUE_SELECTED',
   TOGGLE_PRINTABLE_VIEW: 'TOGGLE_PRINTABLE_VIEW',
   SCHEMA_LABEL_ALIAS_CHANGED: 'SCHEMA_LABEL_ALIAS_CHANGED',
+  SCHEMA_SUMMARY_FUNCTION_SELECTED: 'SCHEMA_SUMMARY_FUNCTION_SELECTED',
 }
 
 export {C}
@@ -85,6 +86,7 @@ const initialState = {
     selectedSortField: '',
     sortOrder: 'asc',
     aliasMap: {}, // stores the [name:alias] for each value
+    summaryFunction: '',
   },
   pivotTableLoading: false,
   // 1 pivot table data per page
@@ -95,6 +97,7 @@ const initialState = {
   }*/],
   pageLabels: [],
   pageSelected: -1, // index of the selected page
+  tableSummary: '',
   infoMessage: '',
   errorMessage: '',
   printableView: false,
@@ -134,13 +137,57 @@ const insertInGeneric = (rowMaps, columnMaps, row, rowLabelsLength, rowLabels, c
   data[x][y] = row[dataIndex];
 };
 
+const extractSummaryData = (pageIndex, infoMaps, infoArray, numberOfPages, summaries) => {
+  const itemsPerPage = infoMaps.length; // === (summaries.length / numberOfPages) or number of schema labels
+  const indexToExtractFrom = itemsPerPage * pageIndex
+  const currentPageInfo = summaries.slice(indexToExtractFrom, indexToExtractFrom+itemsPerPage);
+  return currentPageInfo.map ( (current, inverseDimension) => {
+    // backend returns highest dimension first.
+    const dimension = itemsPerPage - (inverseDimension);
+    const currentDimensionArray = infoArray[dimension-1];
+    const currentDimensionSize = currentDimensionArray.length;
+    let repeatTimes = 1;
+    if (dimension > 1) {
+      // if it's not the outer most
+      repeatTimes = infoArray.slice(0, dimension-1).reduce(multiplyByArrayLength,1);
+    }
+    let summaryArray = new Array(currentDimensionSize*repeatTimes);
+    summaryArray.fill(' ');
+    current.forEach (summary => {
+      // each value goes into a location
+      // summary is an array of size dimension+1;
+      const location = infoMaps.reduce( (sum, infoMap, index) => {
+        // this time span does not indicate how many cells it spans,
+        // but rather how many of the previous dimensions's values it spans.
+        let sizeOfSpan = 1;
+        if (index+1 < infoArray.length) {
+          sizeOfSpan = infoArray.slice(index+1, dimension).reduce(multiplyByArrayLength, 1);
+        }
+        if (index >= dimension) {
+          return sum;
+        } else {
+          const addedTerm = infoMap[summary[index]] * sizeOfSpan;
+          //if (isNaN(addedTerm)) {
+          //  console.log('This should not happen.');
+          //}
+          return sum + addedTerm;
+        }
+      }, 0);
+
+      summaryArray[location] = summary[dimension];
+    })
+    return summaryArray;
+  });
+}
+
 // This code is imperative -> takes data from API and
 // returns an object with rowLabels, columnLabels, data and schema
-const mapPivotTableDataToRender = (schema, apiDataList) => {
+const mapPivotTableDataToRender = (schema, apiDataList, rowSummaries, colSummaries, pageSummaries) => {
   //console.log('Schema: ', schema, 'apiDataList: ', apiDataList)
 
+  const numberOfPages = apiDataList.length
 
-  return apiDataList.map ( apiData => {
+  return apiDataList.map ( (apiData, pageIndex) => {
 
     // get the row labels, column labels (page labels are handled in the reduce)
     let rowSets = schema.rowLabels.map (it => new Set())
@@ -181,6 +228,10 @@ const mapPivotTableDataToRender = (schema, apiDataList) => {
       data[i] = col.fill(' ')
     }
 
+    // The summary data:
+    const rowSummaryData = extractSummaryData(pageIndex, rowMaps, rows, numberOfPages, rowSummaries);
+    const colSummaryData = extractSummaryData(pageIndex, columnMaps, columns, numberOfPages, colSummaries);
+
     //console.log('rowMaps', rowMaps)
     //console.log('columnMaps', columnMaps)
     // insert data
@@ -197,7 +248,10 @@ const mapPivotTableDataToRender = (schema, apiDataList) => {
       rowLabels: rows,
       columnLabels: columns,
       data,
-      schema
+      schema,
+      rowSummaryData,
+      colSummaryData,
+      pageSummary: pageSummaries[pageIndex]
     };
   })
 }
@@ -350,10 +404,15 @@ const rootReducer = (state = initialState, action) => {
           ...state.tableSchema,
           selectedFunction: action.value,
           possibleValues: state.tableSchema.pageLabels.filter(val => {
+            // filter out if there is a page selected.
+            if (state.tableSchema.selectedPageLabel === val.name) {
+              return false;
+            }
             if (numericalFunctions.indexOf(action.value) !== -1) {
               return val.type === 'TYPE_NUMERIC'
             }
-            // else (count) -> all fields are good (need to filter out selected page!)
+            // else (count) -> all fields are good (Done filtering out selected page!)
+
             return true
           }),
           selectedValue: ''
@@ -402,10 +461,14 @@ const rootReducer = (state = initialState, action) => {
         // this function returns an array...
         pivotTables: mapPivotTableDataToRender(
           action.data.schema,
-          action.data.data
+          action.data.data,
+          action.data.rowSummDetails,
+          action.data.colSummDetails,
+          action.data.pageSummDetails
         ),
         pageLabels: action.data.pageLabelValues,
         pageSelected: 0,
+        tableSummary: action.data.tableSummDetails,
         errorMessage: ''
       }
     case C.GENERATE_PIVOT_TABLE_ERROR:
@@ -475,6 +538,14 @@ const rootReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           aliasMap: {...state.tableSchema.aliasMap, [action.name]: action.value}
+        }
+      }
+    case C.SCHEMA_SUMMARY_FUNCTION_SELECTED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          summaryFunction: action.value
         }
       }
     case C.FETCH_FILTER_FIELDS_SUCCESS:
