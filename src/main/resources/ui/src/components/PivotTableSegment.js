@@ -22,7 +22,7 @@ const PivotTableSegment = (props) => {
   if (!isConnected || !tableSelected || pivotTables.length === 0 || pageSelected === -1) {
     return <div></div>
   }
-  const {rowLabels, columnLabels, data, schema} = pivotTables[pageSelected]
+  const {rowLabels, columnLabels, data, schema, rowSummaryData, colSummaryData, pageSummary} = pivotTables[pageSelected]
   const pageOptions = pageLabels.map ( (val, index) => ({
     text: val,
     value: index,
@@ -64,6 +64,8 @@ const PivotTableSegment = (props) => {
           columnLabels={columnLabels}
           data={data}
           schema={schema}
+          rowSummaryData={rowSummaryData}
+          colSummaryData={colSummaryData}
         />
       </div>
     </Segment>

@@ -19,6 +19,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
   };
   const schemaRowLabels = schema.rowLabels.map (replaceAliasName);
   const schemaColumnLabels = schema.columnLabels.map(replaceAliasName);
+  const {tableSummFuncName} = schema;
   let i = 0;
   for (const column of columnLabels) {
     let columnSpan = 1
@@ -86,6 +87,17 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
         )
       }
     }
+    if (i === 0) {
+      headerCells.push(
+        <Table.HeaderCell
+          className="table-definition-header-empty-cell"
+          key={getNextId()}
+          rowSpan={columnLabels.length}
+          colSpan={rowLabels.length}>
+          {tableSummFuncName}
+        </Table.HeaderCell>
+      )
+    }
     headerRows.push(
       <Table.Row children={headerCells} key={getNextId()}/>
     )
@@ -94,7 +106,7 @@ const buildHeaderRows = (rowLabels, columnLabels, schema) => {
   return headerRows
 }
 
-const buildDataRows = (rowLabels, data) => {
+const buildDataRows = (rowLabels, data, rowSummary, colSummary) => {
   let rows = []
   let i = 0;
   for (const row of data) {
@@ -119,6 +131,23 @@ const buildDataRows = (rowLabels, data) => {
         <Table.Cell key={getNextId()}>{`${element}`}</Table.Cell>
       )
     }
+    // summary rows
+    for (let k = 0; k < rowSummary.length; ++k) {
+      /*let rowSpan = 1
+      if ( k > 0) {
+        rowSpan = rowLabels.slice(0, k).reduce(multiplyByArrayLength, 1)
+      }*/
+      let rowSpan = Math.floor(data.length / rowSummary[k].length);
+      if (i % rowSpan === 0) {
+        //const normalizedI = i % (rowSpan * rowSummary[k].length);
+        const y = Math.floor( i / rowSpan);
+        cells.push(
+          <Table.Cell rowSpan={rowSpan} key={getNextId()} className="table-definition-column-cell">
+            {`${rowSummary[k][y]}`}
+          </Table.Cell>
+        )
+      }
+    }
     rows.push(
       <Table.Row key={getNextId()} children={cells}/>
     )
@@ -127,11 +156,11 @@ const buildDataRows = (rowLabels, data) => {
   return rows
 }
 
-const PivotTable = ({rowLabels, columnLabels, data, schema}) => {
+const PivotTable = ({rowLabels, columnLabels, data, schema, colSummaryData, rowSummaryData}) => {
 
   const headerRows = buildHeaderRows(rowLabels, columnLabels, schema)
 
-  const rows = buildDataRows(rowLabels, data)
+  const rows = buildDataRows(rowLabels, data, rowSummaryData, colSummaryData)
 
   const {valueField, functionName} = schema;
 
@@ -157,6 +186,9 @@ PivotTable.propTypes = {
   rowLabels: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
   columnLabels: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
   schema: PropTypes.object.isRequired,
+  rowSummaryData: PropTypes.array,
+  colSummaryData: PropTypes.array,
+  pageSummary: PropTypes.oneOf([PropTypes.string, PropTypes.number]),
 }
 
 export default  PivotTable
