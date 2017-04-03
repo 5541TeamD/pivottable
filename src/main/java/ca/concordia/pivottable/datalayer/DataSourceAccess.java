@@ -4,8 +4,8 @@ import java.util.List;
 
 /**
  * Defines the interface for data source access operations.
- * @author Jyotsana Gupta
- * @version 1.0
+ * @author 	Jyotsana Gupta
+ * @version	1.0
  */
 public interface DataSourceAccess 
 {
@@ -16,6 +16,18 @@ public interface DataSourceAccess
 	 * @param	dbPassword	Password for login
 	 */
 	void setCredentials(String dbUrl, String dbUsername, String dbPassword);
+	
+	/**
+	 * Initiates a connection with the data source.
+	 */
+	void connect();
+	
+	/**
+	 * Closes the connection with the data source.
+	 * @return	true, if connection is closed successfully, or if the connection was already closed
+	 * <br>		false, if the attempt to disconnect fails
+	 */
+    boolean disconnect();
 	
 	/**
      * Tests the connection to the data source by first connecting and then disconnecting.
@@ -30,14 +42,6 @@ public interface DataSourceAccess
      * 			null, if database connection fails
      */
 	List<String> getAllRawTableNames();
-	
-	/**
-  	 * Checks if a table exists in the database.
-  	 * @param	tableName	Name of the table whose existence needs to be verified
-  	 * @return	true, if the table exists in the database
-  	 * 			false, if the table does not exist in the database or database connection fails
-  	 */
-	boolean tableExists(String tableName);
 	
 	/**
   	 * Fetches all the data stored in a table in the database.

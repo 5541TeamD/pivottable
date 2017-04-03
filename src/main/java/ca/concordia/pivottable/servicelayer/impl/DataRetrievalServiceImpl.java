@@ -1,7 +1,6 @@
 package ca.concordia.pivottable.servicelayer.impl;
 
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
-import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.servicelayer.DataRetrievalService;
 import java.util.ArrayList;
@@ -22,7 +21,8 @@ import org.slf4j.LoggerFactory;
  * @author Annabelle Williams
  * @author Jyotsana Gupta
  */
-public class DataRetrievalServiceImpl implements DataRetrievalService {
+public class DataRetrievalServiceImpl implements DataRetrievalService 
+{
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
@@ -53,7 +53,8 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 * @return true, if connection test is successful
 	 * false, if connection test fails
 	 */
-	public boolean checkDataSourceConnection() {
+	public boolean checkDataSourceConnection() 
+	{
 		return dataSource.testConnection();
 	}
 
@@ -62,7 +63,9 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 * @return List of all available raw report names
 	 * null, if data source connection fails
 	 */
-	public List<String> getAllRawReportNames() {
+	public List<String> getAllRawReportNames() 
+	{
+		dataSource.connect();
 		return dataSource.getAllRawTableNames();
 	}
 
@@ -72,8 +75,15 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 * @return true, if the report exists in the data source
 	 * false, if the report does not exist in the data source or data source connection fails
 	 */
-	public boolean rawReportExists(String reportName) {
-		return dataSource.tableExists(reportName);
+	public boolean rawReportExists(String reportName) 
+	{
+		List<String> allRawReportList = getAllRawReportNames();
+  		
+  		if (allRawReportList != null)
+  			if (allRawReportList.contains(reportName))
+  	  			return true;
+  		
+  		return false;
 	}
 
 	/**
@@ -82,18 +92,23 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
 	 * @return All the information stored in the raw report.
 	 * null, if data source connection fails
 	 */
-	public DataSet getRawReport(String reportName) {
+	public DataSet getRawReport(String reportName) 
+	{
+		dataSource.connect();
 		List<String[]> dataFields = dataSource.getTableFields(reportName);
 		List<DataField> rawDataFields = new ArrayList<DataField>();
 		List<List<Object>> rawReportData = new ArrayList<List<Object>>();
 
-		for (String[] dataField : dataFields) {
+		for (String[] dataField : dataFields) 
+		{
 			DataType rawFieldType = DataType.getDataType(dataField[1]);
 			DataField rawDataField = new DataField(dataField[0], rawFieldType);
 			rawDataFields.add(rawDataField);
 		}
 
+		dataSource.connect();
 		rawReportData = dataSource.getTableData(reportName);
+		
 		DataSet rawReport = new DataSet(rawDataFields, rawReportData);
 
 		return rawReport;
@@ -126,14 +141,17 @@ public class DataRetrievalServiceImpl implements DataRetrievalService {
   			pageLabelValues = new ArrayList<>(); // empty page labels
   			
 	  		//Executing the SQL query to get pivot table data without page label
+  			dataSource.connect();
   			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
   		else
   		{
   			//Fetching all the values of the selected page label column
+  			dataSource.connect();
   			pageLabelValues = dataSource.getPageLabelValues(pageLabel, tableName);
   			
   			//Executing the SQL query to get pivot table data with page label
+  			dataSource.connect();
   			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
   		

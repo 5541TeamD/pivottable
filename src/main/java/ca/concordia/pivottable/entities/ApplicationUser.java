@@ -6,17 +6,17 @@ package ca.concordia.pivottable.entities;
 public class ApplicationUser 
 {
 	private final String username;
-	private final String passwordHash;
+	private final String password;
 	
 	/**
 	 * Constructor with all parameters provided. 
 	 * @param 	username		Username for the user to login to the pivot table application
-	 * @param 	passwordHash	Hash of password for the user to login to the pivot table application
+	 * @param 	password		Password for the user to login to the pivot table application
 	 */
-	public ApplicationUser(String username, String passwordHash)
+	public ApplicationUser(String username, String password)
 	{
 		this.username = username;
-		this.passwordHash = passwordHash;
+		this.password = password;
 	}
 
 	/**
@@ -29,11 +29,11 @@ public class ApplicationUser
 	}
 
 	/**
-	 * Accessor method for data member passwordHash.
-	 * @return	passwordHash of this application user
+	 * Accessor method for data member password.
+	 * @return	password of this application user
 	 */
-	public String getPasswordHash() 
+	public String getPassword() 
 	{
-		return this.passwordHash;
+		return this.password;
 	}
 }

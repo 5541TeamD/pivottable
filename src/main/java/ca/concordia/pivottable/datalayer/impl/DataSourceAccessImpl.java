@@ -29,14 +29,24 @@ public class DataSourceAccessImpl implements DataSourceAccess
 	private String dbUrl;
 	
 	/**
-	 * Username to log in to the database.
+	 * Username to login to the database.
 	 */
 	private String dbUsername;
 	
 	/**
-	 * Password to log in to the database.
+	 * Password to login to the database.
 	 */
 	private String dbPassword;
+	
+	/**
+	 * Database connection object
+	 */
+	Connection dbConnection = null;
+	
+	/**
+	 * Used for logging information, warning and error messages during application run.
+	 */
+	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
 	
 	/**
 	 * Sets the credentials required for connecting to a database.
@@ -52,22 +62,12 @@ public class DataSourceAccessImpl implements DataSourceAccess
     }
 	
 	/**
-	 * Used for logging information, warning and error messages during application run.
-	 */
-	private Logger log = LoggerFactory.getLogger(DataSourceAccessImpl.class);
-	
-	/**
 	 * Initiates a connection with the data source.
-	 * @return	An object of type Connection (holding connection details), if connection is successful
-	 * <br>		null, if connection fails
 	 */
-	private Connection connect()
+	public void connect()
 	{
 		//Database driver required for connection
 		String jdbcDriver = "com.mysql.jdbc.Driver";
-		
-		//Database connection state
-		Connection dbConnection = null;
 		
 		try
 		{
@@ -90,17 +90,14 @@ public class DataSourceAccessImpl implements DataSourceAccess
 			dbConnection = null;
 			log.error("SQLException occurred while connecting to database... " + dbConnSQLExcpn.getMessage());
 		}
-		
-		return dbConnection;
 	}
 	
 	/**
 	 * Closes the connection with the data source.
-	 * @param	dbConnection	An object of type Connection referring to the data source connection to be closed.
 	 * @return	true, if connection is closed successfully, or if the connection was already closed
 	 * <br>		false, if the attempt to disconnect fails
 	 */
-    private boolean disconnect(Connection dbConnection)
+    public boolean disconnect()
     {
     	if (dbConnection != null)
     	{
@@ -125,11 +122,11 @@ public class DataSourceAccessImpl implements DataSourceAccess
      */
     public boolean testConnection()
     {
-    	Connection testConnection = connect();
+    	connect();
     	
-    	if (testConnection != null)
+    	if (dbConnection != null)
     	{
-    		return disconnect(testConnection);
+    		return disconnect();
     	}
     	
     	return false;
@@ -142,9 +139,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
      */
   	public List<String> getAllRawTableNames()
   	{
-  		//Connecting to data base
-  		Connection dbConnection = connect();
-  		
   		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -184,31 +178,12 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsAllRawTblNames = null;
   			log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
-  		
-  		disconnect(dbConnection);
-  		
-  		return allRawTblList;
-  	}
-  	
-  	/**
-  	 * Checks if a table exists in the database.
-  	 * @param	tableName	Name of the table whose existence needs to be verified
-  	 * @return	true, if the table exists in the database
-  	 * 			false, if the table does not exist in the database or database connection fails
-  	 */
-  	public boolean tableExists(String tableName)
-  	{
-  		List<String> allRawTblList = getAllRawTableNames();
-  		
-  		if (allRawTblList != null)
+  		finally
   		{
-  			if (allRawTblList.contains(tableName))
-  	  		{
-  	  			return true;
-  	  		}
+  			disconnect();
   		}
-  		
-  		return false;
+  		  		
+  		return allRawTblList;
   	}
   	
   	/**
@@ -219,9 +194,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 */
   	public List<List<Object>> getTableData(String tableName)
   	{
-  		//Connecting to data base
-  		Connection dbConnection = connect();
-  		
   		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -269,8 +241,10 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			tblData = null;
   			log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
   		}
-  		
-  		disconnect(dbConnection);
+  		finally
+  		{
+  			disconnect();
+  		}
   		
   		return tblData;
   	}
@@ -285,9 +259,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 */
   	public List<String[]> getTableFields(String tableName)
   	{
-  		//Connecting to data base
-  		Connection dbConnection = connect();
-  		
   		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -344,8 +315,10 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			tblFields = null;
   			log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
-  		
-  		disconnect(dbConnection);
+  		finally
+  		{
+  			disconnect();
+  		}
   		
   		return tblFields;
   	}
@@ -366,9 +339,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String function, String valField, 
   													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
-  		//Connecting to the data base
-  		Connection dbConnection = connect();
-  		
   		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -417,7 +387,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		//Generating and executing the SQL query
   		pvtTblData = executeQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
   		
-  		disconnect(dbConnection);
+  		disconnect();
   		
   		return pvtTblData;
   	}
@@ -552,9 +522,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String pageLabel, String function, String valField, 
   													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
-  		//Connecting to the data base
-  		Connection dbConnection = connect();
-  		
   		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -602,7 +569,7 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		//Generating and executing the SQL query
   		pvtTblData = executeQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
   		
-  		disconnect(dbConnection);
+  		disconnect();
   		
   		return pvtTblData;
   	}
@@ -835,9 +802,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 */
   	public List<String> getPageLabelValues(String pageLabel, String tableName)
   	{
-  		//Connecting to the data base
-  		Connection dbConnection = connect();
-  		
   		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -873,8 +837,10 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			pageLabelValues = null;
   			log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
   		}
-  		
-  		disconnect(dbConnection);
+  		finally
+  		{
+  			disconnect();
+  		}
   		
   		return pageLabelValues;
   	}
