@@ -4,6 +4,8 @@ import ca.concordia.pivottable.controller.*;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.utils.ControllerFactory;
 import ca.concordia.pivottable.utils.DependenciesContainer;
+import ca.concordia.pivottable.utils.ErrorResponse;
+import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -68,6 +70,8 @@ public class Application {
 
         defineRoutes();
 
+        defineExceptionHandlers();
+
     }
 
     /**
@@ -105,5 +109,15 @@ public class Application {
                 return ctrl.handle(request, response);
             }));
         }
+    }
+
+    private static void defineExceptionHandlers() {
+        exception(Exception.class, (e, req, res) -> {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500);
+            res.header("Content-Type", "application/json");
+            res.status(500);
+            Gson gson = new Gson();
+            res.body(gson.toJson(errorResponse));
+        });
     }
 }

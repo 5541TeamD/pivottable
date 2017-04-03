@@ -3,6 +3,8 @@ import {Dropdown, Segment, Label} from 'semantic-ui-react'
 import {connect} from 'react-redux'
 import {fetchRawReport} from '../actions/ActionCreators'
 
+import {getPivotTableState} from '../reducers/RootReducer'
+
 export const TableDropDown = (props) => {
   if (!props.isConnected) {
     return <div></div>;
@@ -39,12 +41,15 @@ TableDropDown.propTypes = {
   isConnected: PropTypes.bool.isRequired,
 }
 
-const mapStateToProps = (state) => ({
-  loading: state.fetchTableListLoading,
-  tables: state.tableList,
-  currentTable: state.selectedTable,
-  isConnected: state.connectedSuccessfully
-})
+const mapStateToProps = (rootState) => {
+  const state = getPivotTableState(rootState)
+  return {
+    loading: state.fetchTableListLoading,
+    tables: state.tableList,
+    currentTable: state.selectedTable,
+    isConnected: state.connectedSuccessfully
+  }
+}
 
 const mapDispatchToProps = (dispatch) => ({
   tableSelected:  (event, obj) => {

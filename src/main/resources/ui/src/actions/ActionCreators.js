@@ -1,9 +1,9 @@
 import {getTableList, checkAccess, getRawReport, getPivotTable} from '../api/endpoints'
-import {C} from '../reducers/RootReducer'
+import {C, getPivotTableState} from '../reducers/RootReducer'
 
 export const fetchTableList = () => async (dispatch, getState) => {
   dispatch({type: C.FETCH_TABLE_LIST})
-  const {username, password, sourceName} = getState()
+  const {username, password, sourceName} = getPivotTableState(getState())
   try {
     const resp = await getTableList(sourceName, username, password)
     dispatch({type: C.FETCH_TABLE_LIST_SUCCESS, data: resp.data})
@@ -39,7 +39,7 @@ export const fetchRawReport = (tableName) => async (dispatch, getState) => {
   if (!tableName)
     return
   dispatch({type:C.FETCH_RAW_REPORT})
-  const {username, password, sourceName} = getState()
+  const {username, password, sourceName} = getPivotTableState(getState())
   try {
     const resp = await getRawReport(tableName, sourceName, username, password)
     dispatch({type: C.FETCH_RAW_REPORT_SUCCESS, data: resp.data})
@@ -137,7 +137,7 @@ const buildSchemaToSend = ({tableSchema, selectedTable}) => ({
 export const generatePivotTable = () => async(dispatch, getState) => {
   dispatch({type: C.GENERATE_PIVOT_TABLE})
   try {
-    const currentState = getState()
+    const currentState = getPivotTableState(getState())
     const {username, password, sourceName} = currentState
     const resp = await getPivotTable(buildSchemaToSend(currentState),
       sourceName, username, password
@@ -145,7 +145,11 @@ export const generatePivotTable = () => async(dispatch, getState) => {
     dispatch({type: C.GENERATE_PIVOT_TABLE_SUCCESS, data: resp.data})
   } catch (e) {
     console.log(e)
-    dispatch({type: C.GENERATE_PIVOT_TABLE_ERROR})
+    let message = 'An error occurred while generating the pivot table.';
+    if (e.response && e.response.data && e.response.data.details) {
+      message = `${message} ${e.response.data.details}`
+    }
+    dispatch({type: C.GENERATE_PIVOT_TABLE_ERROR, message})
   }
 }
 
