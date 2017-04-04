@@ -1,8 +1,10 @@
 package ca.concordia.pivottable.utils;
 
 import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
+import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
 import ca.concordia.pivottable.servicelayer.impl.CredentialsServiceDefault;
 import ca.concordia.pivottable.servicelayer.impl.DataRetrievalServiceImpl;
+import ca.concordia.pivottable.servicelayer.impl.UserManagementServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +45,11 @@ public class DependenciesContainer {
                 return new DataRetrievalServiceImpl(get("dataSourceAccess"), get("CredentialsService"));
             case "credentialsservice":
                 return new CredentialsServiceDefault();
+            case "usermanagementservice":
+                // TODO this impl should be dependent on UserDataAccess
+                return new UserManagementServiceImpl();
+            case "userdataaccess":
+                return new UserDataAccessImpl();
             default:
                 throw new InstantiationException("No dependency wired " + name + ". Developer needs to specify this.");
         }
@@ -68,6 +75,16 @@ public class DependenciesContainer {
             }
         }
         return dependency == null ? null : (T)dependency;
+    }
+
+    /**
+     * Puts an existing instance of a dependency in the container map.
+     * @param name Name of the dependency
+     * @param obj
+     * @return
+     */
+    public boolean put(String name, Object obj) {
+        return container.put(name.toLowerCase(), obj) != null;
     }
 
 }
