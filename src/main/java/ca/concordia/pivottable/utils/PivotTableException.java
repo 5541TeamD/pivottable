@@ -5,7 +5,7 @@ package ca.concordia.pivottable.utils;
  */
 public class PivotTableException extends RuntimeException {
 
-    PivotTableException(String message) {
+    public PivotTableException(String message) {
         super(message);
     }
 

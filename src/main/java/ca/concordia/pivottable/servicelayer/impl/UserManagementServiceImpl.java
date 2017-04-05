@@ -7,17 +7,24 @@ import javax.xml.bind.DatatypeConverter;
 import ca.concordia.pivottable.datalayer.UserDataAccess;
 import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
 import ca.concordia.pivottable.entities.ApplicationUser;
-import ca.concordia.pivottable.entities.ShareableSchema;
 import ca.concordia.pivottable.servicelayer.UserManagementService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ca.concordia.pivottable.utils.PivotTableException;
+//TODO
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
+/**
+ * Handles application user management operations, including user creation, validation and password hashing.
+ * @author	Jyotsana Gupta
+ * @version	1.0
+ */
 public class UserManagementServiceImpl implements UserManagementService
 {
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	private Logger log = LoggerFactory.getLogger(UserManagementServiceImpl.class);
+	//TODO
+	//private Logger log = LoggerFactory.getLogger(UserManagementServiceImpl.class);
 	
 	/**
 	 * User database object used for performing data processing operations.
@@ -27,12 +34,12 @@ public class UserManagementServiceImpl implements UserManagementService
 	/**
 	 * Checks if the username and password chosen by a new application user are valid.
 	 * @param	newUser	Application user object containing new user's credentials
-	 * @return	Validation failure reason, if validation fails
-	 * 			null, otherwise
 	 */
-	public String validateNewUser(ApplicationUser newUser)
+	public void validateNewUser(ApplicationUser newUser)
 	{
 		String userValidation = null;
+		
+		//Parsing the application user object
 		String username = newUser.getUsername().toLowerCase();
 		String password = newUser.getPassword();
 		
@@ -45,29 +52,34 @@ public class UserManagementServiceImpl implements UserManagementService
 			userDatabase.connect();
 			boolean userExists = userDatabase.usernameExists(username);
 			if (userExists)
-				userValidation = "Username already exists.";
+				userValidation = "Username " + username + " already exists.";
 		}
 			
-		return userValidation;
+		//Throwing an exception to the UI in case any validation fails
+		if (userValidation != null)
+			throw new PivotTableException(userValidation);
 	}
 	
 	/**
 	 * Adds a new user's credentials (username in lower case and password hash) to the users database.
 	 * @param	newUser	Application user object containing new user's credentials
-	 * @return	true, if the user is successfully added
-	 * 			false, otherwise
 	 */
-	public boolean createUser(ApplicationUser newUser)
+	public void createUser(ApplicationUser newUser)
 	{
+		//Parsing the application user object
 		String username = newUser.getUsername().toLowerCase();
-		String password = newUser.getPassword();		
+		String password = newUser.getPassword();
 		
 		//Hashing the user password
 		String passwordHash = hashPassword(password);
 		
 		//Adding the new user to the user database
 		userDatabase.connect();
-		return userDatabase.addUser(username, passwordHash);
+		boolean userAdded = userDatabase.addUser(username, passwordHash);
+		
+		//Throwing an exception to the UI in case user creation fails
+		if (!userAdded)
+			throw new PivotTableException("Unable to create new user " + username + ".");
 	}
 	
 	/**
@@ -86,11 +98,13 @@ public class UserManagementServiceImpl implements UserManagementService
 		}
 		catch(NoSuchAlgorithmException nsae)
 		{
-			log.error("Exception occurred while hashing the user password... " + nsae.getMessage());
+			//TODO
+  			//log.error("Exception occurred while hashing the user password... " + nsae.getMessage());
 		}
 		catch(UnsupportedEncodingException uee)
 		{
-			log.error("Exception occurred while hashing the user password... " + uee.getMessage());
+			//TODO
+  			//log.error("Exception occurred while hashing the user password... " + uee.getMessage());
 		}
 		
 		return DatatypeConverter.printHexBinary(hash);
@@ -99,19 +113,17 @@ public class UserManagementServiceImpl implements UserManagementService
 	/**
 	 * Validates login credentials of an application user.
 	 * @param 	existingUser	Application user object containing existing user's credentials
-	 * @return	Validation failure reason, if validation fails
-	 * 			null, otherwise
 	 */
-	public String validateLogin(ApplicationUser existingUser)
+	public void validateLogin(ApplicationUser existingUser)
 	{
+		String userValidation = null;
 		String username = existingUser.getUsername().toLowerCase();
-		String password = existingUser.getPassword();	
+		String password = existingUser.getPassword();
 		
 		//Hashing the user password
 		String passwordHash = hashPassword(password);
 		
 		//Validating the user login credentials
-		String userValidation = null;
 		if ((username == null) || (username.trim().isEmpty()))
 			userValidation = "Username is either blank or contains only whitespaces.";
 		else if ((password == null) || (password.trim().isEmpty()))
@@ -121,7 +133,7 @@ public class UserManagementServiceImpl implements UserManagementService
 			userDatabase.connect();
 			boolean userExists = userDatabase.usernameExists(username);
 			if (!userExists)
-				userValidation = "Username does not exist.";
+				userValidation = "Username " + username + " does not exist.";
 			else
 			{
 				String userPasswordHash = userDatabase.getUserPasswordHash(username);
@@ -132,27 +144,23 @@ public class UserManagementServiceImpl implements UserManagementService
 			}
 		}
 		
-		return userValidation;
+		//Throwing an exception to the UI in case any validation fails
+		if (userValidation != null)
+			throw new PivotTableException(userValidation);
 	}
 	
 	/**
-	 * Adds a new shareable schema to the user database.
-	 * @param 	shareableSchema	Details of the shareable schema
-	 * @return	true, if schema is successfully added
-	 * 			false, otherwise
+	 * Deletes an existing user from the users database.
+	 * @param	username	Username of the user to be deleted
 	 */
-	public boolean createShareableSchema(ShareableSchema shareableSchema)
+	public void deleteUser(String username)
 	{
-		//Parsing shareable schema object
-		String schemaName = shareableSchema.getSchemaName();
-		String ownerUsername = shareableSchema.getOwnerUsername();
-		String dbURL = shareableSchema.getDbURL();
-		String dbUsername = shareableSchema.getDbUsername();
-		String dbPassword = shareableSchema.getDbPassword();
-		String pvtTblSchema = shareableSchema.getPvtTblSchema().toJSON();
-		
-		//Adding the new shareable schema to the user database
+		//Deleting the user record from the user database
 		userDatabase.connect();
-		return userDatabase.addShareableSchema(schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
+		boolean userDeleted = userDatabase.deleteUser(username);
+		
+		//Throwing an exception to the UI in case user deletion fails
+		if (!userDeleted)
+			throw new PivotTableException("Unable to delete user " + username + ".");
 	}
 }

@@ -1,39 +1,35 @@
 package ca.concordia.pivottable.servicelayer;
 
 import ca.concordia.pivottable.entities.ApplicationUser;
-import ca.concordia.pivottable.entities.ShareableSchema;
 
+/**
+ * Defines the interface for pivot table application user management service operations.
+ * @author 	Jyotsana Gupta
+ * @version	1.0
+ */
 public interface UserManagementService 
 {
 	/**
 	 * Checks if the username and password chosen by a new application user are valid.
 	 * @param	newUser	Application user object containing new user's credentials
-	 * @return	Validation failure reason, if validation fails
-	 * 			null, otherwise
 	 */
-	String validateNewUser(ApplicationUser newUser);
+	void validateNewUser(ApplicationUser newUser);
 	
 	/**
 	 * Adds a new user's credentials (username in lower case and password hash) to the users database.
 	 * @param	newUser	Application user object containing new user's credentials
-	 * @return	true, if the user is successfully added
-	 * 			false, otherwise
 	 */
-	boolean createUser(ApplicationUser newUser);
+	void createUser(ApplicationUser newUser);
 	
 	/**
 	 * Validates login credentials of an application user.
 	 * @param 	existingUser	Application user object containing existing user's credentials
-	 * @return	Validation failure reason, if validation fails
-	 * 			null, otherwise
 	 */
-	String validateLogin(ApplicationUser existingUser);
+	void validateLogin(ApplicationUser existingUser);
 	
 	/**
-	 * Adds a new shareable schema to the user database.
-	 * @param 	shareableSchema	Details of the shareable schema
-	 * @return	true, if schema is successfully added
-	 * 			false, otherwise
+	 * Deletes an existing user from the users database.
+	 * @param	username	Username of the user to be deleted
 	 */
-	boolean createShareableSchema(ShareableSchema shareableSchema);
+	void deleteUser(String username);
 }

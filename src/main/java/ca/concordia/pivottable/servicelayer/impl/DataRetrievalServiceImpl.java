@@ -12,21 +12,24 @@ import ca.concordia.pivottable.entities.DataType;
 import ca.concordia.pivottable.entities.DataField;
 import ca.concordia.pivottable.entities.PivotTable;
 import ca.concordia.pivottable.entities.PivotTableSchema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//TODO
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 /**
  * Handles retrieval of data from the data source and its supply to the Controller.
  * Data retrieved is converted into Entity objects before being sent to the Controller.
- * @author Annabelle Williams
- * @author Jyotsana Gupta
+ * @author 	Annabelle Williams
+ * @author 	Jyotsana Gupta
+ * @version	1.0
  */
 public class DataRetrievalServiceImpl implements DataRetrievalService 
 {
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	private Logger log = LoggerFactory.getLogger(DataRetrievalServiceImpl.class);
+	//TODO
+	//private Logger log = LoggerFactory.getLogger(DataRetrievalServiceImpl.class);
 	
 	/**
 	 * Data source object used for performing data retrieval operations.
@@ -138,11 +141,12 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
   		
   		if (pageLabel == null || pageLabel.trim().equals(""))
   		{
+  			pageLabel = null;
   			pageLabelValues = new ArrayList<>(); // empty page labels
   			
 	  		//Executing the SQL query to get pivot table data without page label
   			dataSource.connect();
-  			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
+  			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
   		else
   		{
@@ -156,7 +160,8 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
   		}
   		
   		//Fetching pivot table row, column, page and table level summary details
-  		log.info("Fetching pivot table row, column, page and table level summary details.");
+  		//TODO
+  		//log.info("Fetching pivot table row, column, page and table level summary details.");
   		List<List<List<List<Object>>>> oneDimSummaryDetails = getDimSummaryDetails(pvtTblData, tableSummFuncName, rowLabels.size(), colLabels.size());
   		List<List<List<Object>>> rowSummDetails = oneDimSummaryDetails.get(0);
   		List<List<List<Object>>> colSummDetails = oneDimSummaryDetails.get(1);
