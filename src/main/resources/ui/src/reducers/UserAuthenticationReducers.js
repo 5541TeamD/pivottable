@@ -9,8 +9,11 @@ export const loginReducer = (state = {
     case C.FETCH_USER_INFO:
       return {...state, loadingUserInfo: true}
     case C.FETCH_USER_INFO_SUCCESS:
+    case C.LOGIN_SUBMIT_SUCCESS:
       return {...state, loadingUserInfo: false, loggedInUser: action.user}
     case C.FETCH_USER_INFO_FAILURE:
+    case C.LOGIN_SUBMIT_FAILURE:
+    case C.LOGOUT_SUCCESS:
       return {...state, loadingUserInfo: false, loggedInUser: null}
     default:
       return state;
@@ -32,13 +35,20 @@ export const loginFormReducer = (state = {
     case C.LOGIN_SUBMIT:
       return {...state, loading: true}
     case C.LOGIN_SUBMIT_FAILURE:
-      return {...state, loading: false, errorMsg: action.message}
+      return {...state, loading: false, errorMessage: action.message}
     case C.LOGIN_SUBMIT_SUCCESS:
     case C.FETCH_USER_INFO_SUCCESS:
-      return {...state, errorMsg: '', username: '', password: '', loading: false}
+      return {...state, errorMessage: '', password: '', loading: false}
     default:
       return state;
   }
+}
+
+function computePwdErrorMessage(pwA, pwB) {
+  if (pwB.length > 0 && pwB !== pwA) {
+    return "Passwords don't match";
+  }
+  return '';
 }
 
 export const registerFormReducer = (state = {
@@ -54,24 +64,31 @@ export const registerFormReducer = (state = {
     case C.REGISTER_USERNAME_CHANGED:
       return {...state, username: action.value};
     case C.REGISTER_PASSWORD1_CHANGED:
-      return {...state, password1: action.value};
+      return {...state,
+        password1: action.value,
+        errorMessage: computePwdErrorMessage(action.value, state.password2)
+      };
     case C.REGISTER_PASSWORD2_CHANGED:
       return {
         ...state,
         password2: action.value,
-        errorMessage: (state.password1.length > 0 && state.password1 !== state.password2) ?
-          "Passwords don't match" : ''
+        errorMessage: computePwdErrorMessage(state.password1, action.value)
       };
     case C.REGISTER_SUBMIT:
       return {...state, loading: true}
     case C.REGISTER_SUBMIT_FAILURE:
-      return {...state, loading: false, errorMsg: action.message, infoMsg: ''};
+      return {...state, loading: false, errorMessage: action.message, infoMsg: ''};
     case C.REGISTER_SUBMIT_SUCCESS:
       return {...state,
         infoMsg: 'Registered Successfully. You may now login.',
-        errorMsg: '',
+        errorMessage: '',
         password1: '',
         password2: '',
+        loading: false,
       }
+    case C.LOGIN_SUBMIT_SUCCESS:
+      return registerFormReducer(undefined, {type: '----irrelevant---'})
+    default:
+      return state;
   }
 }

@@ -45,3 +45,25 @@ export const getPivotTable = (schema, dataSource, username, password) => {
     headers: buildCustomHeader(dataSource, username, password),
   })
 }
+
+export const login = (username, password) => {
+  return instance.get('/api/login', {
+    params: {
+      username,
+      password
+    }
+  })
+}
+
+export const logout = () => {
+  return instance.get('/api/logout')
+}
+
+export const register = (username, password) => {
+  return instance.get('/api/register', {
+    params: {
+      username,
+      password
+    }
+  })
+}

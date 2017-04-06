@@ -44,6 +44,7 @@ public class Application {
         GET.put("/api/rawreport", RawReportController.class);
         GET.put("/api/login", LoginController.class);
         GET.put("/api/logout", LogoutController.class);
+        GET.put("/api/register", RegisterController.class);
     }
 
     private static final Map<String, Class> POST;

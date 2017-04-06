@@ -54,16 +54,18 @@ const C = {
   FETCH_USER_INFO: 'FETCH_USER_INFO',
   FETCH_USER_INFO_SUCCESS: 'FETCH_USER_INFO_SUCCESS',
   FETCH_USER_INFO_FAILURE: 'FETCH_USER_INFO_FAILURE',
+  LOGOUT: 'LOGOUT',
+  LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+  LOGOUT_FAILURE: 'LOGOUT_FAILURE',
 }
 
 
 const getPivotTableState = (state) => (state.pivotTableReducer)
-
 const getLoginFormState = (state) => (state.loginFormReducer)
-
 const getAuthenticationState = (state) => (state.loginReducer)
+const getRegisterFormState = (rootstate) => (rootstate.registerFormReducer)
 
-export {C, getPivotTableState, getLoginFormState, getAuthenticationState}
+export {C, getPivotTableState, getLoginFormState, getAuthenticationState, getRegisterFormState}
 
 export default combineReducers({
   pivotTableReducer,

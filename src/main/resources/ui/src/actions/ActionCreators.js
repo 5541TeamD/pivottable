@@ -1,5 +1,24 @@
-import {getTableList, checkAccess, getRawReport, getPivotTable} from '../api/endpoints'
 import {C, getPivotTableState} from '../reducers/RootReducer'
+import {getTableList,
+  checkAccess,
+  getRawReport,
+  getPivotTable,
+  login,
+  logout,
+  register
+} from '../api/endpoints'
+
+const handleErrorResponse = (e, type, dispatch, additionalMessage = '') => {
+  console.log(e)
+  let message = `An error occurred. ${additionalMessage}`;
+  if (e.response && e.response.data && e.response.data.details) {
+    message = `${message} ${e.response.data.details}`
+    if (e.response.status >= 400) {
+      console.log(`Received a code ${e.response.status}...`);
+    }
+  }
+  dispatch({type, message})
+}
 
 export const fetchTableList = () => async (dispatch, getState) => {
   dispatch({type: C.FETCH_TABLE_LIST})
@@ -144,12 +163,7 @@ export const generatePivotTable = () => async(dispatch, getState) => {
     )
     dispatch({type: C.GENERATE_PIVOT_TABLE_SUCCESS, data: resp.data})
   } catch (e) {
-    console.log(e)
-    let message = 'An error occurred while generating the pivot table.';
-    if (e.response && e.response.data && e.response.data.details) {
-      message = `${message} ${e.response.data.details}`
-    }
-    dispatch({type: C.GENERATE_PIVOT_TABLE_ERROR, message})
+    handleErrorResponse(e, C.GENERATE_PIVOT_TABLE_ERROR, dispatch)
   }
 }
 
@@ -192,3 +206,34 @@ export const registerFormPassword2Changed = (value) => ({
   type: C.REGISTER_PASSWORD2_CHANGED,
   value
 })
+
+export const doLogin = (username, password) => async (dispatch) => {
+  dispatch({type: C.LOGIN_SUBMIT})
+  try {
+    const resp = await login(username, password);
+    // success
+    dispatch({type: C.LOGIN_SUBMIT_SUCCESS, user: resp.data.username})
+  } catch (e) {
+    handleErrorResponse(e, C.LOGIN_SUBMIT_FAILURE, dispatch, 'Log in failed.');
+  }
+}
+
+export const doLogout = () => async (dispatch) => {
+  dispatch({type: C.LOGOUT})
+  try {
+    const resp = await logout();
+    dispatch({type: C.LOGOUT_SUCCESS})
+  } catch (e) {
+    handleErrorResponse(e, C.LOGOUT_FAILURE, dispatch, 'Failed to logout.')
+  }
+}
+
+export const doRegister = (username, password) => async (dispatch) => {
+  dispatch({type: C.REGISTER_SUBMIT})
+  try {
+    const resp = await register(username, password);
+    dispatch({type: C.REGISTER_SUBMIT_SUCCESS});
+  } catch (e) {
+    handleErrorResponse(e, C.REGISTER_SUBMIT_FAILURE, dispatch, 'Registration failed...');
+  }
+}
