@@ -67,3 +67,7 @@ export const register = (username, password) => {
     }
   })
 }
+
+export const getUserInfo = () => {
+  return instance.get('/api/userinfo')
+}

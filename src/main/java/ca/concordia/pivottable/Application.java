@@ -1,7 +1,6 @@
 package ca.concordia.pivottable;
 
 import ca.concordia.pivottable.controller.*;
-import ca.concordia.pivottable.entities.PivotTable;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.utils.*;
 import com.google.gson.Gson;
@@ -12,10 +11,7 @@ import spark.Response;
 import spark.Route;
 import spark.Spark;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +41,7 @@ public class Application {
         GET.put("/api/login", LoginController.class);
         GET.put("/api/logout", LogoutController.class);
         GET.put("/api/register", RegisterController.class);
+        GET.put("/api/userinfo", UserInfoController.class);
     }
 
     private static final Map<String, Class> POST;
@@ -75,7 +72,6 @@ public class Application {
 
         // Dependency injection container is request scoped
         before((request, response) -> {
-            request.session().invalidate();
             DependenciesContainer container = new DependenciesContainer();
             request.attribute("container", container);
             CredentialsService credentials = container.get("CredentialsService");

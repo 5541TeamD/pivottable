@@ -4,7 +4,8 @@ import {connect} from 'react-redux'
 
 import {getAuthenticationState} from '../../reducers/RootReducer'
 
-const PrivateRoute = ({isLoggedIn, component, ...rest}) => (
+const PrivateRoute = ({isLoggedIn, component, ...rest}) => {
+  return (
   <Route {...rest} render={props => (
     isLoggedIn ? (
         React.createElement(component,props)
@@ -13,7 +14,8 @@ const PrivateRoute = ({isLoggedIn, component, ...rest}) => (
         pathname : '/login'
       }}/>
   )}/>
-)
+  )
+}
 
 const mapStateToProps = (rootState) => {
   const state = getAuthenticationState(rootState)

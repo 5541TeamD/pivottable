@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 //import createBrowserHistory from 'history/createBrowserHistory';
 import PrivateRoute from './Utils/PrivateRoute'
 
@@ -15,9 +15,9 @@ const MainApp = () => (
   <Router>
     <div>
       <AppHeader/>
-      <PrivateRoute exact path="/" component={Home} />
+      <PrivateRoute path="/" component={Home} />
       <Route exact path="/login" component={LoginScreen}/>
-      <PrivateRoute exact path="/create" component={PivotTableApp} />
+      <Route path="/create" component={PivotTableApp} />
       <Footer/>
     </div>
   </Router>

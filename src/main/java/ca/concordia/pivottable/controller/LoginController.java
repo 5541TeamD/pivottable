@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class LoginController extends Controller {
 
-    UserManagementService userService;
+    private UserManagementService userService;
 
     public LoginController(DependenciesContainer container) {
         super(container);
@@ -34,9 +34,6 @@ public class LoginController extends Controller {
         Session sess = request.session(true);
         log.info("User " + username + " logged in. Creating session");
         sess.attribute("username", possibleUser.getUsername());
-        Map<String, Object> resp = new HashMap<>();
-        resp.put("status", 200);
-        resp.put("username", username);
-        return gson.toJson(resp);
+        return successResponse(username, response);
     }
 }

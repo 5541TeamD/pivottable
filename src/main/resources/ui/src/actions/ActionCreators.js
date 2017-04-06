@@ -5,7 +5,8 @@ import {getTableList,
   getPivotTable,
   login,
   logout,
-  register
+  register,
+  getUserInfo
 } from '../api/endpoints'
 
 const handleErrorResponse = (e, type, dispatch, additionalMessage = '') => {
@@ -212,7 +213,7 @@ export const doLogin = (username, password) => async (dispatch) => {
   try {
     const resp = await login(username, password);
     // success
-    dispatch({type: C.LOGIN_SUBMIT_SUCCESS, user: resp.data.username})
+    dispatch({type: C.LOGIN_SUBMIT_SUCCESS, user: resp.data.details})
   } catch (e) {
     handleErrorResponse(e, C.LOGIN_SUBMIT_FAILURE, dispatch, 'Log in failed.');
   }
@@ -235,5 +236,15 @@ export const doRegister = (username, password) => async (dispatch) => {
     dispatch({type: C.REGISTER_SUBMIT_SUCCESS});
   } catch (e) {
     handleErrorResponse(e, C.REGISTER_SUBMIT_FAILURE, dispatch, 'Registration failed...');
+  }
+}
+
+export const getCurrentlyLoggedInUser = () => async (dispatch) => {
+  dispatch({type: C.FETCH_USER_INFO});
+  try {
+    const resp = await getUserInfo()
+    dispatch({type: C.FETCH_USER_INFO_SUCCESS, user: resp.data.details ? resp.data.details : null})
+  } catch (e) {
+    handleErrorResponse(e, C.FETCH_USER_INFO_FAILURE, dispatch)
   }
 }
