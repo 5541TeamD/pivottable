@@ -61,7 +61,9 @@ const getPivotTableState = (state) => (state.pivotTableReducer)
 
 const getLoginFormState = (state) => (state.loginFormReducer)
 
-export {C, getPivotTableState, getLoginFormState}
+const getAuthenticationState = (state) => (state.loginReducer)
+
+export {C, getPivotTableState, getLoginFormState, getAuthenticationState}
 
 export default combineReducers({
   pivotTableReducer,
