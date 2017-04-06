@@ -24,7 +24,7 @@ const PivotTableApp = ({isPrintableView}) => {
 }
 
 const mapStateToProps = (state) => ({
-  isPrintableView: state.printableView,
+  isPrintableView: state.pivotTableReducer.printableView,
 })
 
 export default connect(mapStateToProps)(PivotTableApp)

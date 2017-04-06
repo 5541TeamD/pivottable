@@ -2,7 +2,7 @@ import React from 'react'
 
 import {Segment, Form, Button, Label, Input, Modal} from 'semantic-ui-react'
 import {connect} from 'react-redux'
-
+import {getPivotTableState} from '../reducers/RootReducer'
 import {rowLabelsChanged,
   columnLabelsChanged,
   pageLabelChanged,
@@ -186,58 +186,61 @@ const PivotTableSchema = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-  loading: state.rawReportLoading || state.pivotTableLoading,
-  isConnected: state.connectedSuccessfully,
-  allColumns: state.tableSchema.rowLabels,
-  aliasMap: state.tableSchema.aliasMap,
-  rowLabels: state.tableSchema.rowLabels.map ( val => ({
-    text: val.alias,
-    value: val.name,
-    key: val.name
-  })),
-  selectedRowLabels: state.tableSchema.selectedRowLabels.map( val => val.name),
-  columnLabels: state.tableSchema.columnLabels.map (val => ({
-    text: val.alias,
-    value: val.name,
-    key: val.name
-  })),
-  selectedColumnLabels: state.tableSchema.selectedColumnLabels.map (val => val.name),
-  pageLabels: [{text: '', value: null, key: -1}].concat(state.tableSchema.pageLabels.map( val => ({
-    text: val.alias,
-    value: val.name,
-    key: val.name
-  }))),
-  selectedPageLabel: state.tableSchema.selectedPageLabel,
-  functionList: state.tableSchema.functionList.map( val => ({
-    text: val,
-    value: val,
-    key: val
-  })),
-  selectedFunction: state.tableSchema.selectedFunction,
-  possibleValues: state.tableSchema.possibleValues.map( val => ({
-    text: val.alias,
-    key: val.name,
-    value: val.name
-  })),
-  selectedValue: state.tableSchema.selectedValue,
-  // TODO review below ^^;
-  filterFields: ([{name: '', alias: ''}].concat(state.tableSchema.filterFields)).map( (val,idx) => ({
-    text: val.alias,
-    key: idx,
-    value: val.name
-  })),
-  selectedFilterField: state.tableSchema.selectedFilterField,
-  filterValue: state.tableSchema.filterValue,
-  sortFields: ([{name: '', alias: ''}].concat(state.tableSchema.sortFields)).map( (val,idx) => ({
-    text: val.alias,
-    key: idx,
-    value: val.name
-  })),
-  selectedSortField: state.tableSchema.selectedSortField,
-  sortOrder: state.tableSchema.sortOrder,
-  selectedSummaryFunction: state.tableSchema.summaryFunction,
-})
+const mapStateToProps = (rootstate) => {
+  const state = getPivotTableState(rootstate)
+  return {
+    loading: state.rawReportLoading || state.pivotTableLoading,
+    isConnected: state.connectedSuccessfully,
+    allColumns: state.tableSchema.rowLabels,
+    aliasMap: state.tableSchema.aliasMap,
+    rowLabels: state.tableSchema.rowLabels.map(val => ({
+      text: val.alias,
+      value: val.name,
+      key: val.name
+    })),
+    selectedRowLabels: state.tableSchema.selectedRowLabels.map(val => val.name),
+    columnLabels: state.tableSchema.columnLabels.map(val => ({
+      text: val.alias,
+      value: val.name,
+      key: val.name
+    })),
+    selectedColumnLabels: state.tableSchema.selectedColumnLabels.map(val => val.name),
+    pageLabels: [{text: '', value: null, key: -1}].concat(state.tableSchema.pageLabels.map(val => ({
+      text: val.alias,
+      value: val.name,
+      key: val.name
+    }))),
+    selectedPageLabel: state.tableSchema.selectedPageLabel,
+    functionList: state.tableSchema.functionList.map(val => ({
+      text: val,
+      value: val,
+      key: val
+    })),
+    selectedFunction: state.tableSchema.selectedFunction,
+    possibleValues: state.tableSchema.possibleValues.map(val => ({
+      text: val.alias,
+      key: val.name,
+      value: val.name
+    })),
+    selectedValue: state.tableSchema.selectedValue,
+    // TODO review below ^^;
+    filterFields: ([{name: '', alias: ''}].concat(state.tableSchema.filterFields)).map((val, idx) => ({
+      text: val.alias,
+      key: idx,
+      value: val.name
+    })),
+    selectedFilterField: state.tableSchema.selectedFilterField,
+    filterValue: state.tableSchema.filterValue,
+    sortFields: ([{name: '', alias: ''}].concat(state.tableSchema.sortFields)).map((val, idx) => ({
+      text: val.alias,
+      key: idx,
+      value: val.name
+    })),
+    selectedSortField: state.tableSchema.selectedSortField,
+    sortOrder: state.tableSchema.sortOrder,
+    selectedSummaryFunction: state.tableSchema.summaryFunction,
+  }
+}
 
 
 const mapDispatchToProps = (dispatch) => ({

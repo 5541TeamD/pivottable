@@ -4,6 +4,10 @@ import ca.concordia.pivottable.controller.*;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.utils.ControllerFactory;
 import ca.concordia.pivottable.utils.DependenciesContainer;
+import ca.concordia.pivottable.utils.ErrorResponse;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -16,6 +20,7 @@ import static spark.Spark.*;
 
 public class Application {
 
+    private static Logger log = LoggerFactory.getLogger(Application.class);
     /**
      * Interface representing the kind of arguments a Spark route function takes
      */
@@ -34,6 +39,8 @@ public class Application {
         GET.put("/api/checkaccess", DBConnectionCheckController.class);
         GET.put("/api/tables", TableListController.class);
         GET.put("/api/rawreport", RawReportController.class);
+        GET.put("/api/login", LoginController.class);
+        GET.put("/api/logout", LogoutController.class);
     }
 
     private static final Map<String, Class> POST;
@@ -57,6 +64,7 @@ public class Application {
 
         // Dependency injection container is request scoped
         before((request, response) -> {
+            request.session().invalidate();
             DependenciesContainer container = new DependenciesContainer();
             request.attribute("container", container);
             CredentialsService credentials = container.get("CredentialsService");
@@ -67,6 +75,8 @@ public class Application {
         });
 
         defineRoutes();
+
+        defineExceptionHandlers();
 
     }
 
@@ -105,5 +115,16 @@ public class Application {
                 return ctrl.handle(request, response);
             }));
         }
+    }
+
+    private static void defineExceptionHandlers() {
+        exception(Exception.class, (e, req, res) -> {
+            log.error("Message from General Exception handler: " + e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500);
+            res.header("Content-Type", "application/json");
+            res.status(500);
+            Gson gson = new Gson();
+            res.body(gson.toJson(errorResponse));
+        });
     }
 }

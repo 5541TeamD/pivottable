@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import {Segment, Input, Button, Label, Form, Message} from 'semantic-ui-react'
 import {connect} from 'react-redux'
-
+import {getPivotTableState} from '../reducers/RootReducer'
 import {dataSourceNameChanged, userNameChanged,
   passwordChanged, disconnect, connectToDataSource} from '../actions/ActionCreators'
 
@@ -74,7 +74,8 @@ ConnectionForm.propTypes = {
   errorMessage: PropTypes.string.isRequired
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = getPivotTableState(rootState);
   return {
     loading: state.connectionLoading,
     dataSource: state.sourceName,
