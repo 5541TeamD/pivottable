@@ -2,6 +2,8 @@ import {combineReducers} from 'redux';
 
 import pivotTableReducer from './PivotTableReducer'
 
+import {loginReducer, loginFormReducer, registerFormReducer} from './UserAuthenticationReducers'
+
 // action types
 const C = {
   FETCH_TABLE_LIST: 'FETCH_TABLE_LIST',
@@ -38,14 +40,33 @@ const C = {
   TOGGLE_PRINTABLE_VIEW: 'TOGGLE_PRINTABLE_VIEW',
   SCHEMA_LABEL_ALIAS_CHANGED: 'SCHEMA_LABEL_ALIAS_CHANGED',
   SCHEMA_SUMMARY_FUNCTION_SELECTED: 'SCHEMA_SUMMARY_FUNCTION_SELECTED',
+  LOGIN_USERNAME_CHANGED: 'LOGIN_USERNAME_CHANGED',
+  LOGIN_PASSWORD_CHANGED: 'LOGIN_PASSWORD_CHANGED',
+  REGISTER_USERNAME_CHANGED: 'REGISTER_USERNAME_CHANGED',
+  REGISTER_PASSWORD1_CHANGED: 'REGISTER_PASSWORD1_CHANGED',
+  REGISTER_PASSWORD2_CHANGED: 'REGISTER_PASSWORD2_CHANGED',
+  LOGIN_SUBMIT: 'LOGIN_SUBMIT',
+  LOGIN_SUBMIT_SUCCESS: 'LOGIN_SUBMIT_SUCCESS',
+  LOGIN_SUBMIT_FAILURE: 'LOGIN_SUBMIT_FAILURE',
+  REGISTER_SUBMIT: 'REGISTER_SUBMIT',
+  REGISTER_SUBMIT_SUCCESS: 'REGISTER_SUBMIT_SUCCESS',
+  REGISTER_SUBMIT_FAILURE: 'REGISTER_SUBMIT_FAILURE',
+  FETCH_USER_INFO: 'FETCH_USER_INFO',
+  FETCH_USER_INFO_SUCCESS: 'FETCH_USER_INFO_SUCCESS',
+  FETCH_USER_INFO_FAILURE: 'FETCH_USER_INFO_FAILURE',
 }
 
 
 const getPivotTableState = (state) => (state.pivotTableReducer)
 
-export {C, getPivotTableState}
+const getLoginFormState = (state) => (state.loginFormReducer)
+
+export {C, getPivotTableState, getLoginFormState}
 
 export default combineReducers({
-  pivotTableReducer
+  pivotTableReducer,
+  loginReducer,
+  loginFormReducer,
+  registerFormReducer
 })
 

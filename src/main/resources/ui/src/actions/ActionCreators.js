@@ -167,3 +167,28 @@ export const summaryFunctionChanged = (value) => ({
   type: C.SCHEMA_SUMMARY_FUNCTION_SELECTED,
   value
 })
+
+export const loginFormUsernameChanged = (value) => ({
+  type: C.LOGIN_USERNAME_CHANGED,
+  value
+})
+
+export const loginFormPasswordChanged = (value) => ({
+  type: C.LOGIN_PASSWORD_CHANGED,
+  value
+})
+
+export const registerFormUsernameChanged = (value) => ({
+  type: C.REGISTER_USERNAME_CHANGED,
+  value
+})
+
+export const registerFormPassword1Changed = (value) => ({
+  type: C.REGISTER_PASSWORD1_CHANGED,
+  value
+})
+
+export const registerFormPassword2Changed = (value) => ({
+  type: C.REGISTER_PASSWORD2_CHANGED,
+  value
+})
