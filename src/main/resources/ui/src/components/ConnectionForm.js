@@ -19,7 +19,7 @@ const ConnectionForm = (props) => {
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Data Source Connection</Label>
       {errorBox}
-      <Form as="div">
+      <Form as="form" onSubmit={onCheckConnection}>
       {!isConnected ?
         <div>
           <Form.Field>
@@ -97,7 +97,14 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(passwordChanged(value))
   },
   onDisconnect: () => { dispatch(disconnect()) },
-  onCheckConnection: (source, name, pwd) => () => { dispatch(connectToDataSource(source, name, pwd)) }
+  onCheckConnection: (source, name, pwd) => (e) => {
+    if (e) {
+      e.preventDefault()
+    }
+    if (source && name) {
+      dispatch(connectToDataSource(source, name, pwd))
+    }
+  }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps) (ConnectionForm)

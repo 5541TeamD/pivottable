@@ -20,7 +20,7 @@ const LoginForm = (props) => {
     <Segment loading={loading}>
       <Label as="div" attached="top" color="red">App Login</Label>
       {errorBox}
-        <Form as="div">
+        <Form as="form" onSubmit={onLogin(userName, password)}>
           <div>
             <Form.Field>
               <label>Username</label>
@@ -68,7 +68,10 @@ const mapDispatchToProps = (dispatch) => ({
   onPasswordChanged: (e, {value}) => {
     dispatch(loginFormPasswordChanged(value))
   },
-  onLogin: (username, pwd) => () => {
+  onLogin: (username, pwd) => (e) => {
+    if (e) {
+      e.preventDefault();
+    }
     dispatch(doLogin(username, pwd))
   },
 })

@@ -28,7 +28,7 @@ const RegisterForm = (props) => {
         <Label as="div" attached="top" color="green">Register</Label>
         {errorBox}
         {infoBox}
-        <Form as="div">
+        <Form as="form" onSubmit={doRegister(userName, password1, password2)}>
           <div>
             <Form.Field>
               <label>Username</label>
@@ -43,7 +43,7 @@ const RegisterForm = (props) => {
               <Input type="password" value={password2} onChange={onPassword2Changed} placeholder="Re-enter password"/>
             </Form.Field>
             <Form.Field>
-              <Button primary={true} onClick={onRegister(userName, password1)} disabled={password1.length < 3 || !userName || password1 !== password2 }>
+              <Button primary={true} onClick={onRegister(userName, password1, password2)} disabled={password1.length < 3 || !userName || password1 !== password2 }>
                 Register
               </Button>
             </Form.Field>
@@ -88,8 +88,14 @@ const mapDispatchToProps = (dispatch) => ({
   onPassword2Changed: (e, {value}) => {
     dispatch(registerFormPassword2Changed(value))
   },
-  onRegister: (username, pwd) => () => {
-    dispatch(doRegister(username, pwd))
+  onRegister: (username, pwd, pwd2) => (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    if (pwd.length > 0 && pwd === pwd2) {
+      // additional check
+      dispatch(doRegister(username, pwd))
+    }
   },
 })
 
