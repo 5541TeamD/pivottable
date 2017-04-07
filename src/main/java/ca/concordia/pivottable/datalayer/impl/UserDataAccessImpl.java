@@ -67,11 +67,9 @@ public class UserDataAccessImpl implements UserDataAccess
 		catch (Exception excp)
 		{
 			log.error("Unexpected exception occurred while attempting user DB connection... " + excp.getMessage());
-			System.out.println("Unexpected exception occurred while attempting user DB connection... " + excp.getMessage());
 		}		
 		
 		log.info("Initiating connection to user database " + dbUrl + "...");
-		System.out.println("Initiating connection to user database " + dbUrl + "...");
 		
 		try
 		{
@@ -81,7 +79,6 @@ public class UserDataAccessImpl implements UserDataAccess
 		{
 			dbConnection = null;
 			log.error("SQLException occurred while connecting to user database... " + sqle.getMessage());
-			System.out.println("SQLException occurred while connecting to user database... " + sqle.getMessage());
 		}
 	}
 	
@@ -101,7 +98,6 @@ public class UserDataAccessImpl implements UserDataAccess
     		catch (SQLException sqle)
     		{
     			log.error("SQLException occurred while disconnecting from user database... " + sqle.getMessage());
-    			System.out.println("SQLException occurred while disconnecting from user database... " + sqle.getMessage());
     			return false;
     		}
     	}
@@ -129,13 +125,12 @@ public class UserDataAccessImpl implements UserDataAccess
   		try
   		{
   			//Fetching count of the username to be validated from the user database
-  			String usernameQuery = "SELECT COUNT(*) usercount FROM application_user WHERE username = ?";
+  			String usernameQuery = "SELECT COUNT(*) FROM application_user WHERE username = ?";
   			PreparedStatement prepStmt = dbConnection.prepareStatement(usernameQuery);
   			prepStmt.setString(1, username);
   			rsUsernameCount = prepStmt.executeQuery();
-  			if (rsUsernameCount.next()) {
+  			if (rsUsernameCount.next())
 				usernameCount = rsUsernameCount.getInt(1);
-			}
   			rsUsernameCount.close();
   			prepStmt.close();
   		}
@@ -143,7 +138,6 @@ public class UserDataAccessImpl implements UserDataAccess
   		{
   			rsUsernameCount = null;
   			log.error("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
-  			System.out.println("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
   		}
   		  		
   		if (usernameCount > 0)
@@ -196,7 +190,6 @@ public class UserDataAccessImpl implements UserDataAccess
 			}
 			
 			log.error("SQLException occurred while adding new user to database... " + errMsg);
-			System.out.println("SQLException occurred while adding new user to database... " + errMsg);
   		}
   		
 		return userAdded;
@@ -236,9 +229,8 @@ public class UserDataAccessImpl implements UserDataAccess
   		{
   			rsUserPassword = null;
   			log.error("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
-  			System.out.println("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
   		}
-  		  		
+  		
   		return passwordHash;
 	}
 	
@@ -285,7 +277,6 @@ public class UserDataAccessImpl implements UserDataAccess
 			}
 			
 			log.error("SQLException occurred while deleting user from database... " + errMsg);
-			System.out.println("SQLException occurred while deleting user from database... " + errMsg);
   		}
   		
 		return userDeleted;

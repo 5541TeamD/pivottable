@@ -30,15 +30,52 @@ public class UserManagementServiceImpl implements UserManagementService
 	private UserDataAccess userDatabase = new UserDataAccessImpl();
 	
 	/**
-	 * Checks if the username and password chosen by a new application user are valid.
+	 * Adds a new user's credentials (username in lower case and password hash) to the users database.
 	 * @param	newUser	Application user object containing new user's credentials
 	 */
-	public void validateNewUser(ApplicationUser newUser)
+	public void createUser(ApplicationUser newUser)
+	{
+		//Validating new user before creation
+		boolean userValidated = validateNewUser(newUser);
+		
+		if (userValidated)
+		{
+			//Parsing the application user object
+			String username = newUser.getUsername().toLowerCase();
+			String password = newUser.getPassword();
+			
+			//Hashing the user password
+			String passwordHash = hashPassword(password);
+			
+			//Adding the new user to the user database
+			try 
+			{
+				userDatabase.connect();
+				boolean userAdded = userDatabase.addUser(username, passwordHash);
+	
+				//Throwing an exception to the UI in case user creation fails
+				if (!userAdded)
+					throw new PivotTableException("Unable to create new user " + username + ".");
+			} 
+			finally 
+			{
+				userDatabase.disconnect();
+			}
+		}
+	}
+	
+	/**
+	 * Checks if the username and password chosen by a new application user are valid.
+	 * @param	newUser	Application user object containing new user's credentials
+	 * @return	true, if the user is successfully validated
+	 * 			false, otherwise
+	 */
+	private boolean validateNewUser(ApplicationUser newUser)
 	{
 		String userValidation = null;
 		
 		//Parsing the application user object
-		String username = newUser.getUsername().toLowerCase();
+		String username = newUser.getUsername();
 		String password = newUser.getPassword();
 		
 		if ((username == null) || (username.trim().isEmpty()))
@@ -47,40 +84,28 @@ public class UserManagementServiceImpl implements UserManagementService
 			userValidation = "Password is either blank or contains only whitespaces.";
 		else
 		{
-			boolean userExists = userDatabase.usernameExists(username);
-			if (userExists)
-				userValidation = "Username " + username + " already exists.";
+			username = username.toLowerCase();
+			try 
+			{
+				userDatabase.connect();
+				boolean userExists = userDatabase.usernameExists(username);
+				if (userExists)
+					userValidation = "Username " + username + " already exists.";
+			} 
+			finally 
+			{
+				userDatabase.disconnect();
+			}
 		}
 			
 		//Throwing an exception to the UI in case any validation fails
 		if (userValidation != null)
+		{
 			throw new PivotTableException(userValidation);
-	}
-	
-	/**
-	 * Adds a new user's credentials (username in lower case and password hash) to the users database.
-	 * @param	newUser	Application user object containing new user's credentials
-	 */
-	public void createUser(ApplicationUser newUser)
-	{
-		//Parsing the application user object
-		String username = newUser.getUsername().toLowerCase();
-		String password = newUser.getPassword();
-		
-		//Hashing the user password
-		String passwordHash = hashPassword(password);
-		
-		//Adding the new user to the user database
-		try {
-			userDatabase.connect();
-			boolean userAdded = userDatabase.addUser(username, passwordHash);
-
-			//Throwing an exception to the UI in case user creation fails
-			if (!userAdded)
-				throw new PivotTableException("Unable to create new user " + username + ".");
-		} finally {
-			userDatabase.disconnect();
+			return false;
 		}
+		else
+			return true;
 	}
 	
 	/**
@@ -116,11 +141,8 @@ public class UserManagementServiceImpl implements UserManagementService
 	public void validateLogin(ApplicationUser existingUser)
 	{
 		String userValidation = null;
-		String username = existingUser.getUsername().toLowerCase();
+		String username = existingUser.getUsername();
 		String password = existingUser.getPassword();
-		
-		//Hashing the user password
-		String passwordHash = hashPassword(password);
 		
 		//Validating the user login credentials
 		if ((username == null) || (username.trim().isEmpty()))
@@ -129,6 +151,11 @@ public class UserManagementServiceImpl implements UserManagementService
 			userValidation = "Password is either blank or contains only whitespaces.";
 		else
 		{
+			username = username.toLowerCase();
+			
+			//Hashing the user password
+			String passwordHash = hashPassword(password);
+			
 			try {
 				userDatabase.connect();
 				boolean userExists = userDatabase.usernameExists(username);
@@ -157,10 +184,16 @@ public class UserManagementServiceImpl implements UserManagementService
 	 */
 	public void deleteUser(String username)
 	{
+		boolean userDeleted = false;
+		
 		//Deleting the user record from the user database
 		try {
 			userDatabase.connect();
-			boolean userDeleted = userDatabase.deleteUser(username);
+			boolean userExists = userDatabase.usernameExists(username);
+			if (!userExists)
+				userDeleted = false;
+			else
+				userDeleted = userDatabase.deleteUser(username);
 
 			//Throwing an exception to the UI in case user deletion fails
 			if (!userDeleted)

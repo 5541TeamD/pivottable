@@ -329,7 +329,8 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			prepStmt.setLong(1, shareableSchemaID);
   			
   			rsOwnerUser = prepStmt.executeQuery();
-  			ownerUsername = rsOwnerUser.getString(1);
+  			if (rsOwnerUser.next())
+  				ownerUsername = rsOwnerUser.getString(1);
   			
   			rsOwnerUser.close();
   			prepStmt.close();
@@ -395,7 +396,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 			}
 			
 			log.error("SQLException occurred while adding new schema sharing to user schema database... " + errMsg);
-  		}
+		}
 		finally
 		{
 			disconnect();
@@ -514,6 +515,10 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			disconnect();
   		}
   		  		
+  		//Setting schema list to null in case no owned schemas are found
+  		if (myOwnedSchemaList.size() == 0)
+  			myOwnedSchemaList = null;
+  		
   		return myOwnedSchemaList;
 	}
 	
@@ -573,6 +578,10 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			disconnect();
   		}
   		  		
+  		//Setting schema list to null in case no shared schemas are found
+  		if (mySharedSchemaList.size() == 0)
+  			mySharedSchemaList = null;
+  		
   		return mySharedSchemaList;
 	}
 	
@@ -632,6 +641,10 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			disconnect();
   		}
   		  		
+  		//Setting schema list to null in case no shared schemas are found
+  		if (sharedWithMeSchemaList.size() == 0)
+  			sharedWithMeSchemaList = null;
+  		
   		return sharedWithMeSchemaList;
 	}
 }

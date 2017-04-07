@@ -8,13 +8,7 @@ import ca.concordia.pivottable.entities.ApplicationUser;
  * @version	1.0
  */
 public interface UserManagementService 
-{
-	/**
-	 * Checks if the username and password chosen by a new application user are valid.
-	 * @param	newUser	Application user object containing new user's credentials
-	 */
-	void validateNewUser(ApplicationUser newUser);
-	
+{	
 	/**
 	 * Adds a new user's credentials (username in lower case and password hash) to the users database.
 	 * @param	newUser	Application user object containing new user's credentials
