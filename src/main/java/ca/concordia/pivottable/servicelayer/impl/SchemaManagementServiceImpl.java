@@ -1,7 +1,6 @@
 package ca.concordia.pivottable.servicelayer.impl;
 
 import java.util.List;
-
 import ca.concordia.pivottable.datalayer.SchemaDataAccess;
 import ca.concordia.pivottable.datalayer.UserDataAccess;
 import ca.concordia.pivottable.datalayer.impl.SchemaDataAccessImpl;
@@ -9,8 +8,6 @@ import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
 import ca.concordia.pivottable.entities.ShareableSchema;
 import ca.concordia.pivottable.servicelayer.SchemaManagementService;
 import ca.concordia.pivottable.utils.PivotTableException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles shareable schema management operations, including schema creation, editing, sharing and retrieving.
@@ -18,12 +15,7 @@ import org.slf4j.LoggerFactory;
  * @version	1.0
  */
 public class SchemaManagementServiceImpl implements SchemaManagementService
-{
-	/**
-	 * Used for logging information, warning and error messages during application run.
-	 */
-	private Logger log = LoggerFactory.getLogger(SchemaManagementServiceImpl.class);
-	
+{	
 	/**
 	 * User schema database object used for performing data processing operations.
 	 */
@@ -48,12 +40,47 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		String dbPassword = shareableSchema.getDbPassword();
 		String pvtTblSchema = shareableSchema.getPvtTblSchema().toJSON();
 		
-		//Adding the new shareable schema to the user schema database
-		boolean schemaAdded = schemaDatabase.addShareableSchema(schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
+		//Validating the new schema details
+		String schemaValidation = validateSchema(schemaName, ownerUsername, dbURL, dbUsername, pvtTblSchema);
+		if (schemaValidation != null)
+			throw new PivotTableException("Unable to validate new shareable schema before creation. " + schemaValidation);
+		else
+		{
+			//Adding the new shareable schema to the user schema database
+			boolean schemaAdded = schemaDatabase.addShareableSchema(schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
+			
+			//Throwing an exception to the UI in case schema creation fails
+			if (!schemaAdded)
+				throw new PivotTableException("Unable to create new shareable schema " + schemaName + ".");
+		}
+	}
+	
+	/**
+	 * Validates the details of a shareable schema before creation/update.
+	 * @param 	schemaName		Name of the schema
+	 * @param 	ownerUsername	Username of the schema owner
+	 * @param 	dbURL			URL of the database in which the schema is defined
+	 * @param 	dbUsername		Username for logging into the database in which the schema is defined
+	 * @param 	pvtTblSchema	Selections made as part of schema definition
+	 * @return	Schema validation error message, if validation fails
+	 * 			null, otherwise
+	 */
+	private String validateSchema(String schemaName, String ownerUsername, String dbURL, String dbUsername, String pvtTblSchema)
+	{
+		String schemaValidation = null;
 		
-		//Throwing an exception to the UI in case schema creation fails
-		if (!schemaAdded)
-			throw new PivotTableException("Unable to create new shareable schema " + schemaName + ".");
+		if ((schemaName == null) || (schemaName.trim().isEmpty()))
+			schemaValidation = "Schema name is either blank or contains only whitespaces.";
+		else if ((ownerUsername == null) || (ownerUsername.trim().isEmpty()))
+			schemaValidation = "Owner username is either blank or contains only whitespaces.";
+		else if ((dbURL == null) || (dbURL.trim().isEmpty()))
+			schemaValidation = "DB URL is either blank or contains only whitespaces.";
+		else if ((dbUsername == null) || (dbUsername.trim().isEmpty()))
+			schemaValidation = "DB username is either blank or contains only whitespaces.";
+		else if ((pvtTblSchema == null) || (pvtTblSchema.trim().isEmpty()))
+			schemaValidation = "Pivot table schema selection is blank.";
+		
+		return schemaValidation;
 	}
 	
 	/**
@@ -71,12 +98,19 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		String dbPassword = updatedSchema.getDbPassword();
 		String pvtTblSchema = updatedSchema.getPvtTblSchema().toJSON();
 		
-		//Updating the shareable schema details in the user schema database
-		boolean schemaUpdated = schemaDatabase.updateShareableSchema(schemaID, schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
-		
-		//Throwing an exception to the UI in case schema update fails
-		if (!schemaUpdated)
-			throw new PivotTableException("Unable to update shareable schema " + schemaID + ".");
+		//Validating the updated schema details
+		String schemaValidation = validateSchema(schemaName, ownerUsername, dbURL, dbUsername, pvtTblSchema);
+		if (schemaValidation != null)
+			throw new PivotTableException("Unable to validate updated shareable schema. " + schemaValidation);
+		else
+		{
+			//Updating the shareable schema details in the user schema database
+			boolean schemaUpdated = schemaDatabase.updateShareableSchema(schemaID, schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
+			
+			//Throwing an exception to the UI in case schema update fails
+			if (!schemaUpdated)
+				throw new PivotTableException("Unable to update shareable schema " + schemaID + ".");
+		}
 	}
 	
 	/**
@@ -85,8 +119,14 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	 */
 	public void deleteShareableSchema(long schemaID)
 	{
+		boolean schemaDeleted = false;
+		
 		//Deleting the shareable schema from the user schema database
-		boolean schemaDeleted = schemaDatabase.deleteShareableSchema(schemaID);
+		boolean schemaExists = schemaDatabase.schemaExists(schemaID);
+		if (!schemaExists)
+			schemaDeleted = false;
+		else
+			schemaDeleted = schemaDatabase.deleteShareableSchema(schemaID);
 		
 		//Throwing an exception to the UI in case schema deletion fails
 		if (!schemaDeleted)

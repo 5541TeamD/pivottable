@@ -135,8 +135,8 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 		try
 		{
 			//Inserting a record for the new schema into the shareable schema table
-			String insertSchemaStmt = "INSERT INTO shareable_schema "
-										+ "VALUES(NULL, ? , ? , ? , ? , ? , ? );";
+			String insertSchemaStmt = "INSERT INTO shareable_schema(schema_name, owner_username, db_url, db_username, db_password, pivot_table_schema) "
+										+ "VALUES(? , ? , ? , ? , ? , ? );";
 			
 			dbConnection.setAutoCommit(false);
 			PreparedStatement prepStmt = dbConnection.prepareStatement(insertSchemaStmt);
@@ -403,6 +403,50 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 		}
   		
 		return sharingAdded;
+	}
+	
+	/**
+     * Checks if a schema already exists in the user schema database.
+     * @param	schemaID	Schema ID to be verified
+     * @return	true, if schema exists
+     * 			false, otherwise
+     */
+	public boolean schemaExists(long schemaID)
+	{
+		int schemaCount = -1;
+		
+		//Connecting to data base
+  		connect();
+  		
+		if (dbConnection == null)							//failed connection
+  		{
+  			return false;
+  		}
+  		
+  		//Proceeding, if database connection is successful
+  		ResultSet rsSchemaCount = null;  		
+  		try
+  		{
+  			//Fetching count of the schema ID to be validated from the user schema database
+  			String schemaQuery = "SELECT COUNT(*) FROM shareable_schema WHERE schema_id = ?";
+  			PreparedStatement prepStmt = dbConnection.prepareStatement(schemaQuery);
+  			prepStmt.setLong(1, schemaID);
+  			rsSchemaCount = prepStmt.executeQuery();
+  			if (rsSchemaCount.next())
+  				schemaCount = rsSchemaCount.getInt(1);
+  			rsSchemaCount.close();
+  			prepStmt.close();
+  		}
+  		catch (SQLException sqle)
+  		{
+  			rsSchemaCount = null;
+  			log.error("SQLException occurred while fetching schema ID count from user schema database... " + sqle.getMessage());
+  		}
+  		  		
+  		if (schemaCount > 0)
+  			return true;
+  		else
+  			return false;
 	}
 	
 	/**

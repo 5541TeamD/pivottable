@@ -49,6 +49,14 @@ public interface SchemaDataAccess
 	boolean updateShareableSchema(long schemaID, String schemaName, String ownerUsername, String dbURL, String dbUsername, String dbPassword, String pvtTblSchema);
 	
 	/**
+     * Checks if a schema already exists in the user schema database.
+     * @param	schemaID	Schema ID to be verified
+     * @return	true, if schema exists
+     * 			false, otherwise
+     */
+	boolean schemaExists(long schemaID);
+	
+	/**
 	 * Deletes an existing shareable schema and its sharing records from the user schema database.
 	 * @param	schemaID	ID of the shareable schema to be deleted
 	 * @return	true, if the schema is successfully deleted

@@ -36,9 +36,11 @@ public class UserManagementServiceImpl implements UserManagementService
 	public void createUser(ApplicationUser newUser)
 	{
 		//Validating new user before creation
-		boolean userValidated = validateNewUser(newUser);
+		String userValidation = validateNewUser(newUser);
 		
-		if (userValidated)
+		if (userValidation != null)
+			throw new PivotTableException("Unable to validate new user before creation. " + userValidation);
+		else
 		{
 			//Parsing the application user object
 			String username = newUser.getUsername().toLowerCase();
@@ -67,10 +69,10 @@ public class UserManagementServiceImpl implements UserManagementService
 	/**
 	 * Checks if the username and password chosen by a new application user are valid.
 	 * @param	newUser	Application user object containing new user's credentials
-	 * @return	true, if the user is successfully validated
-	 * 			false, otherwise
+	 * @return	User validation error message, if user validation fails
+	 * 			null, otherwise
 	 */
-	private boolean validateNewUser(ApplicationUser newUser)
+	private String validateNewUser(ApplicationUser newUser)
 	{
 		String userValidation = null;
 		
@@ -98,14 +100,7 @@ public class UserManagementServiceImpl implements UserManagementService
 			}
 		}
 			
-		//Throwing an exception to the UI in case any validation fails
-		if (userValidation != null)
-		{
-			throw new PivotTableException(userValidation);
-			return false;
-		}
-		else
-			return true;
+		return userValidation;
 	}
 	
 	/**
