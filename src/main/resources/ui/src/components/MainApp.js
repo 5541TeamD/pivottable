@@ -12,24 +12,22 @@ import PivotTableApp from './PivotTableApp'
 import {getAuthenticationState} from '../reducers/RootReducer'
 
 import {connect} from 'react-redux'
-import {trainTracks} from '../images/train_tracks.jpg'
+import trainTracks from '../images/train_tracks.jpg'
 
 
 const MainApp = ({isAppLoading}) => {
-  console.log(location.pathname)
   return (
     isAppLoading ? (
         <Segment>
-          <Dimmer active>
+          <Dimmer inverted active>
             <Loader size='massive'>Loading</Loader>
           </Dimmer>
-          <Image src={trainTracks} />
+          <Image centered src={trainTracks} />
         </Segment>
       )
       : (
           <div>
             <AppHeader/>
-            <Image src={trainTracks} />
             <PrivateRoute exact={true} path="/" component={Home} />
             <Route exact={true} path="/login" component={LoginScreen}/>
             <PrivateRoute exact={true} path="/create" component={PivotTableApp} />
