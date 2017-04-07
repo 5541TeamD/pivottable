@@ -138,8 +138,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
      */
   	public List<String> getAllRawTableNames()
   	{
-  		//Connecting to data base
-  		connect();
   		
   		if (dbConnection == null)							//failed connection
   		{
@@ -175,7 +173,8 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			}
   			
   			rsAllRawTblNames.close();
-  			stmt.close();
+  			if (stmt != null)
+  				stmt.close();
   		}
   		catch (SQLException allRawTblSQLExcpn)
   		{
@@ -195,8 +194,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 */
   	public List<List<Object>> getTableData(String tableName)
   	{
-  		//Connecting to data base
-  		connect();
   		
   		if (dbConnection == null)							//failed connection
   		{
@@ -259,8 +256,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 */
   	public List<String[]> getTableFields(String tableName)
   	{
-  		//Connecting to data base
-  		connect();
   		
   		if (dbConnection == null)							//failed connection
   		{
@@ -339,8 +334,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String pageLabel, String function, String valField, 
   													String filterField, String filterValue, String sortField, String sortOrder, String tableName)
   	{
-  		//Connecting to data base
-  		connect();
   		
   		if (dbConnection == null)							//failed connection
   		{
@@ -741,8 +734,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
 										   String filterField, String filterValue,
 										   String sortField, String sortOrder)
   	{
-  		//Connecting to data base
-  		connect();
   		
   		if (dbConnection == null)							//failed connection
   		{
