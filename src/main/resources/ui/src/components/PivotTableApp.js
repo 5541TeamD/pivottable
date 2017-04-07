@@ -10,6 +10,8 @@ import PrintablePivotTables from './PrintablePivotTables'
 
 import {connect} from 'react-redux'
 
+import {withRouter} from 'react-router-dom'
+
 const PivotTableApp = ({isPrintableView}) => {
   return ( isPrintableView ?
       <PrintablePivotTables/> :
@@ -27,4 +29,4 @@ const mapStateToProps = (state) => ({
   isPrintableView: state.pivotTableReducer.printableView,
 })
 
-export default connect(mapStateToProps)(PivotTableApp)
+export default withRouter(connect(mapStateToProps)(PivotTableApp))
