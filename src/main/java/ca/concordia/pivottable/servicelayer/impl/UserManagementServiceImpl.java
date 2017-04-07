@@ -71,11 +71,16 @@ public class UserManagementServiceImpl implements UserManagementService
 		String passwordHash = hashPassword(password);
 		
 		//Adding the new user to the user database
-		boolean userAdded = userDatabase.addUser(username, passwordHash);
-		
-		//Throwing an exception to the UI in case user creation fails
-		if (!userAdded)
-			throw new PivotTableException("Unable to create new user " + username + ".");
+		try {
+			userDatabase.connect();
+			boolean userAdded = userDatabase.addUser(username, passwordHash);
+
+			//Throwing an exception to the UI in case user creation fails
+			if (!userAdded)
+				throw new PivotTableException("Unable to create new user " + username + ".");
+		} finally {
+			userDatabase.disconnect();
+		}
 	}
 	
 	/**
@@ -124,16 +129,20 @@ public class UserManagementServiceImpl implements UserManagementService
 			userValidation = "Password is either blank or contains only whitespaces.";
 		else
 		{
-			boolean userExists = userDatabase.usernameExists(username);
-			if (!userExists)
-				userValidation = "Username " + username + " does not exist.";
-			else
-			{
-				String userPasswordHash = userDatabase.getUserPasswordHash(username);
-				if (userPasswordHash == null)
-					userValidation = "Unable to validate password due to database connectivity issue.";
-				else if (!passwordHash.equals(userPasswordHash))
-					userValidation = "Password is incorrect.";
+			try {
+				userDatabase.connect();
+				boolean userExists = userDatabase.usernameExists(username);
+				if (!userExists)
+					userValidation = "Username " + username + " does not exist.";
+				else {
+					String userPasswordHash = userDatabase.getUserPasswordHash(username);
+					if (userPasswordHash == null)
+						userValidation = "Unable to validate password due to database connectivity issue.";
+					else if (!passwordHash.equals(userPasswordHash))
+						userValidation = "Password is incorrect.";
+				}
+			} finally {
+				userDatabase.disconnect();
 			}
 		}
 		
@@ -149,10 +158,15 @@ public class UserManagementServiceImpl implements UserManagementService
 	public void deleteUser(String username)
 	{
 		//Deleting the user record from the user database
-		boolean userDeleted = userDatabase.deleteUser(username);
-		
-		//Throwing an exception to the UI in case user deletion fails
-		if (!userDeleted)
-			throw new PivotTableException("Unable to delete user " + username + ".");
+		try {
+			userDatabase.connect();
+			boolean userDeleted = userDatabase.deleteUser(username);
+
+			//Throwing an exception to the UI in case user deletion fails
+			if (!userDeleted)
+				throw new PivotTableException("Unable to delete user " + username + ".");
+		} finally {
+			userDatabase.disconnect();
+		}
 	}
 }

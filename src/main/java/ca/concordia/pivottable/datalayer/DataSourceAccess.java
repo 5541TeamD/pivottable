@@ -84,5 +84,6 @@ public interface DataSourceAccess
   	 * @param	tableName		Raw report table name
   	 * @return	List of page label column values
   	 */
-	List<String> getPageLabelValues(String pageLabel, String tableName);
+	List<String> getPageLabelValues(String pageLabel, String tableName, String filterField, String filterValue,
+									String sortField, String sortOrder);
 }

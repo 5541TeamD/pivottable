@@ -118,9 +118,6 @@ public class UserDataAccessImpl implements UserDataAccess
 	public boolean usernameExists(String username)
 	{
 		int usernameCount = -1;
-		
-		//Connecting to data base
-  		connect();
   		
 		if (dbConnection == null)							//failed connection
   		{
@@ -132,13 +129,13 @@ public class UserDataAccessImpl implements UserDataAccess
   		try
   		{
   			//Fetching count of the username to be validated from the user database
-  			String usernameQuery = "SELECT COUNT(*) FROM application_user WHERE username = ? ;";
+  			String usernameQuery = "SELECT COUNT(*) usercount FROM application_user WHERE username = ?";
   			PreparedStatement prepStmt = dbConnection.prepareStatement(usernameQuery);
   			prepStmt.setString(1, username);
-  			
-  			rsUsernameCount = prepStmt.executeQuery();  			
-  			usernameCount = rsUsernameCount.getInt(1);
-  			
+  			rsUsernameCount = prepStmt.executeQuery();
+  			if (rsUsernameCount.next()) {
+				usernameCount = rsUsernameCount.getInt(1);
+			}
   			rsUsernameCount.close();
   			prepStmt.close();
   		}
@@ -147,10 +144,6 @@ public class UserDataAccessImpl implements UserDataAccess
   			rsUsernameCount = null;
   			log.error("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
   			System.out.println("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
-  		}
-  		finally
-  		{
-  			disconnect();
   		}
   		  		
   		if (usernameCount > 0)
@@ -169,9 +162,6 @@ public class UserDataAccessImpl implements UserDataAccess
 	public boolean addUser(String username, String passwordHash)
 	{
 		boolean userAdded = true;
-		
-		//Connecting to data base
-  		connect();
   		
 		if (dbConnection == null)							//failed connection
   		{
@@ -188,7 +178,6 @@ public class UserDataAccessImpl implements UserDataAccess
 			PreparedStatement prepStmt = dbConnection.prepareStatement(insertUserStmt);
 			prepStmt.setString(1, username);
 			prepStmt.setString(2, passwordHash);
-			
 	  		prepStmt.executeUpdate();
 	  		dbConnection.commit();
 	  		prepStmt.close();
@@ -209,10 +198,6 @@ public class UserDataAccessImpl implements UserDataAccess
 			log.error("SQLException occurred while adding new user to database... " + errMsg);
 			System.out.println("SQLException occurred while adding new user to database... " + errMsg);
   		}
-		finally
-		{
-			disconnect();
-		}
   		
 		return userAdded;
 	}
@@ -226,9 +211,6 @@ public class UserDataAccessImpl implements UserDataAccess
 	public String getUserPasswordHash(String username)
 	{
 		String passwordHash = null;
-		
-		//Connecting to data base
-  		connect();
   		
 		if (dbConnection == null)							//failed connection
   		{
@@ -245,8 +227,8 @@ public class UserDataAccessImpl implements UserDataAccess
   			prepStmt.setString(1, username);
   			
   			rsUserPassword = prepStmt.executeQuery();
-  			passwordHash = rsUserPassword.getString(1);
-  			
+  			if (rsUserPassword.next())
+  				passwordHash = rsUserPassword.getString(1);
   			rsUserPassword.close();
   			prepStmt.close();
   		}
@@ -255,10 +237,6 @@ public class UserDataAccessImpl implements UserDataAccess
   			rsUserPassword = null;
   			log.error("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
   			System.out.println("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
-  		}
-  		finally
-  		{
-  			disconnect();
   		}
   		  		
   		return passwordHash;
@@ -273,9 +251,6 @@ public class UserDataAccessImpl implements UserDataAccess
 	public boolean deleteUser(String username)
 	{
 		boolean userDeleted = true;
-		
-		//Connecting to data base
-  		connect();
   		
 		if (dbConnection == null)							//failed connection
   		{
@@ -312,10 +287,6 @@ public class UserDataAccessImpl implements UserDataAccess
 			log.error("SQLException occurred while deleting user from database... " + errMsg);
 			System.out.println("SQLException occurred while deleting user from database... " + errMsg);
   		}
-		finally
-		{
-			disconnect();
-		}
   		
 		return userDeleted;
 	}

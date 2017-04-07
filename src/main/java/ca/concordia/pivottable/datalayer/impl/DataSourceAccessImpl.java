@@ -183,10 +183,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			stmt = null;
   			log.error("SQLException occurred while fetching all raw table names from database... " + allRawTblSQLExcpn.getMessage());
   		}
-  		finally
-  		{
-  			disconnect();
-  		}
   		  		
   		return allRawTblList;
   	}
@@ -248,10 +244,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsmdTblData = null;
   			tblData = null;
   			log.error("SQLException occurred while fetching all the data of table " + tableName + "... " + allTblDataSQLExcpn.getMessage());
-  		}
-  		finally
-  		{
-  			disconnect();
   		}
   		
   		return tblData;
@@ -326,10 +318,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			tblFields = null;
   			log.error("SQLException occurred while fetching field details of table " + tableName + "... " + tblFieldsSQLExcpn.getMessage());
   		}
-  		finally
-  		{
-  			disconnect();
-  		}
   		
   		return tblFields;
   	}
@@ -403,13 +391,14 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			sortClause = " ORDER BY " + sortField + " " + sortOrder;
   		
   		//Generating and executing the SQL query
-  		if (pageLabel == null)
-  			pvtTblData = executeQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
-  		else
-  			pvtTblData = executeQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause);
-  		
-  		disconnect();
-  		
+  		if (pageLabel == null) {
+			pvtTblData = executeQuery(dbConnection, selectClause, function, valField, tableName, filterClause, sortClause);
+		} else {
+  			 //Fetching all the values of the selected page label column
+			List<String> pageLabelValues = getPageLabelValues(pageLabel, tableName, filterField, filterValue, sortField, sortOrder);
+			pvtTblData = executeQuery(dbConnection, selectClause, pageLabel, function, valField, tableName, filterClause, sortClause, pageLabelValues);
+		}
+
   		return pvtTblData;
   	}
   	
@@ -538,18 +527,14 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param 	sortClause		SQL query clause used for sorting pivot table data as per the schema
   	 * @return	Pivot table data fetched from the database
   	 */
-  	private List<List<List<Object>>> executeQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause) 
+  	private List<List<List<Object>>> executeQuery(Connection dbConnection, String selectClause, String pageLabel, String function, String valField, String tableName, String filterClause, String sortClause, List<String> pageLabelValues)
   	{
   		String pvtTblDataQuery = null;  		
   		Statement stmtPvtTblData = null;
   		ResultSet rsPvtTblData = null;
   		ResultSetMetaData rsmdPvtTblData = null;
   		int fieldCount = 0;
-  		List<String> pageLabelValues = new ArrayList<String>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
-  		
-  		//Fetching all the values of the selected page label column
-  		pageLabelValues = getPageLabelValues(pageLabel, tableName);
   		
   		if (pageLabelValues != null) 
   		{
@@ -752,7 +737,9 @@ public class DataSourceAccessImpl implements DataSourceAccess
   	 * @param	tableName		Raw report table name
   	 * @return	List of page label column values
   	 */
-  	public List<String> getPageLabelValues(String pageLabel, String tableName)
+  	public List<String> getPageLabelValues(String pageLabel, String tableName,
+										   String filterField, String filterValue,
+										   String sortField, String sortOrder)
   	{
   		//Connecting to data base
   		connect();
@@ -767,10 +754,16 @@ public class DataSourceAccessImpl implements DataSourceAccess
   		Statement stmtPageLabels = null;
   		ResultSet rsPageLabels = null;
   		List<String> pageLabelValues = new ArrayList<String>();
-  		
+
+  		String orderByClause = pageLabel.equals(sortField) ? " ORDER BY " + sortField + " " + sortOrder : "";
+  		String whereClause = "";
+  		if (filterField != null && !filterField.trim().isEmpty() && filterValue != null && !filterField.trim().isEmpty()) {
+  			whereClause = " WHERE " + filterField + " = \'" + filterValue + "\';";
+		}
   		//Generating the SQL query to get all the values of the selected page label column
 		pageLabelQuery = "SELECT DISTINCT " + pageLabel
-							+ " FROM " + tableName + ";";
+							+ " FROM (SELECT * FROM " + tableName + " LIMIT " + String.valueOf(ROW_LIMIT) + ") as sublist "
+							+ whereClause + orderByClause;
 		
 		//Executing the page label SQL query
   		try
@@ -791,10 +784,6 @@ public class DataSourceAccessImpl implements DataSourceAccess
   			rsPageLabels = null;
   			pageLabelValues = null;
   			log.error("SQLException occurred while fetching page label values... " + pageLabelsSQLExcpn.getMessage());
-  		}
-  		finally
-  		{
-  			disconnect();
   		}
   		
   		return pageLabelValues;

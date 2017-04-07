@@ -66,7 +66,12 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 	 */
 	public List<String> getAllRawReportNames() 
 	{
-		return dataSource.getAllRawTableNames();
+		try {
+			dataSource.connect();
+			return dataSource.getAllRawTableNames();
+		} finally {
+			dataSource.disconnect();
+		}
 	}
 
 	/**
@@ -94,22 +99,27 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 	 */
 	public DataSet getRawReport(String reportName) 
 	{
-		List<String[]> dataFields = dataSource.getTableFields(reportName);
-		List<DataField> rawDataFields = new ArrayList<DataField>();
-		List<List<Object>> rawReportData = new ArrayList<List<Object>>();
+		try {
+			dataSource.connect();
+			List<String[]> dataFields = dataSource.getTableFields(reportName);
+			List<DataField> rawDataFields = new ArrayList<DataField>();
+			List<List<Object>> rawReportData = new ArrayList<List<Object>>();
 
-		for (String[] dataField : dataFields) 
-		{
-			DataType rawFieldType = DataType.getDataType(dataField[1]);
-			DataField rawDataField = new DataField(dataField[0], rawFieldType);
-			rawDataFields.add(rawDataField);
+			for (String[] dataField : dataFields) {
+				DataType rawFieldType = DataType.getDataType(dataField[1]);
+				DataField rawDataField = new DataField(dataField[0], rawFieldType);
+				rawDataFields.add(rawDataField);
+			}
+
+			rawReportData = dataSource.getTableData(reportName);
+
+			DataSet rawReport = new DataSet(rawDataFields, rawReportData);
+
+
+			return rawReport;
+		} finally {
+			dataSource.disconnect();
 		}
-
-		rawReportData = dataSource.getTableData(reportName);
-		
-		DataSet rawReport = new DataSet(rawDataFields, rawReportData);
-
-		return rawReport;
 	}
 
 	/**
@@ -133,36 +143,39 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
   		String tableName = pvtTblSchema.getTableName();
   		List<String> pageLabelValues = new ArrayList<String>();
   		List<List<List<Object>>> pvtTblData = new ArrayList<List<List<Object>>>();
-  		
-  		if (pageLabel == null || pageLabel.trim().equals(""))
-  		{
-  			pageLabel = null;
-  			pageLabelValues = new ArrayList<>(); // empty page labels
-  			
-	  		//Executing the SQL query to get pivot table data without page label
-  			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
-  		}
-  		else
-  		{
-  			//Fetching all the values of the selected page label column
-  			pageLabelValues = dataSource.getPageLabelValues(pageLabel, tableName);
-  			
-  			//Executing the SQL query to get pivot table data with page label
-  			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
-  		}
-  		
-  		//Fetching pivot table row, column, page and table level summary details
-  		log.info("Fetching pivot table row, column, page and table level summary details.");
-  		List<List<List<List<Object>>>> oneDimSummaryDetails = getDimSummaryDetails(pvtTblData, tableSummFuncName, rowLabels.size(), colLabels.size());
-  		List<List<List<Object>>> rowSummDetails = oneDimSummaryDetails.get(0);
-  		List<List<List<Object>>> colSummDetails = oneDimSummaryDetails.get(1);
-  		List<Double> pageSummDetails = getPageSummary(pvtTblData, tableSummFuncName);
-  		double tableSummDetails = getTableSummary(pvtTblData, tableSummFuncName);
 
-  		//Creating Pivot Table with the fetched information
-		PivotTable pivotTable = new PivotTable(pvtTblSchema, pageLabelValues, pvtTblData, rowSummDetails, colSummDetails, pageSummDetails, tableSummDetails);
+  		try {
+			dataSource.connect();
+			if (pageLabel == null || pageLabel.trim().equals("")) {
+				pageLabel = null;
+				pageLabelValues = new ArrayList<>(); // empty page labels
 
-		return pivotTable;
+				//Executing the SQL query to get pivot table data without page label
+				pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
+			} else {
+				//Fetching all the values of the selected page label column
+				pageLabelValues = dataSource.getPageLabelValues(pageLabel, tableName, filterField, filterValue, sortField, sortOrder);
+
+				//Executing the SQL query to get pivot table data with page label
+				pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
+			}
+
+			//Fetching pivot table row, column, page and table level summary details
+			//TODO
+			//log.info("Fetching pivot table row, column, page and table level summary details.");
+			List<List<List<List<Object>>>> oneDimSummaryDetails = getDimSummaryDetails(pvtTblData, tableSummFuncName, rowLabels.size(), colLabels.size());
+			List<List<List<Object>>> rowSummDetails = oneDimSummaryDetails.get(0);
+			List<List<List<Object>>> colSummDetails = oneDimSummaryDetails.get(1);
+			List<Double> pageSummDetails = getPageSummary(pvtTblData, tableSummFuncName);
+			double tableSummDetails = getTableSummary(pvtTblData, tableSummFuncName);
+
+			//Creating Pivot Table with the fetched information
+			PivotTable pivotTable = new PivotTable(pvtTblSchema, pageLabelValues, pvtTblData, rowSummDetails, colSummDetails, pageSummDetails, tableSummDetails);
+
+			return pivotTable;
+		} finally {
+  			dataSource.disconnect();
+		}
 	}
 	
 	/**

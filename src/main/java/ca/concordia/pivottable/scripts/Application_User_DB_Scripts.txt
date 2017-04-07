@@ -1,5 +1,5 @@
 -- Database Creation Script
-CREATE DATABASE app_user_db;
+-- CREATE DATABASE app_user_db;
 
 -- Table Creation Script
 CREATE TABLE application_user
