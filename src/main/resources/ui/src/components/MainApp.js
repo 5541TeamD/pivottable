@@ -1,26 +1,46 @@
 import React from 'react'
-import { BrowserRouter as Router, Route} from 'react-router-dom';
+import { Route, withRouter} from 'react-router-dom';
 //import createBrowserHistory from 'history/createBrowserHistory';
 import PrivateRoute from './Utils/PrivateRoute'
 
+import {Segment, Dimmer, Loader, Image} from 'semantic-ui-react'
 import Home from './Home'
 import AppHeader from './AppHeader'
 import Footer from './Footer'
 import LoginScreen from './Login/LoginScreen'
 import PivotTableApp from './PivotTableApp'
+import {getAuthenticationState} from '../reducers/RootReducer'
 
-//const history = createBrowserHistory();
+import {connect} from 'react-redux'
+import {trainTracks} from '../images/train_tracks.jpg'
 
-const MainApp = () => (
-  <Router>
-    <div>
-      <AppHeader/>
-      <PrivateRoute path="/" component={Home} />
-      <Route exact path="/login" component={LoginScreen}/>
-      <Route path="/create" component={PivotTableApp} />
-      <Footer/>
-    </div>
-  </Router>
-)
 
-export default MainApp;
+const MainApp = ({isAppLoading}) => {
+  console.log(location.pathname)
+  return (
+    isAppLoading ? (
+        <Segment>
+          <Dimmer active>
+            <Loader size='massive'>Loading</Loader>
+          </Dimmer>
+          <Image src={trainTracks} />
+        </Segment>
+      )
+      : (
+          <div>
+            <AppHeader/>
+            <Image src={trainTracks} />
+            <PrivateRoute exact={true} path="/" component={Home} />
+            <Route exact={true} path="/login" component={LoginScreen}/>
+            <PrivateRoute exact={true} path="/create" component={PivotTableApp} />
+            <Footer/>
+          </div>
+        )
+  )
+}
+
+const mapStateToProps = (rootState) => ({
+  isAppLoading: getAuthenticationState(rootState).loggedInUser === undefined
+})
+
+export default withRouter(connect(mapStateToProps)(MainApp));

@@ -6,19 +6,21 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import {getCurrentlyLoggedInUser} from './actions/ActionCreators'
 import RootReducer from './reducers/RootReducer'
-
+import {BrowserRouter} from 'react-router-dom'
 const store = createStore(RootReducer, applyMiddleware(thunk));
 
 import MainApp from './components/MainApp'
 
 const App = () => (
-  <Provider store={store}>
-    <div className="App">
-      <MainApp/>
-    </div>
-  </Provider>
+  <BrowserRouter>
+    <Provider store={store}>
+      <div className="App">
+        <MainApp/>
+      </div>
+    </Provider>
+  </BrowserRouter>
 )
 
 store.dispatch(getCurrentlyLoggedInUser());
 
-export default App;
+export default (App);

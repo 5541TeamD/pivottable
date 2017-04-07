@@ -1,7 +1,7 @@
 import {C} from './RootReducer'
 
 export const loginReducer = (state = {
-  loggedInUser: null,
+  loggedInUser: undefined,
   loadingUserInfo: false
 }, action) => {
   const {type} = action;
