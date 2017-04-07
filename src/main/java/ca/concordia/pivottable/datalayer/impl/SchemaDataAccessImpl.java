@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.concordia.pivottable.datalayer.SchemaDataAccess;
-//TODO
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles all the operations to be performed on the user schema database.
@@ -43,8 +42,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
-	//private Logger log = LoggerFactory.getLogger(SchemaDataAccessImpl.class);
+	private Logger log = LoggerFactory.getLogger(SchemaDataAccessImpl.class);
 	
 	/**
 	 * Class constructor.
@@ -71,12 +69,10 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 		}
 		catch (Exception excp)
 		{
-			//TODO
-			//log.error("Unexpected exception occurred while attempting user schema DB connection... " + excp.getMessage());
+			log.error("Unexpected exception occurred while attempting user schema DB connection... " + excp.getMessage());
 		}		
 		
-		//TODO
-		//log.info("Initiating connection to user schema database " + dbUrl + "...");
+		log.info("Initiating connection to user schema database " + dbUrl + "...");
 		
 		try
 		{
@@ -85,8 +81,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 		catch (SQLException sqle)
 		{
 			dbConnection = null;
-			//TODO
-			//log.error("SQLException occurred while connecting to user schema database... " + sqle.getMessage());
+			log.error("SQLException occurred while connecting to user schema database... " + sqle.getMessage());
 		}
 	}
 	
@@ -105,8 +100,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
     		}
     		catch (SQLException sqle)
     		{
-    			//TODO
-    			//log.error("SQLException occurred while disconnecting from user schema database... " + sqle.getMessage());
+    			log.error("SQLException occurred while disconnecting from user schema database... " + sqle.getMessage());
     			return false;
     		}
     	}
@@ -129,6 +123,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		boolean schemaAdded = true;
 		
+		//Connecting to data base
+  		connect();
+		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -150,7 +147,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			prepStmt.setString(5, dbPassword);
   			prepStmt.setString(6, pvtTblSchema);
 			
-  			prepStmt.executeUpdate(insertSchemaStmt);
+  			prepStmt.executeUpdate();
   			dbConnection.commit();
   			prepStmt.close();
 		}
@@ -167,8 +164,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-			//log.error("SQLException occurred while adding new shareable schema to database... " + errMsg);
+			log.error("SQLException occurred while adding new shareable schema to database... " + errMsg);
   		}
 		finally
 		{
@@ -194,6 +190,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		boolean schemaUpdated = true;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -220,7 +219,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 			prepStmt.setString(5, pvtTblSchema);
 			prepStmt.setLong(6, schemaID);
 			
-  			prepStmt.executeUpdate(updateSchemaStmt);
+  			prepStmt.executeUpdate();
   			dbConnection.commit();
   			prepStmt.close();
 		}
@@ -237,8 +236,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-  			//log.error("SQLException occurred while updating shareable schema in database... " + errMsg);
+			log.error("SQLException occurred while updating shareable schema in database... " + errMsg);
   		}
 		finally
 		{
@@ -258,6 +256,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		boolean schemaDeleted = true;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -273,7 +274,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 			PreparedStatement prepStmt = dbConnection.prepareStatement(deleteSchemaStmt);
 			prepStmt.setLong(1, schemaID);
 			
-			prepStmt.executeUpdate(deleteSchemaStmt);
+			prepStmt.executeUpdate();
   			dbConnection.commit();
   			prepStmt.close();
 		}
@@ -290,8 +291,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-  			//log.error("SQLException occurred while deleting shareable schema from database... " + errMsg);
+			log.error("SQLException occurred while deleting shareable schema from database... " + errMsg);
   		}
 		finally
 		{
@@ -311,6 +311,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		String ownerUsername = null;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -325,17 +328,16 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			PreparedStatement prepStmt = dbConnection.prepareStatement(ownerQuery);
   			prepStmt.setLong(1, shareableSchemaID);
   			
-  			rsOwnerUser = prepStmt.executeQuery(ownerQuery);
-  			prepStmt.close();
-  			
+  			rsOwnerUser = prepStmt.executeQuery();
   			ownerUsername = rsOwnerUser.getString(1);
+  			
   			rsOwnerUser.close();
+  			prepStmt.close();
   		}
   		catch (SQLException sqle)
   		{
   			rsOwnerUser = null;
-  			//TODO
-  			//log.error("SQLException occurred while fetching owner username from user schema database... " + sqle.getMessage());
+  			log.error("SQLException occurred while fetching owner username from user schema database... " + sqle.getMessage());
   		}
   		finally
   		{
@@ -356,6 +358,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		boolean sharingAdded = true;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -372,7 +377,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 			prepStmt.setString(1, sharedUsername);
 			prepStmt.setLong(2, shareableSchemaID);
 			
-	  		prepStmt.executeUpdate(insertSharingStmt);
+	  		prepStmt.executeUpdate();
 	  		dbConnection.commit();
 	  		prepStmt.close();
 		}
@@ -389,8 +394,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-  			//log.error("SQLException occurred while adding new schema sharing to user schema database... " + errMsg);
+			log.error("SQLException occurred while adding new schema sharing to user schema database... " + errMsg);
   		}
 		finally
 		{
@@ -411,6 +415,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		boolean sharingDeleted = true;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -428,7 +435,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 			prepStmt.setString(1, sharedUsername);
 			prepStmt.setLong(2, sharedSchemaID);
 			
-			prepStmt.executeUpdate(deleteSharingStmt);
+			prepStmt.executeUpdate();
   			dbConnection.commit();
   			prepStmt.close();
 		}
@@ -445,8 +452,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-  			//log.error("SQLException occurred while deleting schema sharing from database... " + errMsg);
+			log.error("SQLException occurred while deleting schema sharing from database... " + errMsg);
   		}
 		finally
 		{
@@ -465,6 +471,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		List<String[]> myOwnedSchemaList = new ArrayList<String[]>();
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -479,8 +488,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			PreparedStatement prepStmt = dbConnection.prepareStatement(ownedSchemaQuery);
   			prepStmt.setString(1, ownerUsername);
   			
-  			rsMyOwnedSchemas = prepStmt.executeQuery(ownedSchemaQuery);
-  			prepStmt.close();
+  			rsMyOwnedSchemas = prepStmt.executeQuery();
   			
   			//Preparing a list of all fetched schema details
   			while (rsMyOwnedSchemas.next())
@@ -494,12 +502,12 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			}
   			
   			rsMyOwnedSchemas.close();
+  			prepStmt.close();
   		}
   		catch (SQLException sqle)
   		{
   			rsMyOwnedSchemas = null;
-  			//TODO
-  			//log.error("SQLException occurred while fetching all shareable schemas owned by user from user schema database... " + sqle.getMessage());
+  			log.error("SQLException occurred while fetching all shareable schemas owned by user from user schema database... " + sqle.getMessage());
   		}
   		finally
   		{
@@ -518,6 +526,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		List<String[]> mySharedSchemaList = new ArrayList<String[]>();
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -535,8 +546,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			PreparedStatement prepStmt = dbConnection.prepareStatement(sharedSchemaQuery);
   			prepStmt.setString(1, ownerUsername);
   			
-  			rsMySharedSchemas = prepStmt.executeQuery(sharedSchemaQuery);
-  			prepStmt.close();
+  			rsMySharedSchemas = prepStmt.executeQuery();
   			
   			//Preparing a list of all fetched schema details
   			while (rsMySharedSchemas.next())
@@ -551,12 +561,12 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			}
   			
   			rsMySharedSchemas.close();
+  			prepStmt.close();
   		}
   		catch (SQLException sqle)
   		{
   			rsMySharedSchemas = null;
-  			//TODO
-  			//log.error("SQLException occurred while fetching all shareable schemas owned by a user and shared with others from user schema database... " + sqle.getMessage());
+  			log.error("SQLException occurred while fetching all shareable schemas owned by a user and shared with others from user schema database... " + sqle.getMessage());
   		}
   		finally
   		{
@@ -575,6 +585,9 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	{
 		List<String[]> sharedWithMeSchemaList = new ArrayList<String[]>();
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -592,8 +605,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			PreparedStatement prepStmt = dbConnection.prepareStatement(sharedSchemaQuery);
   			prepStmt.setString(1, sharedUsername);
   			
-  			rssharedWithMeSchemas = prepStmt.executeQuery(sharedSchemaQuery);
-  			prepStmt.close();
+  			rssharedWithMeSchemas = prepStmt.executeQuery();
   			
   			//Preparing a list of all fetched schema details
   			while (rssharedWithMeSchemas.next())
@@ -608,12 +620,12 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			}
   			
   			rssharedWithMeSchemas.close();
+  			prepStmt.close();
   		}
   		catch (SQLException sqle)
   		{
   			rssharedWithMeSchemas = null;
-  			//TODO
-  			//log.error("SQLException occurred while fetching all schemas shared with a user but owned by other users from user schema database... " + sqle.getMessage());
+  			log.error("SQLException occurred while fetching all schemas shared with a user but owned by other users from user schema database... " + sqle.getMessage());
   		}
   		finally
   		{

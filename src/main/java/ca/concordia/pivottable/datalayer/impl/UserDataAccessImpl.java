@@ -6,9 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import ca.concordia.pivottable.datalayer.UserDataAccess;
-//TODO
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles all the operations to be performed on the user database.
@@ -40,8 +39,7 @@ public class UserDataAccessImpl implements UserDataAccess
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
-	//private Logger log = LoggerFactory.getLogger(UserDataAccessImpl.class);
+	private Logger log = LoggerFactory.getLogger(UserDataAccessImpl.class);
 	
 	/**
 	 * Class constructor.
@@ -68,12 +66,12 @@ public class UserDataAccessImpl implements UserDataAccess
 		}
 		catch (Exception excp)
 		{
-			//TODO
-			//log.error("Unexpected exception occurred while attempting user DB connection... " + excp.getMessage());
+			log.error("Unexpected exception occurred while attempting user DB connection... " + excp.getMessage());
+			System.out.println("Unexpected exception occurred while attempting user DB connection... " + excp.getMessage());
 		}		
 		
-		//TODO
-		//log.info("Initiating connection to user database " + dbUrl + "...");
+		log.info("Initiating connection to user database " + dbUrl + "...");
+		System.out.println("Initiating connection to user database " + dbUrl + "...");
 		
 		try
 		{
@@ -82,8 +80,8 @@ public class UserDataAccessImpl implements UserDataAccess
 		catch (SQLException sqle)
 		{
 			dbConnection = null;
-			//TODO
-			//log.error("SQLException occurred while connecting to user database... " + sqle.getMessage());
+			log.error("SQLException occurred while connecting to user database... " + sqle.getMessage());
+			System.out.println("SQLException occurred while connecting to user database... " + sqle.getMessage());
 		}
 	}
 	
@@ -102,8 +100,8 @@ public class UserDataAccessImpl implements UserDataAccess
     		}
     		catch (SQLException sqle)
     		{
-    			//TODO
-    			//log.error("SQLException occurred while disconnecting from user database... " + sqle.getMessage());
+    			log.error("SQLException occurred while disconnecting from user database... " + sqle.getMessage());
+    			System.out.println("SQLException occurred while disconnecting from user database... " + sqle.getMessage());
     			return false;
     		}
     	}
@@ -121,6 +119,9 @@ public class UserDataAccessImpl implements UserDataAccess
 	{
 		int usernameCount = -1;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -135,17 +136,17 @@ public class UserDataAccessImpl implements UserDataAccess
   			PreparedStatement prepStmt = dbConnection.prepareStatement(usernameQuery);
   			prepStmt.setString(1, username);
   			
-  			rsUsernameCount = prepStmt.executeQuery(usernameQuery);
-  			prepStmt.close();
-  			
+  			rsUsernameCount = prepStmt.executeQuery();  			
   			usernameCount = rsUsernameCount.getInt(1);
+  			
   			rsUsernameCount.close();
+  			prepStmt.close();
   		}
   		catch (SQLException sqle)
   		{
   			rsUsernameCount = null;
-  			//TODO
-  			//log.error("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
+  			log.error("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
+  			System.out.println("SQLException occurred while fetching username count from user database... " + sqle.getMessage());
   		}
   		finally
   		{
@@ -169,6 +170,9 @@ public class UserDataAccessImpl implements UserDataAccess
 	{
 		boolean userAdded = true;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -185,7 +189,7 @@ public class UserDataAccessImpl implements UserDataAccess
 			prepStmt.setString(1, username);
 			prepStmt.setString(2, passwordHash);
 			
-	  		prepStmt.executeUpdate(insertUserStmt);
+	  		prepStmt.executeUpdate();
 	  		dbConnection.commit();
 	  		prepStmt.close();
 		}
@@ -202,8 +206,8 @@ public class UserDataAccessImpl implements UserDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-  			//log.error("SQLException occurred while adding new user to database... " + errMsg);
+			log.error("SQLException occurred while adding new user to database... " + errMsg);
+			System.out.println("SQLException occurred while adding new user to database... " + errMsg);
   		}
 		finally
 		{
@@ -223,6 +227,9 @@ public class UserDataAccessImpl implements UserDataAccess
 	{
 		String passwordHash = null;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return null;
@@ -237,17 +244,17 @@ public class UserDataAccessImpl implements UserDataAccess
   			PreparedStatement prepStmt = dbConnection.prepareStatement(passwordQuery);
   			prepStmt.setString(1, username);
   			
-  			rsUserPassword = prepStmt.executeQuery(passwordQuery);
-  			prepStmt.close();
-  			
+  			rsUserPassword = prepStmt.executeQuery();
   			passwordHash = rsUserPassword.getString(1);
+  			
   			rsUserPassword.close();
+  			prepStmt.close();
   		}
   		catch (SQLException sqle)
   		{
   			rsUserPassword = null;
-  			//TODO
-  			//log.error("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
+  			log.error("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
+  			System.out.println("SQLException occurred while fetching password hash from user database... " + sqle.getMessage());
   		}
   		finally
   		{
@@ -267,6 +274,9 @@ public class UserDataAccessImpl implements UserDataAccess
 	{
 		boolean userDeleted = true;
 		
+		//Connecting to data base
+  		connect();
+  		
 		if (dbConnection == null)							//failed connection
   		{
   			return false;
@@ -282,7 +292,7 @@ public class UserDataAccessImpl implements UserDataAccess
 			PreparedStatement prepStmt = dbConnection.prepareStatement(deleteUserStmt);
 			prepStmt.setString(1, username);
 			
-			prepStmt.executeUpdate(deleteUserStmt);
+			prepStmt.executeUpdate();
   			dbConnection.commit();
   			prepStmt.close();
 		}
@@ -299,8 +309,8 @@ public class UserDataAccessImpl implements UserDataAccess
 				errMsg = errMsg + " and " + rollbackExcp.getMessage();
 			}
 			
-			//TODO
-  			//log.error("SQLException occurred while deleting user from database... " + errMsg);
+			log.error("SQLException occurred while deleting user from database... " + errMsg);
+			System.out.println("SQLException occurred while deleting user from database... " + errMsg);
   		}
 		finally
 		{

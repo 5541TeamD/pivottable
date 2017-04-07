@@ -12,9 +12,8 @@ import ca.concordia.pivottable.entities.DataType;
 import ca.concordia.pivottable.entities.DataField;
 import ca.concordia.pivottable.entities.PivotTable;
 import ca.concordia.pivottable.entities.PivotTableSchema;
-//TODO
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles retrieval of data from the data source and its supply to the Controller.
@@ -28,8 +27,7 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
-	//private Logger log = LoggerFactory.getLogger(DataRetrievalServiceImpl.class);
+	private Logger log = LoggerFactory.getLogger(DataRetrievalServiceImpl.class);
 	
 	/**
 	 * Data source object used for performing data retrieval operations.
@@ -68,7 +66,6 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 	 */
 	public List<String> getAllRawReportNames() 
 	{
-		dataSource.connect();
 		return dataSource.getAllRawTableNames();
 	}
 
@@ -97,7 +94,6 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 	 */
 	public DataSet getRawReport(String reportName) 
 	{
-		dataSource.connect();
 		List<String[]> dataFields = dataSource.getTableFields(reportName);
 		List<DataField> rawDataFields = new ArrayList<DataField>();
 		List<List<Object>> rawReportData = new ArrayList<List<Object>>();
@@ -109,7 +105,6 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 			rawDataFields.add(rawDataField);
 		}
 
-		dataSource.connect();
 		rawReportData = dataSource.getTableData(reportName);
 		
 		DataSet rawReport = new DataSet(rawDataFields, rawReportData);
@@ -145,23 +140,19 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
   			pageLabelValues = new ArrayList<>(); // empty page labels
   			
 	  		//Executing the SQL query to get pivot table data without page label
-  			dataSource.connect();
   			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
   		else
   		{
   			//Fetching all the values of the selected page label column
-  			dataSource.connect();
   			pageLabelValues = dataSource.getPageLabelValues(pageLabel, tableName);
   			
   			//Executing the SQL query to get pivot table data with page label
-  			dataSource.connect();
   			pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
   		}
   		
   		//Fetching pivot table row, column, page and table level summary details
-  		//TODO
-  		//log.info("Fetching pivot table row, column, page and table level summary details.");
+  		log.info("Fetching pivot table row, column, page and table level summary details.");
   		List<List<List<List<Object>>>> oneDimSummaryDetails = getDimSummaryDetails(pvtTblData, tableSummFuncName, rowLabels.size(), colLabels.size());
   		List<List<List<Object>>> rowSummDetails = oneDimSummaryDetails.get(0);
   		List<List<List<Object>>> colSummDetails = oneDimSummaryDetails.get(1);

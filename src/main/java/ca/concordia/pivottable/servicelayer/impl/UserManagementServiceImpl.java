@@ -9,9 +9,8 @@ import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
 import ca.concordia.pivottable.entities.ApplicationUser;
 import ca.concordia.pivottable.servicelayer.UserManagementService;
 import ca.concordia.pivottable.utils.PivotTableException;
-//TODO
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles application user management operations, including user creation, validation and password hashing.
@@ -23,8 +22,7 @@ public class UserManagementServiceImpl implements UserManagementService
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
-	//private Logger log = LoggerFactory.getLogger(UserManagementServiceImpl.class);
+	private Logger log = LoggerFactory.getLogger(UserManagementServiceImpl.class);
 	
 	/**
 	 * User database object used for performing data processing operations.
@@ -49,7 +47,6 @@ public class UserManagementServiceImpl implements UserManagementService
 			userValidation = "Password is either blank or contains only whitespaces.";
 		else
 		{
-			userDatabase.connect();
 			boolean userExists = userDatabase.usernameExists(username);
 			if (userExists)
 				userValidation = "Username " + username + " already exists.";
@@ -74,7 +71,6 @@ public class UserManagementServiceImpl implements UserManagementService
 		String passwordHash = hashPassword(password);
 		
 		//Adding the new user to the user database
-		userDatabase.connect();
 		boolean userAdded = userDatabase.addUser(username, passwordHash);
 		
 		//Throwing an exception to the UI in case user creation fails
@@ -98,13 +94,11 @@ public class UserManagementServiceImpl implements UserManagementService
 		}
 		catch(NoSuchAlgorithmException nsae)
 		{
-			//TODO
-  			//log.error("Exception occurred while hashing the user password... " + nsae.getMessage());
+			log.error("Exception occurred while hashing the user password... " + nsae.getMessage());
 		}
 		catch(UnsupportedEncodingException uee)
 		{
-			//TODO
-  			//log.error("Exception occurred while hashing the user password... " + uee.getMessage());
+			log.error("Exception occurred while hashing the user password... " + uee.getMessage());
 		}
 		
 		return DatatypeConverter.printHexBinary(hash);
@@ -130,7 +124,6 @@ public class UserManagementServiceImpl implements UserManagementService
 			userValidation = "Password is either blank or contains only whitespaces.";
 		else
 		{
-			userDatabase.connect();
 			boolean userExists = userDatabase.usernameExists(username);
 			if (!userExists)
 				userValidation = "Username " + username + " does not exist.";
@@ -156,7 +149,6 @@ public class UserManagementServiceImpl implements UserManagementService
 	public void deleteUser(String username)
 	{
 		//Deleting the user record from the user database
-		userDatabase.connect();
 		boolean userDeleted = userDatabase.deleteUser(username);
 		
 		//Throwing an exception to the UI in case user deletion fails

@@ -9,9 +9,8 @@ import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
 import ca.concordia.pivottable.entities.ShareableSchema;
 import ca.concordia.pivottable.servicelayer.SchemaManagementService;
 import ca.concordia.pivottable.utils.PivotTableException;
-//TODO
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles shareable schema management operations, including schema creation, editing, sharing and retrieving.
@@ -23,8 +22,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	/**
 	 * Used for logging information, warning and error messages during application run.
 	 */
-	//TODO
-	//private Logger log = LoggerFactory.getLogger(SchemaManagementServiceImpl.class);
+	private Logger log = LoggerFactory.getLogger(SchemaManagementServiceImpl.class);
 	
 	/**
 	 * User schema database object used for performing data processing operations.
@@ -51,7 +49,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		String pvtTblSchema = shareableSchema.getPvtTblSchema().toJSON();
 		
 		//Adding the new shareable schema to the user schema database
-		schemaDatabase.connect();
 		boolean schemaAdded = schemaDatabase.addShareableSchema(schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
 		
 		//Throwing an exception to the UI in case schema creation fails
@@ -75,7 +72,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		String pvtTblSchema = updatedSchema.getPvtTblSchema().toJSON();
 		
 		//Updating the shareable schema details in the user schema database
-		schemaDatabase.connect();
 		boolean schemaUpdated = schemaDatabase.updateShareableSchema(schemaID, schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
 		
 		//Throwing an exception to the UI in case schema update fails
@@ -90,7 +86,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	public void deleteShareableSchema(long schemaID)
 	{
 		//Deleting the shareable schema from the user schema database
-		schemaDatabase.connect();
 		boolean schemaDeleted = schemaDatabase.deleteShareableSchema(schemaID);
 		
 		//Throwing an exception to the UI in case schema deletion fails
@@ -115,7 +110,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		else
 		{
 			//Checking if the owner itself is the shared user
-			schemaDatabase.connect();
 			String ownerUsername = schemaDatabase.getOwnerUsername(shareableSchemaID);
 			if (ownerUsername.equalsIgnoreCase(sharedUsername))
 				schemaShareStatus = "Owner user " + sharedUsername + " is trying to share schema " + shareableSchemaID + " with itself. Sharing request denied!";
@@ -125,7 +119,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		if (schemaShareStatus == null)
 		{
 			//Creating a new sharing for this schema in the user database
-			schemaDatabase.connect();
 			boolean schemaShared = schemaDatabase.addSchemaSharing(sharedUsername, shareableSchemaID);
 			
 			if (!schemaShared)
@@ -145,7 +138,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	public void unshareSchema(String sharedUsername, long sharedSchemaID)
 	{
 		//Deleting the schema sharing record from the user schema database
-		schemaDatabase.connect();
 		boolean sharingDeleted = schemaDatabase.deleteSchemaSharing(sharedUsername, sharedSchemaID);
 		
 		//Throwing an exception to the UI in case schema sharing deletion fails
@@ -160,7 +152,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	 */
 	public List<String[]> getMyOwnedSchemas(String ownerUsername)
 	{
-		schemaDatabase.connect();
 		List<String[]> myOwnedSchemaList = schemaDatabase.getMyOwnedSchemas(ownerUsername);
 		
 		return myOwnedSchemaList;
@@ -173,7 +164,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	 */
 	public List<String[]> getMySharedSchemas(String ownerUsername)
 	{
-		schemaDatabase.connect();
 		List<String[]> mySharedSchemaList = schemaDatabase.getMySharedSchemas(ownerUsername);
 		
 		return mySharedSchemaList;
@@ -186,7 +176,6 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	 */
 	public List<String[]> getSchemasSharedWithMe(String sharedUsername)
 	{
-		schemaDatabase.connect();
 		List<String[]> sharedWithMeSchemaList = schemaDatabase.getSchemasSharedWithMe(sharedUsername);
 		
 		return sharedWithMeSchemaList;
