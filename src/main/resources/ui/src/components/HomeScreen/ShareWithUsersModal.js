@@ -32,7 +32,7 @@ const ShareWithUsersModal = (props) => {
       <Header icon="users" content={`Share schema ${schemaName}`}/>
       <Modal.Content loading={loading}>
         <Segment>
-        <Table compact={true} size="small">
+        <Table collapsing={false} unstackable={true} compact={true} size="small">
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Username</Table.HeaderCell>
@@ -88,12 +88,13 @@ ShareWithUsersModal.propTypes = {
 
 const mapStateToProps = (rootstate) => {
   const state = getHomeScreenState(rootstate)
+  const selectedSchema = state.mySchemas.find((it => it[0] === state.selectedSchemaId))
   return {
     isOpen: state.selectedSchemaId !== '',
     users: state.sharedWithUsers,
     userToAdd: state.userToAdd,
     loading: state.loadingSharedUsers,
-    schemaName: state.mySchemas.find((it => it[0] === state.selectedSchemaId)),
+    schemaName: selectedSchema ? selectedSchema : '',
     schemaId: state.selectedSchemaId
   }
 }

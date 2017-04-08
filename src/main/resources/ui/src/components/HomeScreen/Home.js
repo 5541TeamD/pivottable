@@ -72,7 +72,7 @@ const mapStateToProps = (rootState) => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  onRemovedShared: (id) => () => {
+  onRemoveShared: (id) => () => {
     dispatch(removeSharedSchemaLink(id))
   },
   fetchAllSchemas: () => {

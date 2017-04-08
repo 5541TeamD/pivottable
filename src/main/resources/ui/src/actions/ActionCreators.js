@@ -22,8 +22,11 @@ const handleErrorResponse = (e, type, dispatch, additionalMessage = '') => {
   let message = `An error occurred. ${additionalMessage}`;
   if (e.response && e.response.data && e.response.data.details) {
     message = `${message} ${e.response.data.details}`
-    if (e.response.status >= 400) {
-      console.log(`Received a code ${e.response.status}...`);
+    if (e.response.status === 401) {
+      //console.log(`Received a code ${e.response.status}...`);
+      // dispatch a logout success action to make sure loggedInUser becomes null
+      console.log('dispatching a logout action')
+      dispatch({type: C.LOGOUT_SUCCESS})
     }
   }
   dispatch({type, message})
