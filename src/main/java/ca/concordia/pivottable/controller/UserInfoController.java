@@ -19,11 +19,16 @@ public class UserInfoController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         String user = request.session().attribute("username");
         if (user == null) {
            user = "";
         }
         return successResponse(user, response);
+    }
+
+    @Override
+    protected boolean isControllerSecured() {
+        return false;
     }
 }

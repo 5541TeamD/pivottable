@@ -79,3 +79,44 @@ export const getShareableSchema = (id) => {
 export const postShareableSchema = (shareableSchema) => {
   return instance.post('/api/shareableschema', shareableSchema)
 }
+
+// TODO in backend
+export const getAllUserSchemas = () => {
+  return instance.get('/api/home_schemas')
+}
+
+// TODO in backend
+export const deleteSharedSchemaLink = (id) => {
+  return instance.delete(`/api/delete_shared_schema_link/${id}`)
+}
+
+// TODO in backend
+export const deleteSchema = (id) => {
+  return instance.delete(`/api/delete_schema/${id}`)
+}
+
+// TODO in backend
+export const deleteSharingWithUser = (otherUser, id) => {
+  return instance.delete(`/api/stop_sharing_schema`, {
+    params: {
+      id,
+      otherUser: otherUser
+    }
+  })
+}
+
+// TODO in backend
+export const getSharedUsers = (schemaId) => {
+  return instance.get(`/api/shared_users/${schemaId}`)
+}
+
+
+// TODO in backend
+export const putSharedUserOnSchema = (schemaId, user) => {
+  return instance.put('/api/shared_user', null, {
+    params: {
+      schemaId,
+      user
+    }
+  })
+}

@@ -17,7 +17,7 @@ public class LogoutController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         Session sess = request.session();
         if (sess.attribute("username") != null) {
             sess.invalidate();
@@ -27,5 +27,10 @@ public class LogoutController extends Controller {
         } else {
             return "...ok";
         }
+    }
+
+    @Override
+    protected boolean isControllerSecured() {
+        return false;
     }
 }

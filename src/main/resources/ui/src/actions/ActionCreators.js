@@ -9,6 +9,12 @@ import {getTableList,
   getUserInfo,
   getShareableSchema,
   postShareableSchema,
+  getAllUserSchemas,
+  deleteSchema,
+  deleteSharedSchemaLink,
+  deleteSharingWithUser,
+  getSharedUsers,
+  putSharedUserOnSchema
 } from '../api/endpoints'
 
 const handleErrorResponse = (e, type, dispatch, additionalMessage = '') => {
@@ -16,8 +22,11 @@ const handleErrorResponse = (e, type, dispatch, additionalMessage = '') => {
   let message = `An error occurred. ${additionalMessage}`;
   if (e.response && e.response.data && e.response.data.details) {
     message = `${message} ${e.response.data.details}`
-    if (e.response.status >= 400) {
-      console.log(`Received a code ${e.response.status}...`);
+    if (e.response.status === 401) {
+      //console.log(`Received a code ${e.response.status}...`);
+      // dispatch a logout success action to make sure loggedInUser becomes null
+      console.log('dispatching a logout action')
+      dispatch({type: C.LOGOUT_SUCCESS})
     }
   }
   dispatch({type, message})
@@ -233,7 +242,7 @@ export const doLogin = (username, password) => async (dispatch) => {
 export const doLogout = () => async (dispatch) => {
   dispatch({type: C.LOGOUT})
   try {
-    const resp = await logout();
+    await logout();
     dispatch({type: C.LOGOUT_SUCCESS})
   } catch (e) {
     handleErrorResponse(e, C.LOGOUT_FAILURE, dispatch, 'Failed to logout.')
@@ -243,7 +252,7 @@ export const doLogout = () => async (dispatch) => {
 export const doRegister = (username, password) => async (dispatch) => {
   dispatch({type: C.REGISTER_SUBMIT})
   try {
-    const resp = await register(username, password);
+    await register(username, password);
     dispatch({type: C.REGISTER_SUBMIT_SUCCESS});
   } catch (e) {
     handleErrorResponse(e, C.REGISTER_SUBMIT_FAILURE, dispatch, 'Registration failed...');
@@ -310,3 +319,74 @@ export const savePivotTableSchema = () => async (dispatch, getState) => {
     handleErrorResponse(e, C.SAVE_SHAREABLE_SCHEMA_FAILURE, dispatch, 'Could not save schema...')
   }
 }
+
+export const fetchAllUserSchemas = () => async (dispatch) => {
+  dispatch({type: C.FETCH_ALL_USER_SCHEMAS})
+  try {
+    const resp = await getAllUserSchemas()
+    dispatch({type: C.FETCH_ALL_USER_SCHEMAS_SUCCESS, schemas: resp.data})
+  } catch (e) {
+    handleErrorResponse(e, C.FETCH_ALL_USER_SCHEMAS_FAILURE, dispatch, 'Failed to get schemas.')
+  }
+}
+
+export const removeSharedSchemaLink = (id) => async (dispatch) => {
+  dispatch({type: C.REMOVE_SHARED_SCHEMA})
+  try {
+    await deleteSharedSchemaLink(id)
+    dispatch({type: C.REMOVE_SHARED_SCHEMA_SUCCESS, id})
+  } catch (e) {
+    handleErrorResponse(e, C.REMOVE_SHARED_SCHEMA_FAILURE, dispatch, 'Failed to unshare schema.')
+  }
+}
+
+export const removeMySchema = (id) => async (dispatch) => {
+  dispatch({type: C.DELETE_MY_SCHEMA})
+  try {
+    await deleteSchema(id)
+    dispatch({type: C.DELETE_MY_SCHEMA_SUCCESS, id})
+  } catch (e) {
+    handleErrorResponse(e, C.DELETE_MY_SCHEMA_FAILURE, dispatch, 'Failed to delete schema.')
+  }
+}
+
+export const stopSharingSchema = (schemaId, user) => async (dispatch) => {
+  dispatch({type: C.STOP_SHARING_SCHEMA})
+  try {
+    await deleteSharingWithUser(user, schemaId)
+    dispatch({type: C.STOP_SHARING_SCHEMA_SUCCESS, otherUser: user, id: schemaId})
+  } catch (e) {
+    handleErrorResponse(e, C.STOP_SHARING_SCHEMA_FAILURE, dispatch, 'Failed to unshare schema.')
+  }
+}
+
+export const loadSharedUsers = (schemaId) => async (dispatch) => {
+  dispatch({type: C.LOAD_SHARED_USERS, id: schemaId})
+  try {
+    const resp = await getSharedUsers(schemaId)
+    // response contains all schemas shared by this user...
+    const sharedUsers = resp.data.filter (it => it[0] === schemaId).map (it => it[2]).sort()
+    dispatch({type: C.LOAD_SHARED_USERS_SUCCESS, id: schemaId, sharedUsers})
+  } catch (e) {
+    handleErrorResponse(e, C.LOAD_SHARED_USERS_FAILURE, dispatch, 'Failed to load users with whom you shared.')
+  }
+}
+
+export const addUserToShared = (schemaId, userToAdd) => async (dispatch) => {
+  dispatch({type: C.ADD_USER_TO_SHARED_SCHEMA})
+  try {
+    await putSharedUserOnSchema(schemaId, userToAdd)
+    dispatch({type: C.ADD_USER_TO_SHARED_SCHEMA_SUCCESS, user: userToAdd, id: schemaId})
+  } catch (e) {
+    handleErrorResponse(e, C.ADD_USER_TO_SHARED_SCHEMA_FAILURE, dispatch, 'Failed to add new user to share to.')
+  }
+}
+
+export const closeSharedUsersModal = () => ({
+  type: C.CLOSE_SHARED_USERS_MODAL
+})
+
+export const userToAddValueChanged = (value) => ({
+  type: C.NEW_USER_TO_SHARE_VALUE_CHANGED,
+  value
+})

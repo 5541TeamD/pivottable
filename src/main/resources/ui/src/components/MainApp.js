@@ -4,7 +4,7 @@ import { Route, withRouter} from 'react-router-dom';
 import PrivateRoute from './Utils/PrivateRoute'
 
 import {Segment, Dimmer, Loader, Image} from 'semantic-ui-react'
-import Home from './Home'
+import Home from './HomeScreen/Home'
 import AppHeader from './AppHeader'
 import Footer from './Footer'
 import LoginScreen from './Login/LoginScreen'

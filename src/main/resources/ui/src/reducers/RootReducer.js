@@ -4,6 +4,8 @@ import pivotTableReducer from './PivotTableReducer'
 
 import {loginReducer, loginFormReducer, registerFormReducer} from './UserAuthenticationReducers'
 
+import homeScreenReducer from './HomeScreenReducer'
+
 // action types
 const C = {
   FETCH_TABLE_LIST: 'FETCH_TABLE_LIST',
@@ -66,6 +68,26 @@ const C = {
   SAVE_SHAREABLE_SCHEMA_SUCCESS: 'SAVE_SHAREABLE_SCHEMA_SUCCESS',
   SAVE_SHAREABLE_SCHEMA_FAILURE: 'SAVE_SHAREABLE_SCHEMA_FAILURE',
   SCHEMA_NAME_CHANGED: 'SCHEMA_NAME_CHANGED',
+  FETCH_ALL_USER_SCHEMAS: 'FETCH_ALL_USER_SCHEMAS',
+  FETCH_ALL_USER_SCHEMAS_SUCCESS: 'FETCH_ALL_USER_SCHEMAS_SUCCESS',
+  FETCH_ALL_USER_SCHEMAS_FAILURE: 'FETCH_ALL_USER_SCHEMAS_FAILURE',
+  REMOVE_SHARED_SCHEMA: 'REMOVE_SHARED_SCHEMA',
+  REMOVE_SHARED_SCHEMA_SUCCESS: 'REMOVE_SHARED_SCHEMA_SUCCESS',
+  REMOVE_SHARED_SCHEMA_FAILURE: 'REMOVE_SHARED_SCHEMA_FAILURE',
+  DELETE_MY_SCHEMA: 'DELETE_MY_SCHEMA',
+  DELETE_MY_SCHEMA_SUCCESS: 'DELETE_MY_SCHEMA_SUCCESS',
+  DELETE_MY_SCHEMA_FAILURE: 'DELETE_MY_SCHEMA_FAILURE',
+  STOP_SHARING_SCHEMA: 'STOP_SHARING_SCHEMA',
+  STOP_SHARING_SCHEMA_SUCCESS: 'STOP_SHARING_SCHEMA_SUCCESS',
+  STOP_SHARING_SCHEMA_FAILURE: 'STOP_SHARING_SCHEMA_FAILURE',
+  ADD_USER_TO_SHARED_SCHEMA: 'ADD_USER_TO_SHARED_SCHEMA',
+  ADD_USER_TO_SHARED_SCHEMA_SUCCESS: 'ADD_USER_TO_SHARED_SCHEMA_SUCCESS',
+  ADD_USER_TO_SHARED_SCHEMA_FAILURE: 'ADD_USER_TO_SHARED_SCHEMA_FAILURE',
+  LOAD_SHARED_USERS: 'LOAD_SHARED_USERS',
+  LOAD_SHARED_USERS_SUCCESS: 'LOAD_SHARED_USERS_SUCCESS',
+  LOAD_SHARED_USERS_FAILURE: 'LOAD_SHARED_USERS_FAILURE',
+  NEW_USER_TO_SHARE_VALUE_CHANGED: 'NEW_USER_TO_SHARE_VALUE_CHANGED',
+  CLOSE_SHARED_USERS_MODAL: 'CLOSE_SHARED_USERS_MODAL',
 }
 
 
@@ -73,13 +95,22 @@ const getPivotTableState = (state) => (state.pivotTableReducer)
 const getLoginFormState = (state) => (state.loginFormReducer)
 const getAuthenticationState = (state) => (state.loginReducer)
 const getRegisterFormState = (rootstate) => (rootstate.registerFormReducer)
+const getHomeScreenState = (rootState) => (rootState.homeScreenReducer)
 
-export {C, getPivotTableState, getLoginFormState, getAuthenticationState, getRegisterFormState}
+export {
+  C,
+  getPivotTableState,
+  getLoginFormState,
+  getAuthenticationState,
+  getRegisterFormState,
+  getHomeScreenState
+}
 
 export default combineReducers({
   pivotTableReducer,
   loginReducer,
   loginFormReducer,
-  registerFormReducer
+  registerFormReducer,
+  homeScreenReducer
 })
 

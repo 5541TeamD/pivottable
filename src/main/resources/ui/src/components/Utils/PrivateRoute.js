@@ -4,6 +4,8 @@ import {connect} from 'react-redux'
 
 import {getAuthenticationState} from '../../reducers/RootReducer'
 
+
+// wrapper function to pass Route props to the component
 const renderMergedProps = (component, ...rest) => {
   const finalProps = Object.assign({}, ...rest);
   return (
@@ -11,6 +13,8 @@ const renderMergedProps = (component, ...rest) => {
   );
 }
 
+// utility component (as seen in the example of react-router for auth)
+// simply redirects to /login if the user is not logged in.
 const PrivateRoute = ({isLoggedIn, component, ...rest}) => {
   return (
   <Route {...rest} render={props => (
