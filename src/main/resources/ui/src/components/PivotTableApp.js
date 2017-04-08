@@ -17,7 +17,7 @@ class PivotTableApp extends Component {
 
   componentDidMount() {
     const path = this.props.match.path;
-    console.log(this.props)
+    //console.log(this.props)
     if (!path.indexOf('/create') >= 0) {
       const id = this.props.match.params.id
       if (id !== undefined) {

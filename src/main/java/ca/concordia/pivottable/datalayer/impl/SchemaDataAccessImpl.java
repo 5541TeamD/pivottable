@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.concordia.pivottable.datalayer.SchemaDataAccess;
+import ca.concordia.pivottable.entities.ApplicationConfiguration;
 import ca.concordia.pivottable.entities.PivotTableSchema;
 import ca.concordia.pivottable.entities.ShareableSchema;
+import ca.concordia.pivottable.servicelayer.ConfigurationHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +47,12 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	/**
 	 * Class constructor.
 	 */
-	public SchemaDataAccessImpl()
+	public SchemaDataAccessImpl(ConfigurationHolder appConfigHolder)
 	{
-		dbUrl = "jdbc:mysql://localhost:3306/app_user_db?useSSL=false";
-		dbUsername = "root";
-		dbPassword = "root";
+		ApplicationConfiguration conf = appConfigHolder.getConfiguration();
+		dbUrl = conf.getAppDatabaseUrl();
+		dbUsername = conf.getAppDatabaseUser();
+		dbPassword = conf.getAppDatabasePassword();
 	}
 	
 	/**

@@ -2,7 +2,9 @@ package ca.concordia.pivottable;
 
 import ca.concordia.pivottable.controller.*;
 import ca.concordia.pivottable.entities.PivotTable;
+import ca.concordia.pivottable.servicelayer.ConfigurationHolder;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
+import ca.concordia.pivottable.servicelayer.impl.ConfigurationHolderSingleton;
 import ca.concordia.pivottable.utils.*;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -83,8 +85,14 @@ public class Application {
      */
     public static void main(String[] args) {
 
-        System.out.println("Application running at http://localhost:4567.");
+        int port = ConfigurationHolderSingleton.getConfigHolder().getConfiguration().getAppServerPort();
+        port(port);
+
         staticFiles.location("/ui/build");
+
+
+        System.out.println("Application running at http://localhost:" + String.valueOf(port) + ".");
+
 
         // Dependency injection container is request scoped
         before((request, response) -> {

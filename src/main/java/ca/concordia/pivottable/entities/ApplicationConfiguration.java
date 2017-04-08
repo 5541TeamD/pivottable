@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  */
 public class ApplicationConfiguration 
 {
-	private int appServerPort;
+	private Integer appServerPort;
 	private String appDatabaseUrl;
 	private String appDatabaseUser;
 	private String appDatabasePassword;
@@ -36,7 +36,7 @@ public class ApplicationConfiguration
 	 * Accessor method for the application server port.
 	 * @return	appServerPort of this application
 	 */
-	public int getAppServerPort() 
+	public Integer getAppServerPort()
 	{
 		return appServerPort;
 	}

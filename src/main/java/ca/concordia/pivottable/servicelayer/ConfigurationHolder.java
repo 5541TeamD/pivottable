@@ -13,5 +13,5 @@ public interface ConfigurationHolder
 	 * Fetches the pivot table application configuration details for a user.
 	 * @return	Object of ApplicationConfiguration class
 	 */
-	ApplicationConfiguration getConfiguration(String configFilePath);
+	ApplicationConfiguration getConfiguration();
 }

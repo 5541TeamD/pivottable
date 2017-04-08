@@ -19,14 +19,19 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	/**
 	 * User schema database object used for performing data processing operations.
 	 */
-	private SchemaDataAccess schemaDatabase = new SchemaDataAccessImpl();
+	private SchemaDataAccess schemaDatabase;
 	
 	/**
 	 * User database object used for performing data processing operations.
 	 */
-	//TODO need correct implementation here
-	private UserDataAccess userDatabase = new UserDataAccessImpl(null, null);
-	
+	private UserDataAccess userDatabase;
+
+
+	public SchemaManagementServiceImpl(SchemaDataAccess schemaDatabase, UserDataAccess userDatabase) {
+		this.schemaDatabase = schemaDatabase;
+		this.userDatabase = userDatabase;
+	}
+
 	/**
 	 * Adds a new shareable schema to the user schema database.
 	 * @param 	shareableSchema	Details of the shareable schema

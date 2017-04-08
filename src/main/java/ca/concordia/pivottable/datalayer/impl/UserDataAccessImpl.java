@@ -46,11 +46,10 @@ public class UserDataAccessImpl implements UserDataAccess
 	/**
 	 * Class constructor.
 	 * @param	appConfigHolder	Application configuration holder
-	 * @param	configFilePath	File path of the configuration file
 	 */
-	public UserDataAccessImpl(ConfigurationHolder appConfigHolder, String configFilePath)
+	public UserDataAccessImpl(ConfigurationHolder appConfigHolder)
 	{
-		ApplicationConfiguration appConfig = appConfigHolder.getConfiguration(configFilePath);
+		ApplicationConfiguration appConfig = appConfigHolder.getConfiguration();
 		
 		this.dbUrl = appConfig.getAppDatabaseUrl();
 		this.dbUsername = appConfig.getAppDatabaseUser();

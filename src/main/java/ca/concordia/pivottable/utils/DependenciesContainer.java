@@ -13,6 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
+/**
+ * Simple implementation of a Dependency Injection container.
+ * Controllers use this to get the services they might need.
+ */
 public class DependenciesContainer {
 
     private HashMap<String, Object> container;
@@ -49,19 +53,15 @@ public class DependenciesContainer {
             case "credentialsservice":
                 return new CredentialsServiceDefault();
             case "usermanagementservice":
-                // TODO this impl should be dependent on UserDataAccess
-                return new UserManagementServiceImpl();
+                return new UserManagementServiceImpl(get("userDataAccess"));
             case "userdataaccess":
-                return new UserDataAccessImpl(get("configurationHolder"), get("configurationFilePath"));
+                return new UserDataAccessImpl(get("configurationHolder"));
             case "schemamanagementservice":
-                return new SchemaManagementServiceImpl();
+                return new SchemaManagementServiceImpl(get("schemaDataAccess"), get("userDataAccess"));
             case "schemadataaccess":
-                return new SchemaDataAccessImpl();
-            case "configurationHolder":
+                return new SchemaDataAccessImpl(get("configurationHolder"));
+            case "configurationholder":
             	return ConfigurationHolderSingleton.getConfigHolder();
-            case "configurationFilePath":
-            	//TODO need correct implementation here
-            	return null;
             default:
                 throw new InstantiationException("No dependency wired " + name + ". Developer needs to specify this.");
         }

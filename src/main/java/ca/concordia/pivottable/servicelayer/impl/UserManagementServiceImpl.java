@@ -27,9 +27,16 @@ public class UserManagementServiceImpl implements UserManagementService
 	/**
 	 * User database object used for performing data processing operations.
 	 */
-	//TODO need correct implementation here
-	private UserDataAccess userDatabase = new UserDataAccessImpl(null, null);
-	
+	private UserDataAccess userDatabase;
+
+	/**
+	 * Constructor provides the UserDataAccess implementation
+	 * @param userDatabase The implementation for connecting to the user database class.
+	 */
+	public UserManagementServiceImpl(UserDataAccess userDatabase) {
+		this.userDatabase = userDatabase;
+	}
+
 	/**
 	 * Adds a new user's credentials (username in lower case and password hash) to the users database.
 	 * @param	newUser	Application user object containing new user's credentials
