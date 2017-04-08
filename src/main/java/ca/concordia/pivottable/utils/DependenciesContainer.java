@@ -1,9 +1,11 @@
 package ca.concordia.pivottable.utils;
 
 import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
+import ca.concordia.pivottable.datalayer.impl.SchemaDataAccessImpl;
 import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
 import ca.concordia.pivottable.servicelayer.impl.CredentialsServiceDefault;
 import ca.concordia.pivottable.servicelayer.impl.DataRetrievalServiceImpl;
+import ca.concordia.pivottable.servicelayer.impl.SchemaManagementServiceImpl;
 import ca.concordia.pivottable.servicelayer.impl.UserManagementServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,10 @@ public class DependenciesContainer {
                 return new UserManagementServiceImpl();
             case "userdataaccess":
                 return new UserDataAccessImpl();
+            case "schemamanagementservice":
+                return new SchemaManagementServiceImpl();
+            case "schemadataaccess":
+                return new SchemaDataAccessImpl();
             default:
                 throw new InstantiationException("No dependency wired " + name + ". Developer needs to specify this.");
         }

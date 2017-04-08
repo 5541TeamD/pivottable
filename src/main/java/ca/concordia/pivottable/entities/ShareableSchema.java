@@ -7,9 +7,9 @@ import com.google.gson.Gson;
  */
 public class ShareableSchema 
 {
-	private long schemaID;
+	private Long schemaID;
 	private final String schemaName;
-	private final String ownerUsername;
+	private String ownerUsername;
 	private final PivotTableSchema pvtTblSchema;
 	private final String dbURL;
 	private final String dbUsername;
@@ -25,7 +25,7 @@ public class ShareableSchema
 	 * @param 	dbUsername		Username for connecting to the database
 	 * @param 	dbPassword		Password for connecting to the database
 	 */
-	public ShareableSchema(long schemaID, String schemaName, String ownerUsername, PivotTableSchema pvtTblSchema, String dbURL, String dbUsername, String dbPassword)
+	public ShareableSchema(Long schemaID, String schemaName, String ownerUsername, PivotTableSchema pvtTblSchema, String dbURL, String dbUsername, String dbPassword)
 	{
 		this.schemaID = schemaID;
 		this.schemaName = schemaName;
@@ -40,7 +40,7 @@ public class ShareableSchema
 	 * Accessor method for data member schemaID.
 	 * @return	schemaID of this shareable schema
 	 */
-	public long getSchemaID() 
+	public Long getSchemaID()
 	{
 		return this.schemaID;
 	}
@@ -70,6 +70,15 @@ public class ShareableSchema
 	public String getOwnerUsername()
 	{
 		return this.ownerUsername;
+	}
+
+	/**
+	 * Mutator method for data member ownerUsername.
+	 * @param 	owner	Member owner username (comes from the session)
+	 */
+	public void setOwnerUsername(String owner)
+	{
+		this.ownerUsername = owner;
 	}
 	
 	/**

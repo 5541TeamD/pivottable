@@ -42,6 +42,7 @@ public class Application {
         GET.put("/api/logout", LogoutController.class);
         GET.put("/api/register", RegisterController.class);
         GET.put("/api/userinfo", UserInfoController.class);
+        GET.put("/api/shareableschema/:id", RetrieveSchemaController.class);
     }
 
     private static final Map<String, Class> POST;
@@ -51,6 +52,7 @@ public class Application {
         POST = new HashMap<>();
         // POST end points. This one is post because there is data in the body provided by the client.
         POST.put("/api/pivottable", PivotTableController.class);
+        POST.put("/api/shareableschema", SavePivotTableSchemaController.class);
     }
 
     private static final String[] UIRoutes = {
@@ -142,6 +144,7 @@ public class Application {
      */
     private static void defineExceptionHandlers() {
         exception(Exception.class, (e, req, res) -> {
+            e.printStackTrace();
             log.error("Message from General Exception handler: " + e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500);
             res.header("Content-Type", "application/json");

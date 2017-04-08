@@ -1,5 +1,7 @@
 package ca.concordia.pivottable.datalayer;
 
+import ca.concordia.pivottable.entities.ShareableSchema;
+
 import java.util.List;
 
 /**
@@ -29,10 +31,10 @@ public interface SchemaDataAccess
 	 * @param 	dbUsername		Username to login to the database used while creating the schema
 	 * @param 	dbPassword		Password to login to the database used while creating the schema
 	 * @param 	pvtTblSchema	Details of the selections made in the schema
-	 * @return	true, if the schema is successfully added
-	 * 			false, otherwise
+	 * @return	The generated id, if the schema is successfully added
+	 * 			null, otherwise
 	 */
-	boolean addShareableSchema(String schemaName, String ownerUsername, String dbURL, String dbUsername, String dbPassword, String pvtTblSchema);
+	Long addShareableSchema(String schemaName, String ownerUsername, String dbURL, String dbUsername, String dbPassword, String pvtTblSchema);
 	
 	/**
 	 * Updates an existing shareable schema record in the shareable schemas table in the user schema database.
@@ -110,4 +112,11 @@ public interface SchemaDataAccess
 	 * @return	List of all shared schema details: schema ID, schema name and owner username
 	 */
 	List<String[]> getSchemasSharedWithMe(String sharedUsername);
+
+	/**
+	 * Fetches the schema from the database.
+	 * @param id The schema id
+	 * @return The schema object or null if not found
+	 */
+	ShareableSchema getSchemaById(Long id);
 }

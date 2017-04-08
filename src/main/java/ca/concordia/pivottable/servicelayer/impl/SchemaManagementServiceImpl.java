@@ -30,7 +30,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	 * Adds a new shareable schema to the user schema database.
 	 * @param 	shareableSchema	Details of the shareable schema
 	 */
-	public void createShareableSchema(ShareableSchema shareableSchema)
+	public Long createShareableSchema(ShareableSchema shareableSchema)
 	{
 		//Parsing shareable schema object
 		String schemaName = shareableSchema.getSchemaName();
@@ -42,16 +42,17 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		
 		//Validating the new schema details
 		String schemaValidation = validateSchema(schemaName, ownerUsername, dbURL, dbUsername, pvtTblSchema);
-		if (schemaValidation != null)
+		if (schemaValidation != null) {
 			throw new PivotTableException("Unable to validate new shareable schema before creation. " + schemaValidation);
-		else
+		} else
 		{
 			//Adding the new shareable schema to the user schema database
-			boolean schemaAdded = schemaDatabase.addShareableSchema(schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
+			Long schemaAdded = schemaDatabase.addShareableSchema(schemaName, ownerUsername, dbURL, dbUsername, dbPassword, pvtTblSchema);
 			
 			//Throwing an exception to the UI in case schema creation fails
-			if (!schemaAdded)
+			if (schemaAdded == null)
 				throw new PivotTableException("Unable to create new shareable schema " + schemaName + ".");
+			return schemaAdded;
 		}
 	}
 	
@@ -90,7 +91,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 	public void updateShareableSchema(ShareableSchema updatedSchema)
 	{
 		//Parsing shareable schema object
-		long schemaID = updatedSchema.getSchemaID();
+		Long schemaID = updatedSchema.getSchemaID();
 		String schemaName = updatedSchema.getSchemaName();
 		String ownerUsername = updatedSchema.getOwnerUsername();
 		String dbURL = updatedSchema.getDbURL();
@@ -219,5 +220,16 @@ public class SchemaManagementServiceImpl implements SchemaManagementService
 		List<String[]> sharedWithMeSchemaList = schemaDatabase.getSchemasSharedWithMe(sharedUsername);
 		
 		return sharedWithMeSchemaList;
+	}
+
+	@Override
+	public ShareableSchema getSchemaById(Long id, String requestor) {
+		// TODO check if requestor has access to the schema (either it's his or it's shared with him)!
+		// TODO logging?
+		ShareableSchema schema = schemaDatabase.getSchemaById(id);
+		if (schema == null) {
+			throw new PivotTableException("Schema not found!");
+		}
+		return schema;
 	}
 }

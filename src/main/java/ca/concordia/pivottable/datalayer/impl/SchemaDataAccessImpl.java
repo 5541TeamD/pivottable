@@ -1,14 +1,12 @@
 package ca.concordia.pivottable.datalayer.impl;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import ca.concordia.pivottable.datalayer.SchemaDataAccess;
+import ca.concordia.pivottable.entities.PivotTableSchema;
+import ca.concordia.pivottable.entities.ShareableSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,19 +114,19 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 	 * @param 	dbUsername		Username to login to the database used while creating the schema
 	 * @param 	dbPassword		Password to login to the database used while creating the schema
 	 * @param 	pvtTblSchema	Details of the selections made in the schema
-	 * @return	true, if the schema is successfully added
-	 * 			false, otherwise
+	 * @return	the schema id if the schema is successfully added
+	 * 			null, otherwise
 	 */
-	public boolean addShareableSchema(String schemaName, String ownerUsername, String dbURL, String dbUsername, String dbPassword, String pvtTblSchema)
+	public Long addShareableSchema(String schemaName, String ownerUsername, String dbURL, String dbUsername, String dbPassword, String pvtTblSchema)
 	{
-		boolean schemaAdded = true;
+		Long schemaAdded = null;
 		
 		//Connecting to data base
   		connect();
 		
 		if (dbConnection == null)							//failed connection
   		{
-  			return false;
+  			return null;
   		}
 		
 		//Proceeding, if database connection is successful
@@ -139,7 +137,7 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
 										+ "VALUES(? , ? , ? , ? , ? , ? );";
 			
 			dbConnection.setAutoCommit(false);
-			PreparedStatement prepStmt = dbConnection.prepareStatement(insertSchemaStmt);
+			PreparedStatement prepStmt = dbConnection.prepareStatement(insertSchemaStmt, Statement.RETURN_GENERATED_KEYS);
   			prepStmt.setString(1, schemaName);
   			prepStmt.setString(2, ownerUsername);
   			prepStmt.setString(3, dbURL);
@@ -147,13 +145,14 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			prepStmt.setString(5, dbPassword);
   			prepStmt.setString(6, pvtTblSchema);
 			
-  			prepStmt.executeUpdate();
+  			Integer ret = prepStmt.executeUpdate();
+  			schemaAdded = ret.longValue();
   			dbConnection.commit();
   			prepStmt.close();
 		}
 		catch(SQLException sqle)
 		{
-			schemaAdded = false;
+			schemaAdded = null;
 			String errMsg = sqle.getMessage();
 			try
 			{
@@ -690,5 +689,68 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   			sharedWithMeSchemaList = null;
   		
   		return sharedWithMeSchemaList;
+	}
+
+	/**
+	 * Fetches the schema from the database.
+	 * @param id The schema id
+	 * @return The schema object or null if not found
+	 */
+	@Override
+	public ShareableSchema getSchemaById(Long id) {
+
+		//Connecting to data base
+		connect();
+
+		ShareableSchema schema = null;
+
+		if (dbConnection == null)							//failed connection
+		{
+			return null;
+		}
+
+		//Proceeding, if database connection is successful
+		ResultSet rssharedSchemas = null;
+		try
+		{
+			//Fetching all the schemas shared with a user but owned by other users from the user schema database
+			String schemaQuery =
+					"SELECT schema_id, schema_name, owner_username, db_url, db_username, db_password, pivot_table_schema FROM shareable_schema WHERE schema_id = ? ";
+			PreparedStatement prepStmt = dbConnection.prepareStatement(schemaQuery);
+			prepStmt.setLong(1, id);
+
+			rssharedSchemas = prepStmt.executeQuery();
+
+			//Preparing a list of all fetched schema details
+			if (rssharedSchemas.next())
+			{
+				String[] schemaDetails = new String[6];
+
+				schemaDetails[0] = rssharedSchemas.getString("schema_name");
+				schemaDetails[1] = rssharedSchemas.getString("owner_username");
+				schemaDetails[2] = rssharedSchemas.getString("db_url");
+				schemaDetails[3] = rssharedSchemas.getString("db_username");
+				schemaDetails[4] = rssharedSchemas.getString("db_password");
+				schemaDetails[5] = rssharedSchemas.getString("pivot_table_schema");
+
+				PivotTableSchema pvtTableSchema = PivotTableSchema.fromJSON(schemaDetails[5]);
+				schema = new ShareableSchema(id, schemaDetails[0], schemaDetails[1],
+						pvtTableSchema, schemaDetails[2], schemaDetails[3], schemaDetails[4]);
+
+			}
+
+			rssharedSchemas.close();
+			prepStmt.close();
+		}
+		catch (SQLException sqle)
+		{
+			log.error("SQLException occurred while fetching schema with id " + String.valueOf(id) + " - " + sqle.getMessage());
+		}
+		finally
+		{
+			disconnect();
+		}
+
+		return schema;
 	}
 }

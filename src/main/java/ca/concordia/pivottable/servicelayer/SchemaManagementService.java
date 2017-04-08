@@ -14,8 +14,9 @@ public interface SchemaManagementService
 	/**
 	 * Adds a new shareable schema to the user schema database.
 	 * @param 	shareableSchema	Details of the shareable schema
+	 * @return The generated ID
 	 */
-	void createShareableSchema(ShareableSchema shareableSchema);
+	Long createShareableSchema(ShareableSchema shareableSchema);
 	
 	/**
 	 * Updates the details of an existing shareable schema in the user schema database.
@@ -63,4 +64,12 @@ public interface SchemaManagementService
 	 * @return	List of all shared schema details: schema ID, schema name and owner username
 	 */
 	List<String[]> getSchemasSharedWithMe(String sharedUsername);
+
+	/**
+	 * Gets the schema by Id
+	 * @param id The schema id
+	 * @param requestor The username who requested this schema
+	 * @return The shareable schema
+	 */
+	ShareableSchema getSchemaById(Long id, String requestor);
 }
