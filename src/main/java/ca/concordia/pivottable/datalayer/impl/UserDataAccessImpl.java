@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import ca.concordia.pivottable.datalayer.UserDataAccess;
+import ca.concordia.pivottable.entities.ApplicationConfiguration;
+import ca.concordia.pivottable.servicelayer.ConfigurationHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +45,16 @@ public class UserDataAccessImpl implements UserDataAccess
 	
 	/**
 	 * Class constructor.
+	 * @param	appConfigHolder	Application configuration holder
+	 * @param	configFilePath	File path of the configuration file
 	 */
-	public UserDataAccessImpl()
+	public UserDataAccessImpl(ConfigurationHolder appConfigHolder, String configFilePath)
 	{
-		dbUrl = "jdbc:mysql://localhost:3306/app_user_db?useSSL=false";
-		dbUsername = "root";
-		dbPassword = "root";
+		ApplicationConfiguration appConfig = appConfigHolder.getConfiguration(configFilePath);
+		
+		this.dbUrl = appConfig.getAppDatabaseUrl();
+		this.dbUsername = appConfig.getAppDatabaseUser();
+		this.dbPassword = appConfig.getAppDatabasePassword();
 	}
 	
 	/**
