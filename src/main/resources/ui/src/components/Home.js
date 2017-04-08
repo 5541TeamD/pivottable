@@ -13,4 +13,5 @@ const Home = () => (
   </Segment>
 )
 
+
 export default Home;

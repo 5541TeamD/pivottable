@@ -4,11 +4,18 @@ import {connect} from 'react-redux'
 
 import {getAuthenticationState} from '../../reducers/RootReducer'
 
+const renderMergedProps = (component, ...rest) => {
+  const finalProps = Object.assign({}, ...rest);
+  return (
+    React.createElement(component, finalProps)
+  );
+}
+
 const PrivateRoute = ({isLoggedIn, component, ...rest}) => {
   return (
   <Route {...rest} render={props => (
     isLoggedIn ? (
-        React.createElement(component,props)
+        renderMergedProps(component,props, rest)
       ) :
       <Redirect to={{
         pathname : '/login'

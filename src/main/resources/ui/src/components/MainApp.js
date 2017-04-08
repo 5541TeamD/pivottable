@@ -30,7 +30,9 @@ const MainApp = ({isAppLoading}) => {
             <AppHeader/>
             <PrivateRoute exact={true} path="/" component={Home} />
             <Route exact={true} path="/login" component={LoginScreen}/>
-            <PrivateRoute exact={true} path="/create" component={PivotTableApp} />
+            <PrivateRoute exact={true} path="/create" isReadOnly={false} component={PivotTableApp} />
+            <PrivateRoute exact={true} path="/edit/:id" isReadOnly={false} component={PivotTableApp} />
+            <PrivateRoute exact={true} path="/view/:id" isReadOnly={true} component={PivotTableApp}/>
             <Footer/>
           </div>
         )

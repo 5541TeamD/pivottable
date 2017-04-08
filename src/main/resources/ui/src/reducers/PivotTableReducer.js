@@ -16,6 +16,8 @@ const allFunctions = ['count'].concat(numericalFunctions)
 
 // immutable initial state (everything is immutable)
 const initialState = {
+  id: null,
+  fetchLoading: false,
   connectionLoading: false,
   fetchTableListLoading: false,
   selectedTable: '',
@@ -30,6 +32,7 @@ const initialState = {
     rows: []
   }, // data set
   tableSchema: {
+    name: '',
     rowLabels: [],
     selectedRowLabels: [],
     columnLabels: [],
@@ -63,6 +66,13 @@ const initialState = {
   errorMessage: '',
   printableView: false,
 }
+
+/*const rebuildSchemaFromData = (tableSchema, data) => {
+  const newSelectedRowLabels = data.rowLabels.map ( name => {
+    return tableSchema.rowLabels.find ( val => val.name === name );
+  })
+  //const newSelectedColumnLabels = data.
+}*/
 
 /**
  * row label index: 0
@@ -430,7 +440,8 @@ const pivotTableReducer = (state = initialState, action) => {
         pageLabels: action.data.pageLabelValues,
         pageSelected: 0,
         tableSummary: action.data.tableSummDetails,
-        errorMessage: ''
+        errorMessage: '',
+        infoMessage: ''
       }
     case C.GENERATE_PIVOT_TABLE_ERROR:
       return {...state,
@@ -507,6 +518,71 @@ const pivotTableReducer = (state = initialState, action) => {
         tableSchema: {
           ...state.tableSchema,
           summaryFunction: action.value
+        }
+      }
+    case C.PIVOT_TABLE_CLEAR:
+      return initialState;
+    case C.FETCH_SHAREABLE_SCHEMA:
+      return {...state, fetchLoading: true}
+    case C.FETCH_SHAREABLE_SCHEMA_SUCCESS: {
+      const {data} = action
+      return {
+        ...initialState,
+        id: data.schemaID,
+        username: data.dbUsername,
+        password: data.dbPassword,
+        sourceName: data.dbURL,
+      }
+    }
+    /*case C.FETCH_SHAREABLE_SCHEMA_POPULATE_SCHEMA: {
+      const {data} = action
+      return {
+        ...state,
+        tableSchema: rebuildSchemaFromData(state.tableSchema, data.pvtTblSchema)
+      }
+    }*/
+    case C.FETCH_SHAREABLE_SCHEMA_SET_ALIAS: {
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          aliasMap: action.aliasMap
+        }
+      }
+    }
+    case C.FETCH_SHAREABLE_SCHEMA_FAILURE:
+      return {
+        ...state,
+        fetchLoading: false,
+        errorMessage: action.message,
+        infoMessage: '',
+      }
+    case C.SAVE_SHAREABLE_SCHEMA:
+      return {
+        ...state,
+        fetchLoading: true
+      }
+    case C.SAVE_SHAREABLE_SCHEMA_SUCCESS:
+      return {
+        ...state,
+        id: action.id,
+        infoMessage: 'Schema saved!',
+        errorMessage: '',
+        fetchLoading: false,
+      }
+    case C.SAVE_SHAREABLE_SCHEMA_FAILURE:
+      return {
+        ...state,
+        fetchLoading: false,
+        infoMessage: '',
+        errorMessage: action.message,
+      }
+    case C.SCHEMA_NAME_CHANGED:
+      return {
+        ...state,
+        tableSchema: {
+          ...state.tableSchema,
+          name: action.value
         }
       }
     case C.FETCH_FILTER_FIELDS_SUCCESS:

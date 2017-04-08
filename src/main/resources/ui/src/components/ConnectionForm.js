@@ -8,37 +8,46 @@ import {dataSourceNameChanged, userNameChanged,
 const ConnectionForm = (props) => {
   const {loading, dataSource, userName, password,
   onDataSourceChanged, onUserNameChanged, onPasswordChanged,
-  onCheckConnection, isConnected, onDisconnect, errorMessage} = props
+  onCheckConnection, isConnected, onDisconnect,
+    errorMessage, infoMessage, isReadOnly} = props
 
   const errorBox = errorMessage.length > 0 ?
     (<Message negative>
       <Message.Header>{errorMessage}</Message.Header>
     </Message>) : null
 
+  const infoBox = infoMessage.length > 0 ? (
+      <Message info>
+        <Message.Header>{infoMessage}</Message.Header>
+      </Message>) : null
+
   return (
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Data Source Connection</Label>
       {errorBox}
+      {infoBox}
       <Form as="form" onSubmit={onCheckConnection}>
       {!isConnected ?
         <div>
           <Form.Field>
             <label>Data Source</label>
-            <Input type="text" value={dataSource} onChange={onDataSourceChanged} placeholder="Enter data source"/>
+            <Input disabled={isReadOnly} type="text" value={dataSource} onChange={onDataSourceChanged} placeholder="Enter data source"/>
           </Form.Field>
           <Form.Field>
             <label>Username</label>
-            <Input type="text" value={userName} onChange={onUserNameChanged} placeholder="Enter username"/>
+            <Input type="text" disabled={isReadOnly} value={userName} onChange={onUserNameChanged} placeholder="Enter username"/>
           </Form.Field>
           <Form.Field>
             <label>Password</label>
-            <Input type="password" value={password} onChange={onPasswordChanged} placeholder="Enter password"/>
+            <Input type="password" disabled={isReadOnly} value={password} onChange={onPasswordChanged} placeholder="Enter password"/>
           </Form.Field>
+          {isReadOnly ? null : (
           <Form.Field>
           <Button primary={true} onClick={onCheckConnection(dataSource, userName, password)} disabled={!dataSource || !userName }>
             Check Connection
           </Button>
-          </Form.Field>
+          </Form.Field>)
+          }
         </div>
         :
         <div>
@@ -48,11 +57,13 @@ const ConnectionForm = (props) => {
           <Form.Field>
             <Label basic>Using data source: {dataSource}</Label>
           </Form.Field>
+          {isReadOnly ? null : (
           <Form.Field>
             <Button color="red" onClick={onDisconnect} >
               Reset
             </Button>
           </Form.Field>
+          )}
         </div>
       }
       </Form>
@@ -71,7 +82,9 @@ ConnectionForm.propTypes = {
   onPasswordChanged: PropTypes.func.isRequired,
   onCheckConnection: PropTypes.func.isRequired,
   onDisconnect: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string.isRequired
+  errorMessage: PropTypes.string.isRequired,
+  infoMessage: PropTypes.string.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
 }
 
 const mapStateToProps = (rootState) => {
@@ -82,7 +95,8 @@ const mapStateToProps = (rootState) => {
     userName: state.username,
     password: state.password,
     isConnected: state.connectedSuccessfully,
-    errorMessage: state.errorMessage
+    errorMessage: state.errorMessage,
+    infoMessage: state.infoMessage,
   }
 }
 

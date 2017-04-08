@@ -25,6 +25,7 @@ export const TableDropDown = (props) => {
       <Dropdown placeholder='Select Data Set'
                 fluid
                 selection={true}
+                disabled={props.isReadOnly}
                 name="tableListDropDown"
                 options={tableOptions}
                 value={props.currentTable}
@@ -39,6 +40,7 @@ TableDropDown.propTypes = {
   tables : PropTypes.arrayOf(PropTypes.string).isRequired,
   currentTable: PropTypes.string.isRequired,
   isConnected: PropTypes.bool.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
 }
 
 const mapStateToProps = (rootState) => {

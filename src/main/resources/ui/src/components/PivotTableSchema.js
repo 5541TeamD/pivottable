@@ -16,6 +16,8 @@ import {rowLabelsChanged,
   sortOrderSelected,
   aliasChanged,
   summaryFunctionChanged,
+  schemaNameChanged,
+  savePivotTableSchema,
 } from '../actions/ActionCreators'
 
 const PivotTableSchema = (props) => {
@@ -39,6 +41,10 @@ const PivotTableSchema = (props) => {
     onAliasChanged,
     onSummaryFunctionChanged,
     selectedSummaryFunction,
+    onSchemaNameChanged,
+    schemaName,
+    onSchemaSave,
+    isReadOnly
   } = props
 
   const aliasFields = allColumns.filter (item => {
@@ -54,26 +60,27 @@ const PivotTableSchema = (props) => {
   return isConnected ? (
     <Segment loading={loading}>
       <Label as="div" attached="top" color="blue">Pivot Table Schema</Label>
-      <Form as="div">
+      <Form as="div" onSubmit={onGeneratePivotTable(selectedValue, selectedSummaryFunction)}>
           <Form.Field>
             <label>Row Labels</label>
             <Form.Dropdown multiple options={rowLabels}
                            value={selectedRowLabels}
                            onChange={onRowLabelsChanged}
+                           disabled={isReadOnly}
                            placeholder="Select Row Labels"/>
           </Form.Field>
           <Form.Field>
             <label>Column Labels</label>
             <Form.Dropdown multiple
                            options={columnLabels}
-                           disabled={selectedRowLabels.length === 0}
+                           disabled={selectedRowLabels.length === 0 || isReadOnly}
                            value={selectedColumnLabels}
                            onChange={onColumnLabelsChanged}
                            placeholder="Select Column Labels"/>
           </Form.Field>
           <Form.Field>
             <label>Page Label</label>
-            <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+            <Form.Dropdown disabled={selectedColumnLabels.length === 0 || isReadOnly}
                            value={selectedPageLabel}
                            onChange={onPageLabelChanged}
                            options={pageLabels}
@@ -82,7 +89,7 @@ const PivotTableSchema = (props) => {
           <Form.Group inline>
             <Form.Field>
               <label>Report Filter</label>
-              <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+              <Form.Dropdown disabled={selectedColumnLabels.length === 0 || isReadOnly}
                              onChange={onFilterFieldSelected}
                              options={filterFields}
                              value={selectedFilterField}
@@ -90,7 +97,7 @@ const PivotTableSchema = (props) => {
             </Form.Field>
             <Form.Field>
               <label>Filter Value</label>
-              <Input disabled={selectedFilterField === ''}
+              <Input disabled={selectedFilterField === '' || isReadOnly}
                           type="text"
                           onChange={onFilterValueChanged}
                           value={filterValue}
@@ -102,7 +109,7 @@ const PivotTableSchema = (props) => {
           <Form.Group inline>
             <Form.Field>
               <label>Sort Field</label>
-              <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+              <Form.Dropdown disabled={selectedColumnLabels.length === 0 || isReadOnly}
                              onChange={onSortFieldSelected}
                              options={sortFields}
                              value={selectedSortField}
@@ -110,7 +117,7 @@ const PivotTableSchema = (props) => {
             </Form.Field>
             <Form.Field>
               <label>Sort Order</label>
-              <Form.Dropdown disabled={selectedSortField === ''}
+              <Form.Dropdown disabled={selectedSortField === '' || isReadOnly}
                              onChange={onSortOrderSelected}
                              value={sortOrder}
                              options={[
@@ -121,7 +128,7 @@ const PivotTableSchema = (props) => {
           </Form.Group>
           <Form.Field>
             <label>Function</label>
-            <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+            <Form.Dropdown disabled={selectedColumnLabels.length === 0 || isReadOnly}
                            onChange={onFunctionChanged}
                            options={functionList}
                            value={selectedFunction}
@@ -129,7 +136,7 @@ const PivotTableSchema = (props) => {
           </Form.Field>
           <Form.Field>
             <label>Values</label>
-            <Form.Dropdown disabled={!selectedFunction}
+            <Form.Dropdown disabled={!selectedFunction || isReadOnly}
                            onChange={onValueChanged}
                            options={possibleValues}
                            value={selectedValue}
@@ -137,12 +144,13 @@ const PivotTableSchema = (props) => {
           </Form.Field>
           <Form.Field>
             <label>Summary Function</label>
-            <Form.Dropdown disabled={selectedColumnLabels.length === 0}
+            <Form.Dropdown disabled={selectedColumnLabels.length === 0 || isReadOnly}
                            onChange={onSummaryFunctionChanged}
                            options={functionList}
                            value={selectedSummaryFunction}
                            placeholder="Select Summary Function"/>
           </Form.Field>
+        {isReadOnly ? null :(
           <Form.Field>
               <Modal closeIcon={true}
                    trigger={<Form.Button disabled={!selectedValue}>Customize labels</Form.Button>}>
@@ -168,14 +176,37 @@ const PivotTableSchema = (props) => {
               </Modal.Content>
             </Modal>
           </Form.Field>
+          )}
+          <Form.Group inline>
+            <Form.Field>
+              <label>Schema Name</label>
+              <Input value={schemaName}
+                     type="text"
+                     onChange={onSchemaNameChanged}
+                     disabled={isReadOnly}
+                     placeholder="Enter a name for this schema to save it."
+              />
+            </Form.Field>
+            {isReadOnly ? null : (
+            <Form.Field>
+              <Button disabled={!selectedValue || !selectedSummaryFunction || !schemaName}
+                      onClick={onSchemaSave}
+                      color="green">
+                Save
+              </Button>
+            </Form.Field>
+            )}
+          </Form.Group>
           <Form.Field>
-            <Button primary={true} onClick={onGeneratePivotTable}
+            <Button primary={true} onClick={onGeneratePivotTable(selectedValue, selectedSummaryFunction)}
                     disabled={(!selectedValue || !selectedSummaryFunction)}>
               Generate Pivot Table
             </Button>
+            {isReadOnly ? null : (
             <Button onClick={onReset}>
               Reset
             </Button>
+            )}
           </Form.Field>
       </Form>
     </Segment>
@@ -239,6 +270,7 @@ const mapStateToProps = (rootstate) => {
     selectedSortField: state.tableSchema.selectedSortField,
     sortOrder: state.tableSchema.sortOrder,
     selectedSummaryFunction: state.tableSchema.summaryFunction,
+    schemaName: state.tableSchema.name
   }
 }
 
@@ -274,14 +306,25 @@ const mapDispatchToProps = (dispatch) => ({
   onSortOrderSelected: (e, {value}) => {
     dispatch(sortOrderSelected(value))
   },
-  onGeneratePivotTable: () => {
-    dispatch(generatePivotTable())
+  onGeneratePivotTable: (selectedValue, selectedSummaryFunction) => (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    if (selectedValue && selectedSummaryFunction) {
+      dispatch(generatePivotTable())
+    }
   },
   onAliasChanged: (e, {name, value}) => {
     dispatch(aliasChanged(name, value))
   },
   onSummaryFunctionChanged: (e, {value}) => {
     dispatch(summaryFunctionChanged(value))
+  },
+  onSchemaNameChanged: (e, {value}) => {
+    dispatch(schemaNameChanged(value))
+  },
+  onSchemaSave: () => {
+    dispatch(savePivotTableSchema())
   }
 })
 

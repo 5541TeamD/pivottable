@@ -71,3 +71,11 @@ export const register = (username, password) => {
 export const getUserInfo = () => {
   return instance.get('/api/userinfo')
 }
+
+export const getShareableSchema = (id) => {
+  return instance.get(`/api/shareableschema/${id}`)
+}
+
+export const postShareableSchema = (shareableSchema) => {
+  return instance.post('/api/shareableschema', shareableSchema)
+}
