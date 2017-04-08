@@ -10,6 +10,12 @@ import java.util.List;
 public interface DataSourceAccess 
 {
 	/**
+	 * Assigns the specific strategy to be used for pivot table data retrieval.
+	 * @param	pvtTblStrategy	Specific strategy object
+	 */
+	void setPvtTblStrategy(PivotTableStrategy pvtTblStrategy);
+	
+	/**
 	 * Sets the credentials required for connecting to a database.
 	 * @param	dbUrl		URL of the database
 	 * @param	dbUsername	Username for login
@@ -61,23 +67,6 @@ public interface DataSourceAccess
   	 */
 	List<String[]> getTableFields(String tableName);
 	
-  	/**
-  	 * Executes SQL query on database and fetches pivot table data.
-  	 * @param	rowLabels	Row labels selected as part of pivot table schema
-  	 * @param	colLabels	Column labels selected as part of pivot table schema
-  	 * @param	pageLabel	Page label selected as part of pivot table schema
-  	 * @param	function	Mathematical function selected as part of pivot table schema
-  	 * @param	valField	Value field selected as part of pivot table schema
-  	 * @param	filterField	Field name by which pivot table data needs to be filtered
-  	 * @param	filterValue	Value of the filter field for which pivot table data needs to be displayed
-  	 * @param	sortField	Field name by which pivot table data needs to be sorted
-  	 * @param	sortOrder	Order (ascending/descending) in which pivot table data needs to be sorted
-  	 * @param	tableName	Raw report table name
-  	 * @return	Pivot table data fetched from the database
-  	 */
-  	public List<List<List<Object>>> getPvtTblData(List<String> rowLabels, List<String> colLabels, String pageLabel, String function, String valField, 
-  													String filterField, String filterValue, String sortField, String sortOrder, String tableName);
-  	
 	/**
   	 * Executes SQL query on the database and fetches all the values of the selected page label column 
   	 * @param	pageLabel		Page label column selected as part of pivot table schema
@@ -86,4 +75,10 @@ public interface DataSourceAccess
   	 */
 	List<String> getPageLabelValues(String pageLabel, String tableName, String filterField, String filterValue,
 									String sortField, String sortOrder);
+	
+	/**
+	 * Retrieves pivot table data based on the strategy assigned.
+	 * @return	Pivot table data
+	 */
+	List<List<List<Object>>> executePvtTblStrategy();
 }

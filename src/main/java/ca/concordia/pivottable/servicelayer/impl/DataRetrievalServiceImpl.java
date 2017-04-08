@@ -1,6 +1,8 @@
 package ca.concordia.pivottable.servicelayer.impl;
 
 import ca.concordia.pivottable.datalayer.DataSourceAccess;
+import ca.concordia.pivottable.datalayer.impl.MultiplePageStrategy;
+import ca.concordia.pivottable.datalayer.impl.SinglePageStrategy;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.servicelayer.DataRetrievalService;
 import java.util.ArrayList;
@@ -149,20 +151,21 @@ public class DataRetrievalServiceImpl implements DataRetrievalService
 			if (pageLabel == null || pageLabel.trim().equals("")) {
 				pageLabel = null;
 				pageLabelValues = new ArrayList<>(); // empty page labels
-
-				//Executing the SQL query to get pivot table data without page label
-				pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
+				
+				//Fetching single-page pivot table data
+				dataSource.setPvtTblStrategy(new SinglePageStrategy(rowLabels, colLabels, function, valField, filterField, filterValue, sortField, sortOrder, tableName));
+				pvtTblData = dataSource.executePvtTblStrategy();
 			} else {
 				//Fetching all the values of the selected page label column
 				pageLabelValues = dataSource.getPageLabelValues(pageLabel, tableName, filterField, filterValue, sortField, sortOrder);
 
-				//Executing the SQL query to get pivot table data with page label
-				pvtTblData = dataSource.getPvtTblData(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName);
+				//Fetching multiple-page pivot table data
+				dataSource.setPvtTblStrategy(new MultiplePageStrategy(rowLabels, colLabels, pageLabel, function, valField, filterField, filterValue, sortField, sortOrder, tableName));
+				pvtTblData = dataSource.executePvtTblStrategy();
 			}
 
 			//Fetching pivot table row, column, page and table level summary details
-			//TODO
-			//log.info("Fetching pivot table row, column, page and table level summary details.");
+			log.info("Fetching pivot table row, column, page and table level summary details.");
 			List<List<List<List<Object>>>> oneDimSummaryDetails = getDimSummaryDetails(pvtTblData, tableSummFuncName, rowLabels.size(), colLabels.size());
 			List<List<List<Object>>> rowSummDetails = oneDimSummaryDetails.get(0);
 			List<List<List<Object>>> colSummDetails = oneDimSummaryDetails.get(1);

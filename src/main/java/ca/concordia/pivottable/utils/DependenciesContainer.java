@@ -3,6 +3,7 @@ package ca.concordia.pivottable.utils;
 import ca.concordia.pivottable.datalayer.impl.DataSourceAccessImpl;
 import ca.concordia.pivottable.datalayer.impl.SchemaDataAccessImpl;
 import ca.concordia.pivottable.datalayer.impl.UserDataAccessImpl;
+import ca.concordia.pivottable.servicelayer.impl.ConfigurationHolderSingleton;
 import ca.concordia.pivottable.servicelayer.impl.CredentialsServiceDefault;
 import ca.concordia.pivottable.servicelayer.impl.DataRetrievalServiceImpl;
 import ca.concordia.pivottable.servicelayer.impl.SchemaManagementServiceImpl;
@@ -51,11 +52,16 @@ public class DependenciesContainer {
                 // TODO this impl should be dependent on UserDataAccess
                 return new UserManagementServiceImpl();
             case "userdataaccess":
-                return new UserDataAccessImpl();
+                return new UserDataAccessImpl(get("configurationHolder"), get("configurationFilePath"));
             case "schemamanagementservice":
                 return new SchemaManagementServiceImpl();
             case "schemadataaccess":
                 return new SchemaDataAccessImpl();
+            case "configurationHolder":
+            	return ConfigurationHolderSingleton.getConfigHolder();
+            case "configurationFilePath":
+            	//TODO need correct implementation here
+            	return null;
             default:
                 throw new InstantiationException("No dependency wired " + name + ". Developer needs to specify this.");
         }
