@@ -22,7 +22,7 @@ public class RetrieveSchemaController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         String idStr = request.params("id");
         if (idStr == null) {
             throw new PivotTableException("The schema id must be provided.");

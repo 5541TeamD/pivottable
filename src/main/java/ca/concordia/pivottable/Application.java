@@ -1,6 +1,7 @@
 package ca.concordia.pivottable;
 
 import ca.concordia.pivottable.controller.*;
+import ca.concordia.pivottable.entities.PivotTable;
 import ca.concordia.pivottable.servicelayer.CredentialsService;
 import ca.concordia.pivottable.utils.*;
 import com.google.gson.Gson;
@@ -55,6 +56,19 @@ public class Application {
         POST.put("/api/shareableschema", SavePivotTableSchemaController.class);
     }
 
+    private static final Map<String, Class> PUT;
+    static
+    {
+        PUT = new HashMap<>();
+
+    }
+
+    private static final Map<String, Class> DELETE;
+    static
+    {
+        DELETE = new HashMap<>();
+    }
+
     private static final String[] UIRoutes = {
             "/login",
             "/home",
@@ -107,6 +121,8 @@ public class Application {
 
         addMapHandler(GET, Spark::get);
         addMapHandler(POST, Spark::post);
+        addMapHandler(PUT, Spark::put);
+        addMapHandler(DELETE, Spark::delete);
 
     }
 
@@ -149,6 +165,17 @@ public class Application {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500);
             res.header("Content-Type", "application/json");
             res.status(500);
+            Gson gson = new Gson();
+            res.body(gson.toJson(errorResponse));
+        });
+
+        exception(PivotTableException.class, (e, req, res) -> {
+            PivotTableException ex = (PivotTableException)e;
+            ex.printStackTrace();
+            log.error("Message from the Pivot Table Exception handler: " + ex.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(),ex.getStatusCode());
+            res.header("Content-Type", "application/json");
+            res.status(ex.getStatusCode());
             Gson gson = new Gson();
             res.body(gson.toJson(errorResponse));
         });

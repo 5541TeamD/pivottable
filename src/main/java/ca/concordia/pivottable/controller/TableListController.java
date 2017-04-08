@@ -26,7 +26,7 @@ public class TableListController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         //return new Object();
         log.info("TableListController was called.");
         List<String> tableList = dataRetrievalService.getAllRawReportNames();

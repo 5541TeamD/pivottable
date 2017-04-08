@@ -18,7 +18,7 @@ public class RegisterController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         UserManagementService service = container.get("UserManagementService");
         String username = request.queryParams("username");
         String password = request.queryParams("password");

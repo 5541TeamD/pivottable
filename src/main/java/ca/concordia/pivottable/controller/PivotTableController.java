@@ -24,7 +24,7 @@ public class PivotTableController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         //return new Object();
         log.info("PivotTableController was called");
         String name = request.params("pvtTblSchema");

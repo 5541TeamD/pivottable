@@ -23,7 +23,7 @@ public class DBConnectionCheckController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) {
+    public Object handleAction(Request request, Response response) {
         log.info("Called the DB Connection check controller");
         boolean isConnectionGood = dataRetrievalService.checkDataSourceConnection();
         if (isConnectionGood) {
@@ -33,7 +33,7 @@ public class DBConnectionCheckController extends Controller {
             return result;
         } else {
            String result = "No good";
-           response.status(401);
+           response.status(403);
            return result;
         }
     }

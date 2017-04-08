@@ -23,7 +23,7 @@ public class LoginController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         final String username = request.queryParams("username");
         final String pwd = request.queryParams("password");
         final ApplicationUser possibleUser = new ApplicationUser(username, pwd);
@@ -35,5 +35,10 @@ public class LoginController extends Controller {
         log.info("User " + username + " logged in. Creating session");
         sess.attribute("username", possibleUser.getUsername());
         return successResponse(username, response);
+    }
+
+    @Override
+    protected boolean isControllerSecured() {
+        return false;
     }
 }

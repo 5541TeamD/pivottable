@@ -23,7 +23,7 @@ public class SavePivotTableSchemaController extends Controller {
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
 
         ShareableSchema schema = ShareableSchema.fromJSon(request.body());
         schema.setOwnerUsername(request.session().attribute("username"));
