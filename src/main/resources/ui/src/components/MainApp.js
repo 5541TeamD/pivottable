@@ -3,7 +3,7 @@ import { Route, withRouter} from 'react-router-dom';
 //import createBrowserHistory from 'history/createBrowserHistory';
 import PrivateRoute from './Utils/PrivateRoute'
 
-import {Segment, Dimmer, Loader, Image} from 'semantic-ui-react'
+import {Segment, Dimmer, Loader, Image, Grid} from 'semantic-ui-react'
 import Home from './HomeScreen/Home'
 import AppHeader from './AppHeader'
 import Footer from './Footer'
@@ -26,7 +26,9 @@ const MainApp = ({isAppLoading}) => {
         </Segment>
       )
       : (
-          <div>
+          <Grid stackable>
+            <Grid.Column width={1} />
+            <Grid.Column width={14}>
             <AppHeader/>
             <PrivateRoute exact={true} path="/" component={Home} />
             <Route exact={true} path="/login" component={LoginScreen}/>
@@ -34,7 +36,9 @@ const MainApp = ({isAppLoading}) => {
             <PrivateRoute exact={true} path="/edit/:id" isReadOnly={false} component={PivotTableApp} />
             <PrivateRoute exact={true} path="/view/:id" isReadOnly={true} component={PivotTableApp}/>
             <Footer/>
-          </div>
+            </Grid.Column>
+            <Grid.Column width={1} />
+          </Grid>
         )
   )
 }

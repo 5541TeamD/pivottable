@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Segment, Button, Modal, Header, Icon, Grid, Message } from 'semantic-ui-react';
+import { Segment, Button, Modal, Header, Icon, Grid, Message, Label } from 'semantic-ui-react';
 import MySchemas from './MySchemas';
 import SharedSchemas from './SharedSchemas'
 import ShareWithUsersModal from './ShareWithUsersModal'
 import {connect} from 'react-redux';
-import {getHomeScreenState} from '../../reducers/RootReducer'
+import {getHomeScreenState, getAuthenticationState} from '../../reducers/RootReducer'
 import {removeSharedSchemaLink, removeMySchema, fetchAllUserSchemas, loadSharedUsers} from '../../actions/ActionCreators'
 
 class Home extends React.Component {
@@ -23,7 +23,10 @@ class Home extends React.Component {
       onRemoveSchema,
       onShareButtonClicked,
       errorMessage,
-      infoMessage } = this.props
+      infoMessage,
+      currentUser,
+      fetchAllSchemas,
+    } = this.props
 
     const errorBox = errorMessage.length > 0 ? (
         <Message negative>
@@ -36,8 +39,12 @@ class Home extends React.Component {
         </Message>) : null
 
     return (
-      <Segment>
-        <h2>Welcome Home User!</h2>
+      <Segment raised={true}>
+        <Button onClick={fetchAllSchemas}
+               color="teal" icon={true} floated="right">
+          <Icon name="refresh"/>
+        </Button>
+        <h2>Hello, {currentUser}!</h2>
         {infoBox}
         {errorBox}
         <ul>
@@ -84,6 +91,7 @@ class Home extends React.Component {
 
 const mapStateToProps = (rootState) => {
   const state = getHomeScreenState(rootState)
+  const currentUser = getAuthenticationState(rootState).loggedInUser
   return {
     loadingMine: state.loadingMySchemas,
     loadingShared: state.loadingSharedWithMe,
@@ -91,6 +99,7 @@ const mapStateToProps = (rootState) => {
     sharedSchemas: state.sharedWithMe,
     errorMessage: state.errorMessage,
     infoMessage: state.infoMessage,
+    currentUser,
   }
 }
 
