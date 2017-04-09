@@ -26,4 +26,9 @@ public class RegisterController extends Controller {
         service.createUser(newUser);
         return successResponse("User created successfully!", response);
     }
+
+    @Override
+    protected boolean isControllerSecured() {
+        return false;
+    }
 }
