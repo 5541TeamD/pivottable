@@ -92,7 +92,6 @@ export const deleteSchema = (id) => {
   return instance.delete(`/api/delete_schema/${id}`)
 }
 
-// TODO in backend
 export const deleteSharingWithUser = (otherUser, id) => {
   return instance.delete(`/api/stop_sharing_schema`, {
     params: {
@@ -102,13 +101,10 @@ export const deleteSharingWithUser = (otherUser, id) => {
   })
 }
 
-// TODO in backend
 export const getSharedUsers = (schemaId) => {
   return instance.get(`/api/shared_users/${schemaId}`)
 }
 
-
-// TODO in backend
 export const putSharedUserOnSchema = (schemaId, user) => {
   return instance.put('/api/shared_user', null, {
     params: {

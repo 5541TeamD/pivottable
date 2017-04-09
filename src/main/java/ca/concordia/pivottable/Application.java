@@ -47,6 +47,7 @@ public class Application {
         GET.put("/api/userinfo", UserInfoController.class);
         GET.put("/api/shareableschema/:id", RetrieveSchemaController.class);
         GET.put("/api/home_schemas", AllUserSchemas.class);
+		GET.put("/api/shared_users/:schemaId", RetrieveSharedSchemaController.class);
     }
 
     private static final Map<String, Class> POST;
@@ -63,15 +64,18 @@ public class Application {
     static
     {
         PUT = new HashMap<>();
-
+		// PUT endpoints
+        PUT.put("/api/shared_user", ShareSchemaController.class);
     }
 
     private static final Map<String, Class> DELETE;
     static
     {
         DELETE = new HashMap<>();
+		// DELETE endpoints
         DELETE.put("/api/delete_shared_schema_link/:id", DeleteSharedSchemaLink.class);
         DELETE.put("/api/delete_schema/:id", DeleteSchemaController.class);
+		DELETE.put("/api/stop_sharing_schema", UnshareSchemaController.class);
     }
 
     private static final String[] UIRoutes = {
