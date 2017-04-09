@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react'
-import {Modal, Table, Button, Segment, Header, Input} from 'semantic-ui-react'
+import {Modal, Table, Button, Header, Input} from 'semantic-ui-react'
 
 import {connect} from 'react-redux'
 
@@ -29,10 +29,10 @@ const ShareWithUsersModal = (props) => {
   return (
     <Modal open={isOpen}
            onClose={onCloseHandler}
+           size="small"
     >
       <Header icon="users" content={`Share schema ${schemaName}`}/>
-      <Modal.Content loading={loading}>
-        <Segment>
+      <Modal.Content>
           {errorBox}
         <Table collapsing={false} unstackable={true} compact={true} size="small">
           <Table.Header>
@@ -51,7 +51,7 @@ const ShareWithUsersModal = (props) => {
                 />
               </Table.Cell>
               <Table.Cell>
-                <Button icon="add user" onClick={onAddUser(schemaId,userToAdd)}/>
+                <Button loading={loading} icon="add user" onClick={onAddUser(schemaId,userToAdd)}/>
               </Table.Cell>
             </Table.Row>
             {users.map (user => (
@@ -64,7 +64,6 @@ const ShareWithUsersModal = (props) => {
             ))}
           </Table.Body>
         </Table>
-        </Segment>
       </Modal.Content>
       <Modal.Actions>
         <Button color='green' onClick={onCloseHandler} inverted>

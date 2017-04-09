@@ -113,3 +113,7 @@ export const putSharedUserOnSchema = (schemaId, user) => {
     }
   })
 }
+
+export const putImportFile = (formData) => {
+  return instance.put('/api/import_schema', formData)
+}

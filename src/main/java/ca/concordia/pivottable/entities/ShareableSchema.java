@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 public class ShareableSchema 
 {
 	private Long schemaID;
-	private final String schemaName;
+	private String schemaName;
 	private String ownerUsername;
 	private final PivotTableSchema pvtTblSchema;
 	private final String dbURL;
@@ -49,7 +49,7 @@ public class ShareableSchema
 	 * Mutator method for data member schemaID.
 	 * @param 	schemaID	Schema ID to be assigned to the data member
 	 */
-	public void setschemaID(long schemaID) 
+	public void setschemaID(Long schemaID)
 	{
 		this.schemaID = schemaID;
 	}
@@ -61,6 +61,15 @@ public class ShareableSchema
 	public String getSchemaName()
 	{
 		return this.schemaName;
+	}
+
+	/**
+	 * Setter for schema name
+	 * @param name The new name for this shareable schema.
+	 */
+	public void setSchemaName(String name)
+	{
+		this.schemaName = name;
 	}
 	
 	/**

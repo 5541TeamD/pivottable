@@ -48,6 +48,7 @@ public class Application {
         GET.put("/api/shareableschema/:id", RetrieveSchemaController.class);
         GET.put("/api/home_schemas", AllUserSchemas.class);
 		GET.put("/api/shared_users/:schemaId", RetrieveSharedSchemaController.class);
+		GET.put("/export_schema/:id", ExportSchemaController.class);
     }
 
     private static final Map<String, Class> POST;
@@ -66,6 +67,7 @@ public class Application {
         PUT = new HashMap<>();
 		// PUT endpoints
         PUT.put("/api/shared_user", ShareSchemaController.class);
+        PUT.put("/api/import_schema", ImportSchemaController.class);
     }
 
     private static final Map<String, Class> DELETE;

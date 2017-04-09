@@ -14,7 +14,8 @@ import {getTableList,
   deleteSharedSchemaLink,
   deleteSharingWithUser,
   getSharedUsers,
-  putSharedUserOnSchema
+  putSharedUserOnSchema,
+  putImportFile,
 } from '../api/endpoints'
 
 const handleErrorResponse = (e, type, dispatch, additionalMessage = '') => {
@@ -388,5 +389,38 @@ export const closeSharedUsersModal = () => ({
 
 export const userToAddValueChanged = (value) => ({
   type: C.NEW_USER_TO_SHARE_VALUE_CHANGED,
+  value
+})
+
+export const importSchema = (formData) => async (dispatch) => {
+  dispatch({type: C.IMPORT_SCHEMA});
+  try {
+    await putImportFile(formData);
+    // trick to update save table
+    await dispatch(fetchAllUserSchemas());
+    dispatch({type: C.IMPORT_SCHEMA_SUCCESS})
+  } catch (e) {
+    handleErrorResponse(e, C.IMPORT_SCHEMA_FAILURE, dispatch, 'Failed to import schema. Technical error is:')
+  }
+}
+
+export const openImportModal = () => ({
+  type: C.IMPORT_SCHEMA_MODAL_OPEN
+})
+
+export const closeImportModal = () => ({
+  type: C.IMPORT_SCHEMA_MODAL_CLOSE
+})
+
+export const dismissHomeInfo = () => ({
+  type: C.HOME_DISMISS_INFO
+})
+
+export const dismissHomeError = () => ({
+  type: C.HOME_DISMISS_ERROR
+})
+
+export const importFileSelected = (value) => ({
+  type: C.IMPORT_SCHEMA_FILE_SELECTED,
   value
 })
