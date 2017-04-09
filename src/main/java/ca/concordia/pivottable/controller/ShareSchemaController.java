@@ -1,9 +1,10 @@
 package ca.concordia.pivottable.controller;
 
-import ca.concordia.pivottable.entities.ShareableSchema;
 import ca.concordia.pivottable.servicelayer.SchemaManagementService;
 import ca.concordia.pivottable.utils.DependenciesContainer;
 import ca.concordia.pivottable.utils.PivotTableException;
+import spark.Request;
+import spark.Response;
 
 public class ShareSchemaController extends Controller
 {
@@ -21,7 +22,7 @@ public class ShareSchemaController extends Controller
 	}
     
 	@Override
-	public Object handleAction(Request request, Response response) throws Exception 
+	public Object handleAction(Request request, Response response) throws Exception
 	{
 		String sharedUsername = request.queryParams("user");
 		if (sharedUsername == null)
