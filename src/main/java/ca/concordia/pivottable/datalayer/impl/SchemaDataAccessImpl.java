@@ -562,8 +562,8 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   		}
   		  		
   		//Setting schema list to null in case no owned schemas are found
-  		if (myOwnedSchemaList.size() == 0)
-  			myOwnedSchemaList = null;
+  		//if (myOwnedSchemaList.size() == 0)
+  		//	myOwnedSchemaList = null;
   		
   		return myOwnedSchemaList;
 	}
@@ -625,8 +625,8 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   		}
   		  		
   		//Setting schema list to null in case no shared schemas are found
-  		if (mySharedSchemaList.size() == 0)
-  			mySharedSchemaList = null;
+  		//if (mySharedSchemaList.size() == 0)
+  		//	mySharedSchemaList = null;
   		
   		return mySharedSchemaList;
 	}
@@ -688,8 +688,8 @@ public class SchemaDataAccessImpl implements SchemaDataAccess
   		}
   		  		
   		//Setting schema list to null in case no shared schemas are found
-  		if (sharedWithMeSchemaList.size() == 0)
-  			sharedWithMeSchemaList = null;
+  		//if (sharedWithMeSchemaList.size() == 0)
+  		//	sharedWithMeSchemaList = null;
   		
   		return sharedWithMeSchemaList;
 	}

@@ -15,7 +15,13 @@ class Home extends React.Component {
   }
 
   render() {
-    const {loading, mySchemas, sharedSchemas, onRemoveShared, onRemoveSchema, onShareButtonClicked} = this.props
+    const {loadingMine,
+      loadingShared,
+      mySchemas,
+      sharedSchemas,
+      onRemoveShared,
+      onRemoveSchema,
+      onShareButtonClicked} = this.props
     return (
       <Segment>
         <h2>Welcome Home User!</h2>
@@ -47,11 +53,11 @@ class Home extends React.Component {
           <Grid.Column>
             <MySchemas schemas={mySchemas}
                      onShareClicked={onShareButtonClicked}
-                     loading={loading}
+                     loading={loadingMine}
                      onRemoveClicked={onRemoveSchema}/>
           </Grid.Column>
           <Grid.Column>
-            <SharedSchemas loading={loading}
+            <SharedSchemas loading={loadingShared}
                            onRemoveShared={onRemoveShared}
                            sharedSchemas={sharedSchemas}/>
           </Grid.Column>
@@ -64,9 +70,10 @@ class Home extends React.Component {
 const mapStateToProps = (rootState) => {
   const state = getHomeScreenState(rootState)
   return {
-    loading: false,
-    mySchemas: [],
-    sharedSchemas: [],
+    loadingMine: state.loadingMySchemas,
+    loadingShared: state.loadingSharedWithMe,
+    mySchemas: state.mySchemas,
+    sharedSchemas: state.sharedWithMe,
     errorMessage: state.errorMessage
   }
 }

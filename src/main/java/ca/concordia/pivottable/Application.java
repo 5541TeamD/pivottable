@@ -46,6 +46,7 @@ public class Application {
         GET.put("/api/register", RegisterController.class);
         GET.put("/api/userinfo", UserInfoController.class);
         GET.put("/api/shareableschema/:id", RetrieveSchemaController.class);
+        GET.put("/api/home_schemas", AllUserSchemas.class);
     }
 
     private static final Map<String, Class> POST;

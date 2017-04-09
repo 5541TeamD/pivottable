@@ -25,8 +25,8 @@ const homeScreenReducer = (state = initialState, action) => {
         ...state,
         loadingMySchemas: false,
         loadingSharedWithMe: false,
-        mySchemas: action.data.mySchemas,
-        sharedWithMe: action.data.sharedWithMe,
+        mySchemas: action.schemas.mySchemas,
+        sharedWithMe: action.schemas.sharedWithMe,
         errorMessage: '',
       }
     case C.FETCH_ALL_USER_SCHEMAS_FAILURE:

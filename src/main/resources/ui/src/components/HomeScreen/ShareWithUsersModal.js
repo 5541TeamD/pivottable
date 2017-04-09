@@ -89,12 +89,13 @@ ShareWithUsersModal.propTypes = {
 const mapStateToProps = (rootstate) => {
   const state = getHomeScreenState(rootstate)
   const selectedSchema = state.mySchemas.find((it => it[0] === state.selectedSchemaId))
+  const selectedSchemaName = selectedSchema ? selectedSchema[1] : ''
   return {
     isOpen: state.selectedSchemaId !== '',
     users: state.sharedWithUsers,
     userToAdd: state.userToAdd,
     loading: state.loadingSharedUsers,
-    schemaName: selectedSchema ? selectedSchema : '',
+    schemaName: selectedSchemaName,
     schemaId: state.selectedSchemaId
   }
 }
