@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Segment, Button, Modal, Header, Icon, Grid } from 'semantic-ui-react';
+import { Segment, Button, Modal, Header, Icon, Grid, Message } from 'semantic-ui-react';
 import MySchemas from './MySchemas';
 import SharedSchemas from './SharedSchemas'
 import ShareWithUsersModal from './ShareWithUsersModal'
@@ -21,10 +21,25 @@ class Home extends React.Component {
       sharedSchemas,
       onRemoveShared,
       onRemoveSchema,
-      onShareButtonClicked} = this.props
+      onShareButtonClicked,
+      errorMessage,
+      infoMessage } = this.props
+
+    const errorBox = errorMessage.length > 0 ? (
+        <Message negative>
+          <Message.Header>{errorMessage}</Message.Header>
+        </Message>) : null
+
+    const infoBox = infoMessage.length > 0 ? (
+        <Message info>
+          <Message.Header>{infoMessage}</Message.Header>
+        </Message>) : null
+
     return (
       <Segment>
         <h2>Welcome Home User!</h2>
+        {infoBox}
+        {errorBox}
         <ul>
           <li>
             <Link to="/create">Create a new schema</Link>
@@ -48,7 +63,7 @@ class Home extends React.Component {
             </Modal>
           </li>
         </ul>
-        <ShareWithUsersModal />
+        <ShareWithUsersModal errorBox={errorBox}/>
         <Grid stackable={true} columns={2}>
           <Grid.Column>
             <MySchemas schemas={mySchemas}
@@ -74,7 +89,8 @@ const mapStateToProps = (rootState) => {
     loadingShared: state.loadingSharedWithMe,
     mySchemas: state.mySchemas,
     sharedSchemas: state.sharedWithMe,
-    errorMessage: state.errorMessage
+    errorMessage: state.errorMessage,
+    infoMessage: state.infoMessage,
   }
 }
 

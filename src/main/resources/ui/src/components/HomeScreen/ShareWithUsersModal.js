@@ -22,7 +22,8 @@ const ShareWithUsersModal = (props) => {
     onRemoveUser,
     loading,
     schemaName,
-    schemaId
+    schemaId,
+    errorBox
   } = props
 
   return (
@@ -32,6 +33,7 @@ const ShareWithUsersModal = (props) => {
       <Header icon="users" content={`Share schema ${schemaName}`}/>
       <Modal.Content loading={loading}>
         <Segment>
+          {errorBox}
         <Table collapsing={false} unstackable={true} compact={true} size="small">
           <Table.Header>
             <Table.Row>
@@ -83,7 +85,8 @@ ShareWithUsersModal.propTypes = {
   onRemoveUser: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   schemaName: PropTypes.string.isRequired,
-  schemaId: PropTypes.string.isRequired
+  schemaId: PropTypes.string.isRequired,
+  errorBox: PropTypes.object,
 }
 
 const mapStateToProps = (rootstate) => {
