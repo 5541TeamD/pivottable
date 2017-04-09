@@ -70,6 +70,7 @@ public class Application {
     static
     {
         DELETE = new HashMap<>();
+        DELETE.put("/api/delete_shared_schema_link/:id", DeleteSharedSchemaLink.class);
     }
 
     private static final String[] UIRoutes = {

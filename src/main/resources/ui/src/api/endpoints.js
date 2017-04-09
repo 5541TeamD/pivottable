@@ -80,12 +80,10 @@ export const postShareableSchema = (shareableSchema) => {
   return instance.post('/api/shareableschema', shareableSchema)
 }
 
-// TODO in backend
 export const getAllUserSchemas = () => {
   return instance.get('/api/home_schemas')
 }
 
-// TODO in backend
 export const deleteSharedSchemaLink = (id) => {
   return instance.delete(`/api/delete_shared_schema_link/${id}`)
 }
