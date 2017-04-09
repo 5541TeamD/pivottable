@@ -23,7 +23,7 @@ const PrintablePivotTables = (props) => {
       toggle={true}
       checked={isPrintableView}
       onChange={onPrintableViewChanged}
-      label="Simple View"
+      label="Print View"
     />
   );
   if (!isConnected || !tableSelected || pivotTables.length === 0) {

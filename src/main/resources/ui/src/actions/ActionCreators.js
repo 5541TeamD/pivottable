@@ -400,7 +400,7 @@ export const importSchema = (formData) => async (dispatch) => {
     await dispatch(fetchAllUserSchemas());
     dispatch({type: C.IMPORT_SCHEMA_SUCCESS})
   } catch (e) {
-    handleErrorResponse(e, C.IMPORT_SCHEMA_FAILURE, dispatch, 'Failed to import schema')
+    handleErrorResponse(e, C.IMPORT_SCHEMA_FAILURE, dispatch, 'Failed to import schema. Technical error is:')
   }
 }
 
@@ -414,6 +414,10 @@ export const closeImportModal = () => ({
 
 export const dismissHomeInfo = () => ({
   type: C.HOME_DISMISS_INFO
+})
+
+export const dismissHomeError = () => ({
+  type: C.HOME_DISMISS_ERROR
 })
 
 export const importFileSelected = (value) => ({

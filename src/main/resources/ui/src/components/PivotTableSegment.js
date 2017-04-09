@@ -60,7 +60,7 @@ const PivotTableSegment = (props) => {
         toggle={true}
         checked={isPrintableView}
         onChange={onPrintableViewChanged}
-        label="Simple View"
+        label="Print View"
       />
       <br />
       <h3>{`${functionName}(${valueAlias})`}</h3>

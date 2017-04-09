@@ -16,6 +16,7 @@ import {
   importSchema,
   dismissHomeInfo,
   importFileSelected,
+  dismissHomeError,
 } from '../../actions/ActionCreators'
 
 class Home extends React.Component {
@@ -44,10 +45,11 @@ class Home extends React.Component {
       onImportFileChanged,
       onDismissHomeInfo,
       importFileData,
+      onDismissError
     } = this.props
 
      const errorBox = errorMessage.length > 0 ? (
-        <Message negative>
+        <Message negative onDismiss={onDismissError}>
           <Message.Header>{errorMessage}</Message.Header>
         </Message>) : null
 
@@ -71,7 +73,10 @@ class Home extends React.Component {
                         accept=".json"
                         onChange={onImportFileChanged}
             />
-            <Button type="submit" color="green" loading={importLoading}>Submit</Button>
+            <Button disabled={importFileData === ''}
+                    type="submit" color="green"
+                    loading={importLoading}>Submit
+            </Button>
           </Form>
         </Modal.Content>
         <Modal.Actions>
@@ -175,6 +180,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   onDismissHomeInfo: () => {
     dispatch(dismissHomeInfo())
+  },
+  onDismissError: () => {
+    dispatch(dismissHomeError())
   }
 
 })

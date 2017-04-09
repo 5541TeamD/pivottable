@@ -3,7 +3,6 @@ package ca.concordia.pivottable.controller;
 import ca.concordia.pivottable.entities.ShareableSchema;
 import ca.concordia.pivottable.servicelayer.SchemaManagementService;
 import ca.concordia.pivottable.utils.DependenciesContainer;
-import ca.concordia.pivottable.utils.PivotTableException;
 import spark.Request;
 import spark.Response;
 
@@ -13,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 public class ImportSchemaController extends Controller {
@@ -36,7 +36,7 @@ public class ImportSchemaController extends Controller {
         Part uploadedFileData = request.raw().getPart("uploaded_file");
         try (InputStream is = uploadedFileData.getInputStream()) {
             // Use the input stream to create a file
-            String json = new BufferedReader(new InputStreamReader(is))
+            String json = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n"));
             ShareableSchema schema = ShareableSchema.fromJSon(json);
             schema.setOwnerUsername(currentUser);
@@ -49,7 +49,7 @@ public class ImportSchemaController extends Controller {
             Long ret = service.createShareableSchema(schema);
             return successResponse(ret.toString(), response);
         } catch (IOException ioe) {
-            log.error("IO Exeption... " + ioe.getMessage());
+            log.error("IO Exception... " + ioe.getMessage());
             throw ioe;
         }
     }

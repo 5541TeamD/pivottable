@@ -155,6 +155,7 @@ const homeScreenReducer = (state = initialState, action) => {
       return {
         ...state,
         importModalOpen: false,
+        importFileData: '',
       }
     case C.IMPORT_SCHEMA:
       return {
@@ -180,6 +181,11 @@ const homeScreenReducer = (state = initialState, action) => {
       return {
         ...state,
         infoMessage: ''
+      }
+    case C.HOME_DISMISS_ERROR:
+      return {
+        ...state,
+        errorMessage: '',
       }
     case C.IMPORT_SCHEMA_FILE_SELECTED:
       return {
