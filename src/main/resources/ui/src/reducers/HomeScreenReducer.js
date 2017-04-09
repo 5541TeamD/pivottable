@@ -12,6 +12,9 @@ const initialState = {
   userToAdd: '',
   infoMessage : '',
   errorMessage: '',
+  importModalOpen: false,
+  importLoading: false,
+  importFileData: '',
 }
 
 
@@ -142,6 +145,46 @@ const homeScreenReducer = (state = initialState, action) => {
       return {
         ...state,
         userToAdd: action.value,
+      }
+    case C.IMPORT_SCHEMA_MODAL_OPEN:
+      return {
+        ...state,
+        importModalOpen: true
+      }
+    case C.IMPORT_SCHEMA_MODAL_CLOSE:
+      return {
+        ...state,
+        importModalOpen: false,
+      }
+    case C.IMPORT_SCHEMA:
+      return {
+        ...state,
+        importLoading: true
+      }
+    case C.IMPORT_SCHEMA_FAILURE:
+      return {
+        ...state,
+        errorMessage: action.message,
+        importLoading: false,
+      }
+    case C.IMPORT_SCHEMA_SUCCESS:
+      return {
+        ...state,
+        importLoading: false,
+        errorMessage: '',
+        infoMessage: 'Schema imported successfully!',
+        importModalOpen: false,
+        importFileData: initialState.importFileData,
+      }
+    case C.HOME_DISMISS_INFO:
+      return {
+        ...state,
+        infoMessage: ''
+      }
+    case C.IMPORT_SCHEMA_FILE_SELECTED:
+      return {
+        ...state,
+        importFileData: action.value
       }
     default:
       return state;
