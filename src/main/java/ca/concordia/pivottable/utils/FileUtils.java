@@ -28,7 +28,9 @@ public class FileUtils {
                 encoded = Files.readAllBytes(Paths.get(url.toURI()));
             } catch (URISyntaxException uriSE) {
                 throw new IOException(uriSE.getMessage());
-            }
+            } catch (NullPointerException npe) {
+				throw new IOException(npe.getMessage());
+			}
         }
         return new String(encoded, StandardCharsets.UTF_8);
     }
