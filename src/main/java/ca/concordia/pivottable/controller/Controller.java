@@ -3,6 +3,7 @@ package ca.concordia.pivottable.controller;
 import ca.concordia.pivottable.utils.DependenciesContainer;
 import ca.concordia.pivottable.utils.PivotTableException;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -74,7 +75,16 @@ public abstract class Controller implements Route {
     }
 
     protected String toJson(Object obj) {
-        Gson gson = new Gson();
+        return toJson(obj, false);
+    }
+
+    protected String toJson(Object obj, boolean pretty) {
+        Gson gson;
+        if (pretty) {
+            gson = new GsonBuilder().setPrettyPrinting().create();
+        } else {
+            gson = new Gson();
+        }
         return gson.toJson(obj);
     }
 
