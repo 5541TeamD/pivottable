@@ -1,25 +1,26 @@
-import React, { Component } from 'react';
-import PivotTableApp from './components/PivotTableApp'
+import React from 'react';
 import 'semantic-ui-css/semantic.css'
 
 import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
-
+import {getCurrentlyLoggedInUser} from './actions/ActionCreators'
 import RootReducer from './reducers/RootReducer'
-
+import {BrowserRouter} from 'react-router-dom'
 const store = createStore(RootReducer, applyMiddleware(thunk));
 
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <div className="App">
-          <PivotTableApp/>
-        </div>
-      </Provider>
-    );
-  }
-}
+import MainApp from './components/MainApp'
 
-export default App;
+const App = () => (
+  <BrowserRouter>
+    <Provider store={store}>
+      <div className="App">
+        <MainApp/>
+      </div>
+    </Provider>
+  </BrowserRouter>
+)
+
+store.dispatch(getCurrentlyLoggedInUser());
+
+export default (App);

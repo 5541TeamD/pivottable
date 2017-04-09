@@ -4,6 +4,8 @@ import PivotTable from './PivotTable'
 import {printableViewChanged} from '../actions/ActionCreators'
 import {connect} from 'react-redux'
 
+import {getPivotTableState} from '../reducers/RootReducer'
+
 import {Checkbox, Label} from 'semantic-ui-react'
 
 const PrintablePivotTables = (props) => {
@@ -100,14 +102,17 @@ PrintablePivotTables.propTypes = {
   tableSummary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
-const mapStateToProps = (state) => ({
-  isConnected: state.connectedSuccessfully,
-  pivotTables: state.pivotTables,
-  pageLabels: state.pageLabels,
-  tableSelected: state.selectedTable,
-  isPrintableView: state.printableView,
-  tableSummary: state.tableSummary,
-})
+const mapStateToProps = (rootstate) => {
+  const state = getPivotTableState(rootstate)
+  return {
+    isConnected: state.connectedSuccessfully,
+    pivotTables: state.pivotTables,
+    pageLabels: state.pageLabels,
+    tableSelected: state.selectedTable,
+    isPrintableView: state.printableView,
+    tableSummary: state.tableSummary,
+  }
+}
 
 const mapDispatchToProps = (dispatch) => ({
   // value contains the index of the page

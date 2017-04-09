@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react'
 import {Segment, Table, Label} from 'semantic-ui-react'
-
+import {getPivotTableState} from '../reducers/RootReducer'
 import {connect} from 'react-redux'
+
 
 const RawDataReport = (props) => {
   const {isConnected, rawReport, tableSelected, loading} = props
@@ -55,11 +56,14 @@ RawDataReport.propTypes = {
   loading: PropTypes.bool.isRequired
 }
 
-const mapStateToProps = (state) => ({
-  isConnected: state.connectedSuccessfully,
-  rawReport: state.rawReport,
-  tableSelected: state.selectedTable,
-  loading: state.rawReportLoading
-})
+const mapStateToProps = (rootState) => {
+  const state = getPivotTableState(rootState)
+  return {
+    isConnected: state.connectedSuccessfully,
+    rawReport: state.rawReport,
+    tableSelected: state.selectedTable,
+    loading: state.rawReportLoading
+  }
+}
 
 export default connect(mapStateToProps) (RawDataReport)

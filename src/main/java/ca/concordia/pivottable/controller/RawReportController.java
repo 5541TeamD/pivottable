@@ -26,7 +26,7 @@ public class RawReportController extends Controller{
     }
 
     @Override
-    public Object handle(Request request, Response response) throws Exception {
+    public Object handleAction(Request request, Response response) throws Exception {
         //return new Object();
         log.info("RawReportController was called");
         String name = request.queryParams("tablename");

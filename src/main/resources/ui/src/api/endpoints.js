@@ -45,3 +45,71 @@ export const getPivotTable = (schema, dataSource, username, password) => {
     headers: buildCustomHeader(dataSource, username, password),
   })
 }
+
+export const login = (username, password) => {
+  return instance.get('/api/login', {
+    params: {
+      username,
+      password
+    }
+  })
+}
+
+export const logout = () => {
+  return instance.get('/api/logout')
+}
+
+export const register = (username, password) => {
+  return instance.get('/api/register', {
+    params: {
+      username,
+      password
+    }
+  })
+}
+
+export const getUserInfo = () => {
+  return instance.get('/api/userinfo')
+}
+
+export const getShareableSchema = (id) => {
+  return instance.get(`/api/shareableschema/${id}`)
+}
+
+export const postShareableSchema = (shareableSchema) => {
+  return instance.post('/api/shareableschema', shareableSchema)
+}
+
+export const getAllUserSchemas = () => {
+  return instance.get('/api/home_schemas')
+}
+
+export const deleteSharedSchemaLink = (id) => {
+  return instance.delete(`/api/delete_shared_schema_link/${id}`)
+}
+
+export const deleteSchema = (id) => {
+  return instance.delete(`/api/delete_schema/${id}`)
+}
+
+export const deleteSharingWithUser = (otherUser, id) => {
+  return instance.delete(`/api/stop_sharing_schema`, {
+    params: {
+      id,
+      otherUser: otherUser
+    }
+  })
+}
+
+export const getSharedUsers = (schemaId) => {
+  return instance.get(`/api/shared_users/${schemaId}`)
+}
+
+export const putSharedUserOnSchema = (schemaId, user) => {
+  return instance.put('/api/shared_user', null, {
+    params: {
+      schemaId,
+      user
+    }
+  })
+}

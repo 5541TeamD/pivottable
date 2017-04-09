@@ -4,6 +4,7 @@ import {Segment, Label, Form} from 'semantic-ui-react'
 
 import {connect} from 'react-redux'
 
+import {getPivotTableState} from '../reducers/RootReducer'
 import {pivotTablePageChanged, printableViewChanged} from '../actions/ActionCreators'
 
 const PivotTableSegment = (props) => {
@@ -94,16 +95,19 @@ PivotTableSegment.propTypes = {
   tableSummary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 }
 
-const mapStateToProps = (state) => ({
-  isConnected: state.connectedSuccessfully,
-  pivotTables: state.pivotTables,
-  pageSelected: state.pageSelected,
-  pageLabels: state.pageLabels,
-  tableSelected: state.selectedTable,
-  loading: state.pivotTableLoading,
-  isPrintableView: state.printableView,
-  tableSummary: state.tableSummary,
-})
+const mapStateToProps = (rootstate) => {
+  const state = getPivotTableState(rootstate)
+  return {
+    isConnected: state.connectedSuccessfully,
+    pivotTables: state.pivotTables,
+    pageSelected: state.pageSelected,
+    pageLabels: state.pageLabels,
+    tableSelected: state.selectedTable,
+    loading: state.pivotTableLoading,
+    isPrintableView: state.printableView,
+    tableSummary: state.tableSummary,
+  }
+}
 
 const mapDispatchToProps = (dispatch) => ({
   // value contains the index of the page
