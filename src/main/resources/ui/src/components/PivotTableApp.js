@@ -27,7 +27,7 @@ class PivotTableApp extends Component {
   }
 
   componentWillUnmount() {
-    
+    this.props.clearStore()
   }
 
   render() {
