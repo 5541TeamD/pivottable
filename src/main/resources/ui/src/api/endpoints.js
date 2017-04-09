@@ -88,7 +88,6 @@ export const deleteSharedSchemaLink = (id) => {
   return instance.delete(`/api/delete_shared_schema_link/${id}`)
 }
 
-// TODO in backend
 export const deleteSchema = (id) => {
   return instance.delete(`/api/delete_schema/${id}`)
 }

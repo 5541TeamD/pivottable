@@ -6,7 +6,7 @@ import ca.concordia.pivottable.utils.PivotTableException;
 import spark.Request;
 import spark.Response;
 
-public class DeleteSharedSchemaLink extends Controller {
+public class DeleteSchemaController extends Controller {
 
     private SchemaManagementService service;
 
@@ -15,7 +15,7 @@ public class DeleteSharedSchemaLink extends Controller {
      *
      * @param container The DI container
      */
-    public DeleteSharedSchemaLink(DependenciesContainer container) {
+    public DeleteSchemaController(DependenciesContainer container) {
         super(container);
         service = container.get("SchemaManagementService");
     }
@@ -28,8 +28,9 @@ public class DeleteSharedSchemaLink extends Controller {
         }
         String currentUser = request.session().attribute("username");
         Long id = Long.parseLong(idStr, 10);
-        service.unshareSchema(currentUser, id);
+        // TODO pass currentUser so service can check security!
+        service.deleteShareableSchema(id);
 
-        return successResponse("Removed successfully", response);
+        return successResponse("Deleted successfully", response);
     }
 }
