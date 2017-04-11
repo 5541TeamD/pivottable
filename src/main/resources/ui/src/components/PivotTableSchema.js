@@ -197,17 +197,17 @@ const PivotTableSchema = (props) => {
             </Form.Field>
             )}
           </Form.Group>
+        {isReadOnly ? null : (
           <Form.Field>
             <Button primary={true} onClick={onGeneratePivotTable(selectedValue, selectedSummaryFunction)}
                     disabled={(!selectedValue || !selectedSummaryFunction)}>
               Generate Pivot Table
             </Button>
-            {isReadOnly ? null : (
             <Button onClick={onReset}>
               Reset
             </Button>
-            )}
           </Form.Field>
+        )}
       </Form>
     </Segment>
   )
