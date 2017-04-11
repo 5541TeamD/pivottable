@@ -1,5 +1,5 @@
 group 'ca.concordia'
-version '1.1-SNAPSHOT'
+version '2.0-SNAPSHOT'
 
 apply plugin: 'java'
 
