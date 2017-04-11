@@ -26,9 +26,7 @@ const MainApp = ({isAppLoading}) => {
         </Segment>
       )
       : (
-          <Grid stackable>
-            <Grid.Column width={1} />
-            <Grid.Column width={14}>
+          <div>
             <AppHeader/>
             <PrivateRoute exact={true} path="/" component={Home} />
             <Route exact={true} path="/login" component={LoginScreen}/>
@@ -36,9 +34,7 @@ const MainApp = ({isAppLoading}) => {
             <PrivateRoute exact={true} path="/edit/:id" isReadOnly={false} component={PivotTableApp} />
             <PrivateRoute exact={true} path="/view/:id" isReadOnly={true} component={PivotTableApp}/>
             <Footer/>
-            </Grid.Column>
-            <Grid.Column width={1} />
-          </Grid>
+          </div>
         )
   )
 }
