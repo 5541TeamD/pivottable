@@ -3,7 +3,7 @@ import { Route, withRouter} from 'react-router-dom';
 //import createBrowserHistory from 'history/createBrowserHistory';
 import PrivateRoute from './Utils/PrivateRoute'
 
-import {Segment, Dimmer, Loader, Image, Grid} from 'semantic-ui-react'
+import {Segment, Dimmer, Loader, Image} from 'semantic-ui-react'
 import Home from './HomeScreen/Home'
 import AppHeader from './AppHeader'
 import Footer from './Footer'
