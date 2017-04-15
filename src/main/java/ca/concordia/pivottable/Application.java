@@ -51,6 +51,7 @@ public class Application {
 		GET.put("/export_schema/:id", ExportSchemaController.class);
     }
 
+    // POST routes
     private static final Map<String, Class> POST;
     static
     {
@@ -61,6 +62,7 @@ public class Application {
         POST.put("/api/shareableschema", SavePivotTableSchemaController.class);
     }
 
+    // PUT Routes
     private static final Map<String, Class> PUT;
     static
     {
@@ -70,6 +72,7 @@ public class Application {
         PUT.put("/api/import_schema", ImportSchemaController.class);
     }
 
+    // DELETE routes
     private static final Map<String, Class> DELETE;
     static
     {
@@ -80,6 +83,7 @@ public class Application {
 		DELETE.put("/api/stop_sharing_schema", UnshareSchemaController.class);
     }
 
+    // UI routes -> will simply render index.html and browserHistory will take care of rendering the right view
     private static final String[] UIRoutes = {
             "/login",
             "/home",
@@ -125,16 +129,14 @@ public class Application {
      * This is where the controllers get instanciated.
      */
     private static void defineRoutes() {
-        get("/hello", (req, res) -> {
-            return "Hello, World!";
-        } );
 
         addUIRoutes();
 
-        get("/stop", (req, res) -> {
-            stop();
-            return "";
-        });
+//        get("/stop", (req, res) -> {
+//            stop();
+//            return "";
+//        });
+
 
         addMapHandler(GET, Spark::get);
         addMapHandler(POST, Spark::post);
