@@ -9,6 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.FileSystem;
+import java.net.URI;
+import java.util.Map;
+import java.util.HashMap;
 
 public class FileUtils {
 
@@ -22,17 +28,38 @@ public class FileUtils {
         byte[] encoded;
         try {
             encoded = Files.readAllBytes(Paths.get(filePath));
-        } catch (NoSuchFileException nsfe) {
+        } catch (NoSuchFileException|FileSystemNotFoundException nsfe) {
             URL url = FileUtils.class.getResource(filePath);
+            FileSystem fs = null;
             try {
-                encoded = Files.readAllBytes(Paths.get(url.toURI()));
+                URI fileURI = url.toURI();
+                fs = initFileSystem(fileURI);
+                encoded = Files.readAllBytes(Paths.get(fileURI));
             } catch (URISyntaxException uriSE) {
                 throw new IOException(uriSE.getMessage());
             } catch (NullPointerException npe) {
-				throw new IOException(npe.getMessage());
-			}
+                throw new IOException(npe.getMessage());
+	    } finally {
+                if (fs != null) {
+                    fs.close();
+                }
+            }
         }
         return new String(encoded, StandardCharsets.UTF_8);
+    }
+
+    private static FileSystem initFileSystem(URI uri) throws IOException
+    {
+        try
+        {
+            return FileSystems.getFileSystem(uri);
+        }
+        catch( FileSystemNotFoundException e )
+        {
+            Map<String, String> env = new HashMap<>();
+            env.put("create", "true");
+            return FileSystems.newFileSystem(uri, env);
+        }
     }
 
 }
